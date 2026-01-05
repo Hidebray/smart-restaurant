@@ -1,0 +1,5 @@
+{
+  "name": "Smart Restaurant MVP",
+  "description": "A QR-based menu ordering system for dine-in service. This MVP includes a guest flow for ordering and an admin dashboard for management, using mock data.",
+  "requestFramePermissions": []
+}
