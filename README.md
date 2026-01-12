@@ -2,105 +2,106 @@
 
 A smart restaurant management system featuring QR code–based ordering and real-time status updates between Guests, Waiters, and Kitchen staff.
 
----
+## 📂 Project Structure
 
-## Technology Stack
-- **Frontend & Backend:** Next.js 14 (App Router)
-- **Database:** PostgreSQL (running on Docker)
-- **ORM:** Prisma
-- **Real-time Communication:** Socket.IO (separate server)
-- **Styling:** Tailwind CSS
-- **State Management:** Zustand
+The project is split into two main parts:
+
+- **`frontend/`**: The Next.js web application (User Interfaces for Guest, Waiter, Kitchen, Admin). Handles database interactions via Prisma.
+- **`backend/`**: The Node.js Socket.IO server for real-time signaling. Also contains the Docker infrastructure configuration.
 
 ---
 
-## Local Development Setup Guide
+## 🛠️ Technology Stack
+
+- **Frontend:** Next.js 16 (App Router), React 19, Tailwind CSS.
+- **Backend:** Node.js, Socket.IO.
+- **Database:** PostgreSQL (running via Docker).
+- **ORM:** Prisma.
+- **State Management:** Zustand.
+- **Infrastructure:** Docker Compose.
+
+---
+
+## 🚀 Local Development Setup Guide
 
 ### 1. Prerequisites
 - Node.js (v18 or later)
 - Docker Desktop (installed and running)
 - Git
 
----
-
 ### 2. Clone the Repository
 ```bash
 git clone https://github.com/Hidebray/smart-restaurant.git
 cd smart-restaurant
-
 ```
 
-### 3. Install Dependencies
+### 3. Setup Backend & Infrastructure
+**This step must be done first to ensure the database is running.**
+
 ```bash
+cd backend
 npm install
 ```
 
-### 4. Configure Environment Variables
-Create a .env file in the project root with the following content:
-```env
-# Database connection (credentials must match docker-compose.yml)
-DATABASE_URL="postgresql://admin:password123@localhost:5433/smart_restaurant?schema=public"
-```
-### 5. Start the Database with Docker
-Run the following command to start PostgreSQL and pgAdmin:
+**Start the Database:**
 ```bash
 docker-compose up -d
 ```
-*Wait approximately 30 seconds for the database to start.*
 
-### 6. Run Migration & Seed Data
-Push the table schema and create sample data (Menu, Tables, Users):
+**Start the Socket Server:**
 ```bash
+npm run dev
+# Server runs on http://localhost:3001
+```
+
+### 4. Setup Frontend
+Open a **new terminal** window and navigate to the project root.
+
+```bash
+cd frontend
+npm install
+```
+
+**Initialize Database Schema & Seed Data:**
+(Make sure the backend docker container is running first)
+```bash
+# Push schema to the database
 npx prisma db push
+
+# Seed initial data (Menu, Tables, Users)
 npx prisma db seed
+```
+
+**Start the Application:**
+```bash
+npm run dev
+# App runs on http://localhost:3000
 ```
 
 ---
 
-## Feature Testing Guide (Latest Features)
+## 🧪 Feature Testing Guide (Workflow)
 
 ### Rules
-- This is a latest feature testing guide for the current Smart Restaurant system.
-- Please change the content below if you have added new features.
-- Each step includes the URL to access, actions to perform, and expected results.
+- Open three browser tabs (or windows) to simulate the three different roles.
 
-### Description
-- The current system simulates a restaurant workflow involving three roles.
-- Please open three browser tabs (or three incognito windows) to test each role.
+### Step 1: Guest (Ordering)
+- **URL:** [http://localhost:3000/guest/menu](http://localhost:3000/guest/menu)
+- **Action:** Select dishes (e.g., Phở, Milk Tea) -> Add to cart -> Click "Send Order to Kitchen".
+- **Result:** Order is submitted, cart is cleared.
 
-### Step 1: Guest 
-- Access: http://localhost:3000/guest/menu
-- Actions:
-    1. Select dishes (Phở, Trà sữa...) -> Add to cart.
-    2. Click the cart icon (top right).
-    3. Click the "Send Order to Kitchen" button.
-- Expected result: 
-    - Order submission success message.
-    - Shopping cart is cleared.
+### Step 2: Kitchen (Cooking)
+- **URL:** [http://localhost:3000/kitchen](http://localhost:3000/kitchen)
+- **Action:**
+  1. See the new order appear.
+  2. Click **"NHẬN ĐƠN & NẤU"** (Status: Preparing).
+  3. Click **"XONG -> TRẢ MÓN"** (Status: Ready).
+- **Result:** Status updates are sent to Waiter.
 
-### Step 2: Waiter
-- Access: http://localhost:3000/waiter
-- Actions:
-    1. Go to the "Chờ duyệt" tab. See the newly placed order appear (Real-time).
-    2. Click "Chấp nhận"
-- Expected result: 
-    - The order disappears from the "Pending" tab.
-
-### Step 3: Kitchen
-- Access: http://localhost:3000/kitchen
-- Actions:
-    1. See the order appear with status PENDING (or PREPARING if waiter has accepted).
-    2. Click "NHẬN ĐƠN & NẤU" -> Status changes to Yellow (Preparing).
-    3. Click "XONG -> TRẢ MÓN" -> Status changes to Green (Ready).
-- Expected result:
-    - Waiter and Guest receive real-time status updates.
-
-### Step 4: Waiter (Completion)
-- Return to the Waiter tab: http://localhost:3000/waiter
-- Actions:
-    1. Go to the "Trả món" tab. See the completed order.
-    2. Click "Đã mang ra bàn".
-    3. Go to the "Đang phục vụ" tab. Click "Thanh toán".
-- Expected result:
-    - The workflow is completed.
-    - Order status is updated to COMPLETED.
+### Step 3: Waiter (Serving & Payment)
+- **URL:** [http://localhost:3000/waiter](http://localhost:3000/waiter)
+- **Action:**
+  1. Go to **"Trả món"** tab -> See "Ready" order.
+  2. Click **"Đã mang ra bàn"**.
+  3. Go to **"Đang phục vụ"** tab -> Click **"Thanh toán"**.
+- **Result:** Order is completed.
