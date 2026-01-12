@@ -1,13 +1,12 @@
 {
-  "name": "smart-restaurant",
+  "name": "smart-restaurant-frontend",
   "version": "0.1.0",
   "private": true,
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint",
-    "socket": "ts-node --skip-project server.ts"
+    "lint": "eslint"
   },
   "dependencies": {
     "@prisma/client": "^5.19.0",
@@ -16,7 +15,6 @@
     "next": "16.1.1",
     "react": "19.2.3",
     "react-dom": "19.2.3",
-    "socket.io": "^4.8.3",
     "socket.io-client": "^4.8.3",
     "tailwind-merge": "^3.4.0",
     "zustand": "^5.0.9"
