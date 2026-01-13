@@ -6,9 +6,11 @@ import { OrdersModule } from './orders/orders.module';
 import { ProductsModule } from './products/products.module';
 import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
+import { TablesModule } from './tables/tables.module';
 
 @Module({
   imports: [
+    TablesModule,
     OrdersModule,
     PrismaModule,
     ProductsModule,

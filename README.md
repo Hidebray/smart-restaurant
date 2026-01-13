@@ -1,107 +1,128 @@
-# Smart Restaurant System (MVP)
+# Smart Restaurant
 
-A smart restaurant management system featuring QR code–based ordering and real-time status updates between Guests, Waiters, and Kitchen staff.
+This is the monorepo for the Smart Restaurant application, containing the frontend and backend services.
 
-## 📂 Project Structure
-
-The project is split into two main parts:
-
-- **`frontend/`**: The Next.js web application (User Interfaces for Guest, Waiter, Kitchen, Admin). Handles database interactions via Prisma.
-- **`backend/`**: The Node.js Socket.IO server for real-time signaling. Also contains the Docker infrastructure configuration.
+-   **Frontend:** A [Next.js](https://nextjs.org/) application located in the `/frontend` directory.
+-   **Backend:** A [NestJS](https://nestjs.com/) API located in the `/backend` directory.
 
 ---
 
-## 🛠️ Technology Stack
-
-- **Frontend:** Next.js 16 (App Router), React 19, Tailwind CSS.
-- **Backend:** Node.js, Socket.IO.
-- **Database:** PostgreSQL (running via Docker).
-- **ORM:** Prisma.
-- **State Management:** Zustand.
-- **Infrastructure:** Docker Compose.
-
----
-
-## 🚀 Local Development Setup Guide
+## 🚀 Local Development Setup
 
 ### 1. Prerequisites
-- Node.js (v18 or later)
-- Docker Desktop (installed and running)
-- Git
 
-### 2. Clone the Repository
-```bash
-git clone https://github.com/Hidebray/smart-restaurant.git
-cd smart-restaurant
-```
+-   Node.js (v18 or later)
+-   Docker Desktop (for the PostgreSQL database)
 
-### 3. Setup Backend & Infrastructure
-**This step must be done first to ensure the database is running.**
+### 2. Backend Setup
 
 ```bash
+# Navigate to the backend directory
 cd backend
+
+# Install dependencies
 npm install
+
+# Create a .env file (see backend/.env.example) and add your database URL and JWT secret
+# Example: DATABASE_URL="postgresql://user:password@localhost:5432/smart_restaurant_db?schema=public"
+
+# Run the backend server
+npm run start:dev
 ```
 
-**Start the Database:**
-```bash
-docker-compose up -d
-```
+The backend API will be running at `http://localhost:5000`.
 
-**Start the Socket Server:**
-```bash
-npm run dev
-# Server runs on http://localhost:3001
-```
-
-### 4. Setup Frontend
-Open a **new terminal** window and navigate to the project root.
+### 3. Frontend Setup
 
 ```bash
+# Navigate to the frontend directory
 cd frontend
+
+# Install dependencies
 npm install
-```
 
-**Initialize Database Schema & Seed Data:**
-(Make sure the backend docker container is running first)
-```bash
-# Push schema to the database
-npx prisma db push
-
-# Seed initial data (Menu, Tables, Users)
-npx prisma db seed
-```
-
-**Start the Application:**
-```bash
+# Run the frontend development server
 npm run dev
-# App runs on http://localhost:3000
 ```
+
+The frontend application will be accessible at `http://localhost:3000`.
 
 ---
 
-## 🧪 Feature Testing Guide (Workflow)
+## 🧪 Feature Testing Guide
 
-### Rules
-- Open three browser tabs (or windows) to simulate the three different roles.
+This guide provides end-to-end testing scenarios to verify the core features of the Smart Restaurant application from the user's perspective.
 
-### Step 1: Guest (Ordering)
-- **URL:** [http://localhost:3000/guest/menu](http://localhost:3000/guest/menu)
-- **Action:** Select dishes (e.g., Phở, Milk Tea) -> Add to cart -> Click "Send Order to Kitchen".
-- **Result:** Order is submitted, cart is cleared.
+**Prerequisites:**
+1.  Ensure the [Backend Setup](#2-backend-setup) is complete and the server is running.
+2.  Ensure the [Frontend Setup](#3-frontend-setup) is complete and the server is running.
+3.  You may need to register `Admin` and `Staff` users first via the API as described in the old guide, or through a dedicated UI if available.
 
-### Step 2: Kitchen (Cooking)
-- **URL:** [http://localhost:3000/kitchen](http://localhost:3000/kitchen)
-- **Action:**
-  1. See the new order appear.
-  2. Click **"NHẬN ĐƠN & NẤU"** (Status: Preparing).
-  3. Click **"XONG -> TRẢ MÓN"** (Status: Ready).
-- **Result:** Status updates are sent to Waiter.
+---
 
-### Step 3: Waiter (Serving & Payment)
-- **URL:** [http://localhost:3000/waiter](http://localhost:3000/waiter)
-- **Action:**
-  1. Go to **"Trả món"** tab -> See "Ready" order.
-  2. Click **"Đã mang ra bàn"**.
-  3. Go to **"Đang phục vụ"** tab -> Click **"Thanh toán"**.
-- **Result:** Order is completed.
+### **Scenario 1: Customer Places an Order**
+
+1.  **Open Customer View:** Navigate to `http://localhost:3000` in your web browser.
+2.  **Select a Table:** Choose any available table to start an order. For this example, let's use **Table 5**.
+3.  **Browse Menu:** You will be taken to the menu page. Browse the different categories and items.
+4.  **Add Items to Cart:** Add a few items to your cart by clicking the "Add" or "+" button next to them.
+5.  **Place Order:** Go to your cart, review the items, and click **"Place Order"**.
+6.  **Verify Order Status:** After placing the order, you should be redirected to an order status page. Verify that your new order is listed with the status **`Pending`**.
+
+---
+
+### **Scenario 2: Staff Manages the Order in Real-Time**
+
+1.  **Open Staff View:** In a separate browser window or an incognito tab, navigate to the login page (e.g., `http://localhost:3000/login`).
+2.  **Log In as Staff:** Enter the credentials for a user with the `Staff` role.
+3.  **View Kitchen Dashboard:** Navigate to the kitchen or orders dashboard. You should see the new order from **Table 5**.
+4.  **Update Status to `Preparing`:**
+    *   Find the order and change its status from `Pending` to **`Preparing`**.
+    *   **Check the customer's browser window.** The order status for Table 5 should update automatically to **`Preparing`** without a page refresh.
+5.  **Update Status to `Ready`:**
+    *   In the staff view, change the order status to **`Ready`**.
+    *   **Check the customer's browser window again.** The status should update in real-time to **`Ready`**.
+6.  **Complete the Order:**
+    *   Finally, update the status to **`Completed`**. The order may now move to a "Completed" tab or be removed from the active dashboard.
+
+---
+
+### **Scenario 3: Admin Manages Tables and QR Codes**
+
+1.  **Log In as Admin:** In a separate browser window, log in with an `Admin` user's credentials.
+2.  **Navigate to Table Management:** Go to the admin section and find the "Table Management" page (e.g., `http://localhost:3000/admin/tables`).
+3.  **Create a New Table:**
+    *   Click "Add New Table".
+    *   Fill in the form with a table number (e.g., "Table 10"), capacity, and location.
+    *   Save the new table.
+    *   **Verify:** The new table should appear in the list of tables.
+4.  **Update an Existing Table:**
+    *   Click the "Edit" icon on an existing table.
+    *   Change its capacity or location.
+    *   Save the changes.
+    *   **Verify:** The table's details should be updated in the list.
+5.  **Generate a QR Code:**
+    *   Click the "QR Code" icon on any table.
+    *   A modal should appear displaying the unique QR code for that table.
+    *   **Verify:** You can test this by scanning it with your phone; it should lead to a URL like `http://localhost:3000/table/some-unique-token`.
+6.  **Delete a Table:**
+    *   Click the "Delete" icon on a table.
+    *   Confirm the deletion.
+    *   **Verify:** The table should be removed from the list.
+
+### **Scenario 4: Admin Manages the Menu**
+
+
+1.  **Log In as Admin:** In a separate browser window, log in with an `Admin` user's credentials.
+2.  **Navigate to Menu Management:** Go to the section for editing the restaurant's menu.
+3.  **Create a New Menu Item:**
+    *   Add a new item with a name, price, and description (e.g., "Spicy Chicken Wings").
+    *   Save the new item.
+    *   **Verify:** Open the customer's menu page (`http://localhost:3000`) and confirm that "Spicy Chicken Wings" is now visible.
+4.  **Update an Existing Item:**
+    *   Edit the price of an existing item.
+    *   Save the changes.
+    *   **Verify:** Refresh the customer's menu page and check that the price has been updated.
+5.  **Delete a Menu Item:**
+    *   Remove an item from the menu.
+    *   **Verify:** The item should no longer be visible on the customer's menu page.
