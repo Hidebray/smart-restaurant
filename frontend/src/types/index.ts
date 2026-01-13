@@ -1,6 +1,11 @@
-// types/index.ts
+export type UserRole = 'ADMIN' | 'WAITER' | 'KITCHEN' | 'CUSTOMER';
+
+export type TableStatus = 'AVAILABLE' | 'OCCUPIED' | 'RESERVED' | 'INACTIVE';
 
 export type ProductStatus = 'AVAILABLE' | 'UNAVAILABLE' | 'SOLD_OUT';
+
+export type OrderStatus = 'PENDING' | 'ACCEPTED' | 'REJECTED' | 'PREPARING' | 'READY' | 'SERVED' | 'COMPLETED' | 'CANCELLED';
+
 
 export interface Category {
   id: string;
@@ -40,20 +45,24 @@ export interface Product {
   id: string;
   name: string;
   description: string | null;
-  price: number;
+  price: string;
   status: ProductStatus;
   categoryId: string;
   category?: Category;
   images: ProductImage[];
-  modifierGroups: ProductModifierGroup[]; // Quan trọng: Topping/Size
+  modifierGroups: ProductModifierGroup[]; // Important: Topping/Size
 }
 
 export interface CartItem {
   productId: string;
+  name: string;
+  price: Number;
+  image?: string;
   quantity: number;
   modifiers: {
     modifierOptionId: string;
     name: string;
     price: number;
   }[];
+  totalPrice: number;
 }

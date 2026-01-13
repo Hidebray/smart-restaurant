@@ -1,68 +1,68 @@
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware'; // Giúp lưu giỏ hàng khi F5
+import { persist } from 'zustand/middleware';
 import { CartItem, Product } from '@/types';
 
 interface CartState {
   items: CartItem[];
+  totalAmount: number;
+
   addToCart: (product: Product, quantity: number, modifiers: any[]) => void;
-  removeFromCart: (productId: string) => void;
+  removeFromCart: (index: number) => void;
   clearCart: () => void;
-  total: number;
 }
 
 export const useCartStore = create<CartState>()(
   persist(
     (set, get) => ({
       items: [],
-      total: 0,
+      totalAmount: 0,
       
       addToCart: (product, quantity, modifiers) => {
         const currentItems = get().items;
         
-        // Tính giá: Giá gốc + Giá topping
         const modifierTotal = modifiers.reduce((sum, mod) => sum + Number(mod.price), 0);
         const unitPrice = Number(product.price) + modifierTotal;
+        const finalPrice = unitPrice * quantity;
         
-        // Kiểm tra xem món này (cùng topping) đã có trong giỏ chưa
-        const existingItemIndex = currentItems.findIndex(
-          (item) => item.productId === product.id 
-          // (Tạm thời so sánh đơn giản, thực tế cần so sánh deep object modifiers)
-        );
+        const existingItemIndex = currentItems.findIndex(item => {
+            const itemModsString = JSON.stringify(item.modifiers.map(m => m.modifierOptionId).sort());
+            const newItemModsString = JSON.stringify(modifiers.map(m => m.modifierOptionId).sort());
+            return item.productId === product.id && newItemModsString === itemModsString;
+        });
 
         let newItems = [...currentItems];
 
         if (existingItemIndex > -1) {
-          // Nếu có rồi thì tăng số lượng
           newItems[existingItemIndex].quantity += quantity;
+          newItems[existingItemIndex].totalPrice += finalPrice;
         } else {
-          // Chưa có thì thêm mới
-          newItems.push({
+            const newItem: CartItem = {
             productId: product.id,
-            quantity,
-            modifiers,
-            // Lưu thêm tên để hiển thị cho dễ
-            productName: product.name, 
-            price: unitPrice 
-          } as any);
+            name: product.name,
+            price: Number(product.price),
+            image: product.images.find(img => img.isPrimary)?.url,
+            quantity: quantity,
+            modifiers: modifiers,
+            totalPrice: finalPrice
+          };
+          newItems.push(newItem);
         }
 
-        // Tính lại tổng tiền cả giỏ
-        const newTotal = newItems.reduce((sum, item) => sum + (item as any).price * item.quantity, 0);
-        set({ items: newItems, total: newTotal });
+        const newTotalAmount = newItems.reduce((sum, item) => sum + item.totalPrice, 0);
+        set({ items: newItems, totalAmount: newTotalAmount });
       },
 
-      removeFromCart: (productId) => {
-        // Tạm thời xóa hết các món có ID này
+      removeFromCart: (index) => {
         const currentItems = get().items;
-        const newItems = currentItems.filter(item => item.productId !== productId);
-        const newTotal = newItems.reduce((sum, item) => sum + (item as any).price * item.quantity, 0);
-        set({ items: newItems, total: newTotal });
+        const newItems = currentItems.filter((_, i) => i != index);
+        const newTotalAmount = newItems.reduce((sum, item) => sum + item.totalPrice, 0);
+        set({ items: newItems, totalAmount: newTotalAmount});
       },
 
-      clearCart: () => set({ items: [], total: 0 }),
+      clearCart: () => set({ items: [], totalAmount: 0 }),
     }),
     {
-      name: 'smart-restaurant-cart', // Tên key lưu trong localStorage
+      name: 'smart-restaurant-cart',
     }
   )
 );
