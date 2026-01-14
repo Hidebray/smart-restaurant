@@ -33,9 +33,9 @@ export default function Home() {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isCartOpen, setIsCartOpen] = useState(false);
   const cartItems = useCartStore((state) => state.items);
-  const cartTotal = useCartStore((
-    state,
-  ) => state.items.reduce((sum, item) => sum + item.quantity, 0));
+  const cartTotal = useCartStore((state) =>
+    state.items.reduce((sum, item) => sum + item.quantity, 0)
+  );
 
   const searchParams = useSearchParams();
   const tableId = searchParams.get("tableId");
@@ -76,8 +76,10 @@ export default function Home() {
             >
               <div className="relative h-48 w-full">
                 <Image
-                  src={product.images.find((img) => img.isPrimary)?.url ||
-                    "https://images.unsplash.com/photo-1546069901-ba9599a7e63c"}
+                  src={
+                    product.images.find((img) => img.isPrimary)?.url ||
+                    "https://images.unsplash.com/photo-1546069901-ba9599a7e63c"
+                  }
                   alt={product.name}
                   fill
                   className="object-cover group-hover:scale-105 transition-transform duration-300"

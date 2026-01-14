@@ -1,19 +1,18 @@
+"use client";
 
-'use client';
-
-import useSWR from 'swr';
-import { tablesApi } from '@/lib/api/tables';
-import { Table } from '@/types/table';
-import { useState } from 'react';
-import TableList from './table-list';
-import TableForm from './table-form';
-import Button from '@/components/ui/button';
-import { PlusCircle } from 'lucide-react';
+import useSWR from "swr";
+import { tablesApi } from "@/lib/api/tables";
+import { Table } from "@/types/table";
+import { useState } from "react";
+import TableList from "./table-list";
+import TableForm from "./table-form";
+import Button from "@/components/ui/button";
+import * as Icons from "lucide-react";
 
 const fetcher = () => tablesApi.getAll();
 
 export default function TablesPage() {
-  const { data: tables, error, mutate } = useSWR<Table[]>('tables', fetcher);
+  const { data: tables, error, mutate } = useSWR<Table[]>("tables", fetcher);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [selectedTable, setSelectedTable] = useState<Table | null>(null);
 
@@ -41,7 +40,7 @@ export default function TablesPage() {
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-3xl font-bold">Table Management</h1>
         <Button onClick={handleAddNew}>
-          <PlusCircle className="mr-2 h-4 w-4" /> Add New Table
+          <Icons.PlusCircle className="mr-2 h-4 w-4" /> Add New Table
         </Button>
       </div>
 

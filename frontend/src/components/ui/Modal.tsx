@@ -1,6 +1,5 @@
-
-import React from 'react';
-import { X } from 'lucide-react';
+import React from "react";
+import { X } from "lucide-react";
 
 interface ModalProps {
   isOpen: boolean;
@@ -18,7 +17,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, children }) => {
       onClick={onClose}
     >
       <div
-        className="relative w-full max-w-lg p-6 bg-white rounded-lg shadow-xl m-4"
+        className="relative w-full max-w-lg p-6 bg-white text-gray-900 rounded-lg shadow-xl m-4 border border-gray-200"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between pb-4 border-b">
