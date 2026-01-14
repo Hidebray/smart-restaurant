@@ -34,17 +34,17 @@ export default function RootLayout({
           toastOptions={{
             duration: 3000,
             style: {
-              background: '#333',
-              color: '#fff',
-              borderRadius: '10px',
+              background: "#333",
+              color: "#fff",
+              borderRadius: "10px",
             },
             success: {
               style: {
-                background: 'green',
+                background: "green",
               },
               iconTheme: {
-                primary: 'white',
-                secondary: 'green',
+                primary: "white",
+                secondary: "green",
               },
             },
           }}
