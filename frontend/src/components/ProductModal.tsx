@@ -158,14 +158,14 @@ export default function ProductModal({ product, isOpen, onClose }: ProductModalP
                 {/* Footer: Nút bấm */}
                 <div className="p-4 border-t bg-white shrink-0">
                     <div className="flex items-center justify-between mb-4">
-                        <div className="flex items-center border rounded-lg">
+                        <div className="flex items-center border border-gray-400 rounded-lg">
                             <button
-                                className="px-4 py-2 hover:bg-gray-100 font-bold"
+                                className="px-4 py-2 hover:bg-gray-100 font-bold text-gray-900"
                                 onClick={() => setQuantity(Math.max(1, quantity - 1))}
                             >-</button>
-                            <span className="px-4 font-bold">{quantity}</span>
+                            <span className="px-4 font-bold text-gray-900">{quantity}</span>
                             <button
-                                className="px-4 py-2 hover:bg-gray-100 font-bold"
+                                className="px-4 py-2 hover:bg-gray-100 font-bold text-gray-900"
                                 onClick={() => setQuantity(quantity + 1)}
                             >+</button>
                         </div>

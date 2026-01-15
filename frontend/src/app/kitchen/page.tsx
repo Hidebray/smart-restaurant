@@ -155,9 +155,9 @@ export default function KitchenPage() {
 function Column({ title, orders, color, icon, onStatusChange }: any) {
   return (
     <div className={`p-4 rounded-xl border-t-4 shadow-sm min-h-[500px] bg-white ${color}`}>
-      <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
+      <h2 className="text-xl font-bold mb-4 flex items-center gap-2 text-gray-800">
         <span>{icon}</span> {title}
-        <span className="ml-auto bg-white px-2 py-1 rounded text-sm shadow-sm">{orders.length}</span>
+        <span className="ml-auto bg-white px-2 py-1 rounded text-sm shadow-sm text-gray-900">{orders.length}</span>
       </h2>
 
       <div className="space-y-4">
