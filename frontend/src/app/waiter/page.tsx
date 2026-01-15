@@ -130,13 +130,13 @@ export default function WaiterPage() {
             🕒 Đơn Mới (Pending)
           </h2>
           <div className="space-y-4">
-            {pendingOrders.length === 0 && <p className="text-gray-400 italic text-center">Không có đơn chờ.</p>}
+            {pendingOrders.length === 0 && <p className="text-gray-500 italic text-center">Không có đơn chờ.</p>}
 
             {pendingOrders.map((order) => (
               <div key={order.id} className="border border-yellow-200 p-4 rounded-lg shadow-sm">
                 <div className="flex justify-between items-center mb-2">
                   <span className="text-2xl font-bold text-yellow-800">Bàn {order.table?.tableNumber ?? "?"}</span>
-                  <span className="text-xs text-gray-500">{new Date(order.createdAt).toLocaleTimeString('vi-VN')}</span>
+                  <span className="text-xs text-gray-600">{new Date(order.createdAt).toLocaleTimeString('vi-VN')}</span>
                 </div>
                 <ul className="mb-4 bg-white p-2 rounded border border-yellow-100">
                   {order.items.map((item) => {
@@ -145,7 +145,7 @@ export default function WaiterPage() {
                       <li key={item.id} className="font-medium text-gray-800">
                         <div>• {item.quantity} x {item.product?.name ?? 'Unknown item'}</div>
                         {modNames.length > 0 && (
-                          <div className="text-xs text-gray-500 ml-4 mt-1">{modNames.join(', ')}</div>
+                          <div className="text-xs text-gray-600 ml-4 mt-1">{modNames.join(', ')}</div>
                         )}
                       </li>
                     );
@@ -176,13 +176,13 @@ export default function WaiterPage() {
             🔔 Món Chờ Bưng (Ready)
           </h2>
           <div className="space-y-4">
-            {readyOrders.length === 0 && <p className="text-gray-400 italic text-center">Không có món nào chờ.</p>}
+            {readyOrders.length === 0 && <p className="text-gray-500 italic text-center">Không có món nào chờ.</p>}
 
             {readyOrders.map((order) => (
               <div key={order.id} className="border border-green-200 bg-green-50 p-4 rounded-lg shadow-sm animate-pulse">
                 <div className="flex justify-between items-center mb-2">
                   <span className="text-2xl font-bold text-green-800">Bàn {order.table?.tableNumber ?? "?"}</span>
-                  <span className="text-xs text-gray-500">
+                  <span className="text-xs text-gray-600">
                     {new Date(order.createdAt).toLocaleTimeString('vi-VN')}
                   </span>
                 </div>
@@ -193,7 +193,7 @@ export default function WaiterPage() {
                       <li key={item.id} className="font-medium text-gray-800">
                         <div>• {item.quantity} x {item.product?.name ?? 'Unknown item'}</div>
                         {modNames.length > 0 && (
-                          <div className="text-xs text-gray-500 ml-4 mt-1">{modNames.join(', ')}</div>
+                          <div className="text-xs text-gray-600 ml-4 mt-1">{modNames.join(', ')}</div>
                         )}
                       </li>
                     );
@@ -219,12 +219,12 @@ export default function WaiterPage() {
             {servedOrders.map((order) => (
               <div key={order.id} className="border border-gray-200 p-4 rounded-lg hover:shadow-md transition-shadow">
                 <div className="flex justify-between items-center mb-2">
-                  <span className="text-xl font-bold text-gray-700">Bàn {order.table.tableNumber}</span>
+                  <span className="text-xl font-bold text-gray-900">Bàn {order.table.tableNumber}</span>
                   <span className="text-blue-600 font-bold">
                     {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(Number(order.totalAmount))}
                   </span>
                 </div>
-                <div className="text-sm text-gray-500 mb-3 line-clamp-1">
+                <div className="text-sm text-gray-600 mb-3 line-clamp-1">
                   {order.items.map(i => {
                     const mods = (i as any).modifiers?.map((m: any) => m.modifierOption?.name ?? m.name).filter(Boolean) ?? [];
                     return mods.length ? `${i.product?.name ?? 'Unknown'} (${mods.join(', ')})` : (i.product?.name ?? 'Unknown');

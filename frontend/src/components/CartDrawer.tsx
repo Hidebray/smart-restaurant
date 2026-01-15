@@ -75,14 +75,14 @@ export default function CartDrawer({ isOpen, onClose, tableId }: CartDrawerProps
   return (
     <div className="fixed inset-0 z-[60] flex justify-end">
       {/* Màn đen mờ che background */}
-      <div 
+      <div
         className="absolute inset-0 bg-black/30 backdrop-blur-sm transition-opacity"
         onClick={onClose}
       />
 
       {/* Panel trượt từ phải sang */}
       <div className="relative w-full max-w-md bg-white h-full shadow-2xl flex flex-col animate-in slide-in-from-right duration-300">
-        
+
         {/* Header */}
         <div className="p-4 border-b flex justify-between items-center bg-gray-50">
           <h2 className="text-xl font-bold text-gray-800">Giỏ hàng ({items.length} món)</h2>
@@ -92,7 +92,7 @@ export default function CartDrawer({ isOpen, onClose, tableId }: CartDrawerProps
         {/* Body: Danh sách món */}
         <div className="flex-1 overflow-y-auto p-4 space-y-4">
           {items.length === 0 ? (
-            <div className="text-center text-gray-500 mt-10 flex flex-col items-center">
+            <div className="text-center text-gray-600 mt-10 flex flex-col items-center">
               <span className="text-4xl mb-2">🛒</span>
               <p>Chưa có món nào.</p>
               <button onClick={onClose} className="text-blue-600 mt-2 font-medium">Xem Menu ngay</button>
@@ -102,12 +102,12 @@ export default function CartDrawer({ isOpen, onClose, tableId }: CartDrawerProps
               <div key={`${item.productId}-${index}`} className="flex gap-4 bg-white p-3 rounded-xl border border-gray-100 shadow-sm">
                 {/* Ảnh nhỏ */}
                 <div className="relative h-20 w-20 shrink-0 rounded-lg overflow-hidden bg-gray-100">
-                    <Image 
-                        src={item.image || "/placeholder.png"} 
-                        alt={item.name} 
-                        fill 
-                        className="object-cover"
-                    />
+                  <Image
+                    src={item.image || "/placeholder.png"}
+                    alt={item.name}
+                    fill
+                    className="object-cover"
+                  />
                 </div>
 
                 {/* Thông tin */}
@@ -115,24 +115,24 @@ export default function CartDrawer({ isOpen, onClose, tableId }: CartDrawerProps
                   <div className="flex justify-between items-start">
                     <h3 className="font-bold text-gray-800 truncate">{item.name}</h3>
                     <span className="text-blue-600 font-bold text-sm">
-                        {formatPrice(item.totalPrice)}
+                      {formatPrice(item.totalPrice)}
                     </span>
                   </div>
-                  
+
                   {/* Liệt kê modifiers (Topping/Size) */}
-                  <div className="text-xs text-gray-500 mt-1 line-clamp-2">
+                  <div className="text-xs text-gray-600 mt-1 line-clamp-2">
                     {item.modifiers && item.modifiers.length > 0 ? item.modifiers.map(m => m.name).join(", ") : ""}
                   </div>
 
                   <div className="flex justify-between items-end mt-2">
                     <span className="text-sm font-medium bg-gray-100 px-2 py-0.5 rounded text-gray-600">
-                        x{item.quantity}
+                      x{item.quantity}
                     </span>
-                    <button 
-                        onClick={() => removeFromCart(index)}
-                        className="text-red-500 text-xs font-medium hover:underline"
+                    <button
+                      onClick={() => removeFromCart(index)}
+                      className="text-red-500 text-xs font-medium hover:underline"
                     >
-                        Xóa
+                      Xóa
                     </button>
                   </div>
                 </div>
@@ -143,28 +143,28 @@ export default function CartDrawer({ isOpen, onClose, tableId }: CartDrawerProps
 
         {/* Footer: Tổng tiền & Nút chốt đơn */}
         {items.length > 0 && (
-            <div className="p-4 border-t bg-white safe-area-pb">
-                <div className="flex justify-between items-center mb-4">
-                  <span className="text-gray-600">Tổng cộng:</span>
-                  <span className="text-2xl font-bold text-blue-600">{formatPrice(totalAmount)}</span>
-                </div>
-
-                {!tableId && (
-                  <div className="mb-3 text-sm text-red-600">Lưu ý: Chưa tìm thấy mã bàn. Vui lòng quét mã QR bàn trước khi gửi đơn.</div>
-                )}
-
-                <button
-                  onClick={handleCheckout}
-                  disabled={isSubmitting || !tableId}
-                  className="w-full bg-blue-600 text-white font-bold py-3.5 rounded-xl hover:bg-blue-700 active:scale-95 transition-all disabled:bg-gray-400 disabled:cursor-not-allowed flex justify-center items-center gap-2"
-                >
-                  {isSubmitting ? (
-                    <>Wait...</>
-                  ) : (
-                    <>{tableId ? '🚀 Gửi Đơn Bếp' : 'Quét QR để đặt món'}</>
-                  )}
-                </button>
+          <div className="p-4 border-t bg-white safe-area-pb">
+            <div className="flex justify-between items-center mb-4">
+              <span className="text-gray-600">Tổng cộng:</span>
+              <span className="text-2xl font-bold text-blue-600">{formatPrice(totalAmount)}</span>
             </div>
+
+            {!tableId && (
+              <div className="mb-3 text-sm text-red-600">Lưu ý: Chưa tìm thấy mã bàn. Vui lòng quét mã QR bàn trước khi gửi đơn.</div>
+            )}
+
+            <button
+              onClick={handleCheckout}
+              disabled={isSubmitting || !tableId}
+              className="w-full bg-blue-600 text-white font-bold py-3.5 rounded-xl hover:bg-blue-700 active:scale-95 transition-all disabled:bg-gray-400 disabled:cursor-not-allowed flex justify-center items-center gap-2"
+            >
+              {isSubmitting ? (
+                <>Wait...</>
+              ) : (
+                <>{tableId ? '🚀 Gửi Đơn Bếp' : 'Quét QR để đặt món'}</>
+              )}
+            </button>
+          </div>
         )}
       </div>
     </div>

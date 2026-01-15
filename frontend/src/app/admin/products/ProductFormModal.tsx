@@ -175,7 +175,7 @@ export default function ProductFormModal({
           <div className="space-y-1">
             <label className="text-sm font-semibold">Primary Image URL</label>
             <Input {...register("imageUrl")} placeholder="https://..." />
-            <div className="text-xs text-gray-500">
+            <div className="text-xs text-gray-600">
               Nếu bỏ trống, hệ thống sẽ dùng hình mặc định trên menu.
             </div>
           </div>

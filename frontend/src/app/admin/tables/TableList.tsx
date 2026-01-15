@@ -50,10 +50,10 @@ export default function TableList({ tables, onEdit, onUpdate }: TableListProps) 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {tables.map((table) => (
               <div key={table.id} className="p-4 border rounded-lg shadow-sm">
-                <h3 className="font-semibold text-lg">{table.tableNumber}</h3>
-                <p>Capacity: {table.capacity}</p>
-                <p>Location: {table.location || 'N/A'}</p>
-                <p>Status: <span className="font-medium">{table.status}</span></p>
+                <h3 className="font-semibold text-lg text-gray-900">{table.tableNumber}</h3>
+                <p className="text-gray-700">Capacity: {table.capacity}</p>
+                <p className="text-gray-700">Location: {table.location || 'N/A'}</p>
+                <p className="text-gray-700">Status: <span className="font-medium text-gray-900">{table.status}</span></p>
                 <div className="flex justify-end space-x-2 mt-4">
                   <Button variant="outline" size="icon" onClick={() => handleGenerateQr(table)}>
                     <QrCode className="h-4 w-4" />

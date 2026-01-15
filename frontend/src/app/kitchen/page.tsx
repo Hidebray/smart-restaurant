@@ -103,7 +103,7 @@ export default function KitchenPage() {
       <header className="flex justify-between items-center mb-8">
         <h1 className="text-3xl font-bold text-gray-800">👨‍🍳 Màn hình Bếp</h1>
         <div className="flex items-center gap-4">
-          <div className="text-sm text-gray-500">Tự động cập nhật mỗi 5s</div>
+          <div className="text-sm text-gray-600">Tự động cập nhật mỗi 5s</div>
           <button
             onClick={async () => {
               await fetch('/api/auth/logout', { method: 'POST' });
@@ -164,7 +164,7 @@ function Column({ title, orders, color, icon, onStatusChange }: any) {
           <div key={order.id} className="bg-white p-4 rounded-lg shadow-md border border-gray-100 hover:shadow-lg transition-shadow">
             <div className="flex justify-between items-start mb-2 pb-2 border-b border-dashed">
               <span className="font-bold text-lg text-blue-600">Bàn {order.table?.tableNumber || "?"}</span>
-              <span className="text-xs text-gray-400">
+              <span className="text-xs text-gray-600">
                 {new Date(order.createdAt).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' })}
               </span>
             </div>
@@ -179,7 +179,7 @@ function Column({ title, orders, color, icon, onStatusChange }: any) {
                       <span className="font-bold">x{item.quantity}</span>
                     </div>
                     {modNames.length > 0 && (
-                      <div className="text-xs text-gray-500 ml-1 mt-1">{modNames.join(', ')}</div>
+                      <div className="text-xs text-gray-600 ml-1 mt-1">{modNames.join(', ')}</div>
                     )}
                   </li>
                 );

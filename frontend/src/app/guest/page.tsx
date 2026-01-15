@@ -95,7 +95,7 @@ export default function Home() {
                     {formatPrice(product.price)}
                   </span>
                 </div>
-                <p className="text-gray-500 text-sm line-clamp-2 mb-3">
+                <p className="text-gray-600 text-sm line-clamp-2 mb-3">
                   {product.description || "Chưa có mô tả"}
                 </p>
                 <button className="w-full bg-blue-50 text-blue-600 font-bold py-2 rounded-lg hover:bg-blue-100 transition-colors">

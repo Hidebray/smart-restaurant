@@ -68,7 +68,7 @@ export default function ProductList({
                 <div className="font-semibold text-gray-900 truncate">
                   {p.name}
                 </div>
-                <div className="text-xs text-gray-500 truncate">
+                <div className="text-xs text-gray-600 truncate">
                   {p.description || "No description"}
                 </div>
               </div>

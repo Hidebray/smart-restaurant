@@ -57,7 +57,7 @@ export default function ProductsPage() {
       <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-3xl font-bold">Product Management</h1>
-          <p className="text-sm text-gray-600">
+          <p className="text-sm text-gray-700">
             Tạo / sửa / xoá món ăn, đồ uống trực tiếp trên dashboard.
           </p>
         </div>
@@ -70,12 +70,12 @@ export default function ProductsPage() {
       </div>
 
       <div className="mb-4 flex items-center gap-2 rounded-xl border border-gray-300 bg-white px-3 py-2">
-        <Icons.Search className="h-4 w-4 text-gray-500" />
+        <Icons.Search className="h-4 w-4 text-gray-600" />
         <Input
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Search by name, category, status..."
-          className="border-0 text-gray-900 placeholder:text-gray-400 focus:ring-0 focus:ring-offset-0"
+          className="border-0 text-gray-900 placeholder:text-gray-500 focus:ring-0 focus:ring-offset-0"
         />
       </div>
 

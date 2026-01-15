@@ -58,7 +58,7 @@ export default function TablesPage() {
   return (
     <main className="min-h-screen p-6 bg-gray-50">
       <div className="max-w-5xl mx-auto">
-        <h1 className="text-2xl font-bold mb-4">QR Codes for Tables</h1>
+        <h1 className="text-2xl font-bold mb-4 text-gray-800">QR Codes for Tables</h1>
 
         {tables.length === 0 ? (
           <div>No tables found.</div>
@@ -68,8 +68,8 @@ export default function TablesPage() {
               <div key={t.id} className="bg-white p-4 rounded-lg shadow">
                 <div className="flex items-center justify-between mb-3">
                   <div>
-                    <div className="text-lg font-bold">Bàn {t.tableNumber}</div>
-                    <div className="text-sm text-gray-500">Sức chứa: {t.capacity}</div>
+                    <div className="text-lg font-bold text-gray-900">Bàn {t.tableNumber}</div>
+                    <div className="text-sm text-gray-600">Sức chứa: {t.capacity}</div>
                   </div>
                   <div className="text-sm text-gray-600">{t.status}</div>
                 </div>
@@ -81,7 +81,7 @@ export default function TablesPage() {
                       <img src={qrMap[t.id]} alt={`QR ${t.tableNumber}`} className="w-40 h-40 object-contain" />
                     </Link>
                   ) : (
-                    <div className="w-40 h-40 bg-gray-100 flex items-center justify-center text-sm text-gray-500">No QR</div>
+                    <div className="w-40 h-40 bg-gray-100 flex items-center justify-center text-sm text-gray-600">No QR</div>
                   )}
                 </div>
 

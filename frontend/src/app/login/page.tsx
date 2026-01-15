@@ -71,7 +71,7 @@ export default function LoginPage() {
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
         <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
-          <form className="space-y-6" onSubmit={handleSubmit}>
+          <form className="space-y-6" onSubmit={handleSubmit} noValidate>
             {/* Email Field */}
             <div>
               <label
@@ -91,7 +91,7 @@ export default function LoginPage() {
                   onChange={(e) =>
                     setFormData({ ...formData, email: e.target.value })
                   }
-                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                  className="appearance-none block w-full px-3 py-2 border border-gray-400 rounded-md shadow-sm placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                   placeholder="admin@example.com"
                 />
               </div>
@@ -116,7 +116,7 @@ export default function LoginPage() {
                   onChange={(e) =>
                     setFormData({ ...formData, password: e.target.value })
                   }
-                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                  className="appearance-none block w-full px-3 py-2 border border-gray-400 rounded-md shadow-sm placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                   placeholder="••••••••"
                 />
               </div>
@@ -167,17 +167,17 @@ export default function LoginPage() {
                 <div className="w-full border-t border-gray-300" />
               </div>
               <div className="relative flex justify-center text-sm">
-                <span className="px-2 bg-white text-gray-500">
+                <span className="px-2 bg-white text-gray-600">
                   Demo Credentials
                 </span>
               </div>
             </div>
 
-            <div className="mt-6 grid grid-cols-2 gap-3 text-xs text-gray-500 text-center">
-               <div>admin@smart.restaurant</div>
-               <div>waiter@smart.restaurant</div>
-               <div>kitchen@smart.restaurant</div>
-               <div className="col-span-2">(Mật khẩu mặc định: password@123)</div>
+            <div className="mt-6 grid grid-cols-2 gap-3 text-xs text-gray-600 text-center">
+              <div>admin@smart.restaurant</div>
+              <div>waiter@smart.restaurant</div>
+              <div>kitchen@smart.restaurant</div>
+              <div className="col-span-2">(Mật khẩu mặc định: password@123)</div>
             </div>
           </div>
         </div>
