@@ -47,7 +47,20 @@ docker compose up -d
 
 # Initialize the database schema
 npx prisma db push
+
+# Seed sample data (Default Users, Tables, Products)
+npx prisma db seed
 ```
+
+### Default Credentials
+
+After seeding, you can log in with the following accounts (Password for all: `password@123`):
+
+| Role | Email |
+| :--- | :--- |
+| **Admin** | `admin@smart.restaurant` |
+| **Waiter** | `waiter@smart.restaurant` |
+| **Kitchen** | `kitchen@smart.restaurant` |
 
 ### 3. Frontend Setup
 
