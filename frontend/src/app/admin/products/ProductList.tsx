@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import type { Product } from "@/types";
-import Button from "@/components/ui/button";
+import Button from "@/components/ui/Button";
 import { Pencil, Trash2 } from "lucide-react";
 
 function formatPrice(price: string | number) {
@@ -83,9 +83,8 @@ export default function ProductList({
 
             <div className="col-span-1">
               <span
-                className={`inline-flex rounded-full px-2 py-1 text-xs font-bold ${
-                  statusBadge[p.status] || "bg-gray-100 text-gray-700"
-                }`}
+                className={`inline-flex rounded-full px-2 py-1 text-xs font-bold ${statusBadge[p.status] || "bg-gray-100 text-gray-700"
+                  }`}
               >
                 {p.status}
               </span>

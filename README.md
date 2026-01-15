@@ -23,14 +23,31 @@ cd backend
 # Install dependencies
 npm install
 
-# Create a .env file (see backend/.env.example) and add your database URL and JWT secret
-# Example: DATABASE_URL="postgresql://user:password@localhost:5432/smart_restaurant_db?schema=public"
+# Create a .env file from the example
+cp .env.example .env
+
+# Update the environment variables in .env:
+# - PORT=5000
+# - DATABASE_URL="postgresql://admin:admin-postgres-pwd-3@localhost:5433/smart_restaurant?schema=public"
+# - JWT_SECRET="your-super-secret-jwt-key"
 
 # Run the backend server
 npm run start:dev
 ```
 
 The backend API will be running at `http://localhost:5000`.
+
+### Database Setup (Required)
+
+Ensure you have Docker Desktop running, then start the database:
+
+```bash
+# Start the database containers
+docker compose up -d
+
+# Initialize the database schema
+npx prisma db push
+```
 
 ### 3. Frontend Setup
 

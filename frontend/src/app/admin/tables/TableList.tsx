@@ -2,13 +2,13 @@
 'use client';
 
 import { Table } from '@/types/table';
-import Button from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import Button from '@/components/ui/Button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { QrCode, Edit, Trash2 } from 'lucide-react';
 import { tablesApi } from '@/lib/api/tables';
 import toast from 'react-hot-toast';
 import { useState } from 'react';
-import QrCodeModal from './qr-code-modal';
+import QrCodeModal from './QrCodeModal';
 
 interface TableListProps {
   tables: Table[];

@@ -13,9 +13,9 @@ import {
   DialogHeader,
   DialogTitle,
   DialogFooter,
-} from "@/components/ui/dialog";
-import Button from "@/components/ui/button";
-import Input from "@/components/ui/input";
+} from "@/components/ui/Dialog";
+import Button from "@/components/ui/Button";
+import Input from "@/components/ui/Input";
 
 type FormValues = {
   name: string;

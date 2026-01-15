@@ -5,9 +5,9 @@ import { Table } from '@/types/table';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { tablesApi } from '@/lib/api/tables';
 import toast from 'react-hot-toast';
-import Button from '@/components/ui/button';
-import Input from '@/components/ui/input';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import Button from '@/components/ui/Button';
+import Input from '@/components/ui/Input';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
 

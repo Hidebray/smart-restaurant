@@ -4,8 +4,8 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import { useSearchParams } from "next/navigation";
 import { Product } from "@/types";
-import ProductModal from "@/components/productModal";
-import CartDrawer from "@/components/cartDrawer";
+import ProductModal from "@/components/ProductModal";
+import CartDrawer from "@/components/CartDrawer";
 import { useCartStore } from "@/store/useCartStore";
 
 async function getProducts(): Promise<Product[]> {

@@ -4,11 +4,11 @@ import useSWR from "swr";
 import { useMemo, useState } from "react";
 import type { Product } from "@/types";
 import { productsApi } from "@/lib/api/products";
-import Button from "@/components/ui/button";
-import Input from "@/components/ui/input";
+import Button from "@/components/ui/Button";
+import Input from "@/components/ui/Input";
 import * as Icons from "lucide-react";
-import ProductList from "./product-list";
-import ProductFormModal from "./product-form-modal";
+import ProductList from "./ProductList";
+import ProductFormModal from "./ProductFormModal";
 
 const fetcher = () => productsApi.getAll();
 

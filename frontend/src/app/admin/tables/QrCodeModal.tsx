@@ -7,8 +7,8 @@ import {
   DialogHeader,
   DialogTitle,
   DialogFooter,
-} from '@/components/ui/dialog';
-import Button from '@/components/ui/button';
+} from '@/components/ui/Dialog';
+import Button from '@/components/ui/Button';
 import Image from 'next/image';
 
 interface QrCodeModalProps {
@@ -39,7 +39,7 @@ export default function QrCodeModal({ qrCodeUrl, tableName, onClose }: QrCodeMod
       printWindow.document.close();
     }
   };
-  
+
   return (
     <Dialog open={true} onOpenChange={onClose}>
       <DialogContent>

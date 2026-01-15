@@ -4,9 +4,9 @@ import useSWR from "swr";
 import { tablesApi } from "@/lib/api/tables";
 import { Table } from "@/types/table";
 import { useState } from "react";
-import TableList from "./table-list";
-import TableForm from "./table-form";
-import Button from "@/components/ui/button";
+import TableList from "./TableList";
+import TableForm from "./TableForm";
+import Button from "@/components/ui/Button";
 import * as Icons from "lucide-react";
 
 const fetcher = () => tablesApi.getAll();
