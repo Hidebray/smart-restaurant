@@ -167,6 +167,9 @@ The working order rotates daily following this sequence:
   - [x] Search works across product name and description
   - _Commit:_ `feat: implement fuzzy search for products`
 
-- [ ] **Task 6.5: Multi-language Support (EN/VI)**
-  - [ ] Refactor UI to support multiple languages.
+- [x] **Task 6.5: Multi-language Support (EN/VI)**
+  - [x] Created translation files for English and Vietnamese
+  - [x] Implemented i18n context and custom hook
+  - [x] Added language switcher component to header
+  - [x] Integrated translations in guest menu page
   - _Commit:_ `feat: add multi-language support`

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { tablesApi } from "@/lib/api/tables";
+import LanguageSwitcher from "@/components/LanguageSwitcher";
 
 interface HeaderProps {
     title: string;
@@ -39,11 +40,14 @@ export default function Header({ title, showBack, backUrl, tableId }: HeaderProp
                 )}
                 <span className="text-lg font-bold text-gray-800">{title}</span>
             </div>
-            {tableNumber && (
-                <span className="text-sm font-semibold text-gray-500 bg-gray-100 px-3 py-1 rounded-full">
-                    {tableNumber}
-                </span>
-            )}
+            <div className="flex items-center gap-3">
+                {tableNumber && (
+                    <span className="text-sm font-semibold text-gray-500 bg-gray-100 px-3 py-1 rounded-full">
+                        {tableNumber}
+                    </span>
+                )}
+                <LanguageSwitcher />
+            </div>
         </div>
     );
 }

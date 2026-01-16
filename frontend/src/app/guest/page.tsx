@@ -7,6 +7,7 @@ import { Product } from "@/types";
 import ProductModal from "@/components/ProductModal";
 import Header from "@/components/mobile/Header";
 import CategoryTabs from "@/components/mobile/CategoryTabs";
+import { useI18n } from "@/contexts/I18nContext";
 
 async function getProducts(): Promise<Product[]> {
   const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:5000'}/products`, {
@@ -28,6 +29,7 @@ const formatPrice = (price: number | string) => {
 };
 
 function GuestMenuContent() {
+  const { t } = useI18n();
   const [products, setProducts] = useState<Product[]>([]);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -69,18 +71,18 @@ function GuestMenuContent() {
   // Extract unique categories
   const categories = useMemo(() => {
     const cats = new Set(products.map((p) => p.category?.name || "Other"));
-    return ["All", ...Array.from(cats)].sort();
-  }, [products]);
+    return [t('menu.allCategories'), ...Array.from(cats)].sort();
+  }, [products, t]);
 
   // Filter products by category only (search is handled by backend)
   const filteredProducts = useMemo(() => {
     return products.filter((product) => {
       const matchesCategory =
-        activeCategory === "All" ||
+        activeCategory === t('menu.allCategories') ||
         (product.category?.name || "Other") === activeCategory;
       return matchesCategory;
     });
-  }, [products, activeCategory]);
+  }, [products, activeCategory, t]);
 
   const handleProductClick = (product: Product) => {
     setSelectedProduct(product);
@@ -89,14 +91,14 @@ function GuestMenuContent() {
 
   return (
     <>
-      <Header title="Smart Restaurant" tableId={tableId} />
+      <Header title={t('common.appName')} tableId={tableId} />
 
       {/* Search Bar */}
       <div className="bg-white px-4 pb-3">
         <div className="relative">
           <input
             type="text"
-            placeholder="Search menu items..."
+            placeholder={t('menu.searchPlaceholder')}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="w-full bg-[#f5f6fa] border-none rounded-xl py-3 pl-10 pr-4 text-gray-700 focus:ring-2 focus:ring-[#e74c3c] outline-none"

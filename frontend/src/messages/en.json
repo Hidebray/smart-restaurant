@@ -1,0 +1,80 @@
+{
+    "common": {
+        "appName": "Smart Restaurant",
+        "loading": "Loading...",
+        "error": "Error",
+        "success": "Success",
+        "submit": "Submit",
+        "cancel": "Cancel",
+        "save": "Save",
+        "delete": "Delete",
+        "edit": "Edit",
+        "search": "Search",
+        "filter": "Filter",
+        "logout": "Logout"
+    },
+    "menu": {
+        "title": "Menu",
+        "searchPlaceholder": "Search menu items...",
+        "allCategories": "All",
+        "noItems": "No items found",
+        "addToCart": "Add to Cart"
+    },
+    "cart": {
+        "title": "Your Cart",
+        "empty": "Your cart is empty",
+        "total": "Total",
+        "checkout": "Send Order",
+        "items": "items",
+        "quantity": "Quantity"
+    },
+    "orders": {
+        "title": "Your Orders",
+        "orderNumber": "Order #",
+        "status": "Status",
+        "total": "Total",
+        "sessionTotal": "Current Session Total",
+        "noOrders": "No orders yet",
+        "goToMenu": "Go to Menu",
+        "browseMenu": "Browse Menu",
+        "callWaiter": "Call Waiter",
+        "pay": "Pay",
+        "paid": "Paid",
+        "orderTotal": "Order Total"
+    },
+    "auth": {
+        "login": "Login",
+        "register": "Register",
+        "email": "Email",
+        "password": "Password",
+        "name": "Full Name",
+        "phone": "Phone Number",
+        "loginSuccess": "Login successful!",
+        "registerSuccess": "Registration successful! Please login.",
+        "alreadyHaveAccount": "Already have an account?",
+        "noAccount": "Don't have an account?",
+        "registerCustomer": "Register Customer Account",
+        "loginNow": "Login now",
+        "continueWithGoogle": "Continue with Google"
+    },
+    "review": {
+        "title": "Review Item",
+        "rating": "Rating (Stars)",
+        "comment": "Comment (Optional)",
+        "placeholder": "The food was amazing...",
+        "submit": "Submit Review",
+        "success": "Thank you for your review! ⭐",
+        "loginRequired": "Please login to submit a review!",
+        "sessionExpired": "Session expired. Please login again!"
+    },
+    "status": {
+        "PENDING": "Pending",
+        "ACCEPTED": "Accepted",
+        "PREPARING": "Preparing",
+        "READY": "Ready",
+        "SERVED": "Served",
+        "COMPLETED": "Completed",
+        "REJECTED": "Rejected",
+        "CANCELLED": "Cancelled"
+    }
+}

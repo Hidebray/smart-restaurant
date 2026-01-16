@@ -1,0 +1,80 @@
+{
+    "common": {
+        "appName": "Smart Restaurant",
+        "loading": "Đang tải...",
+        "error": "Lỗi",
+        "success": "Thành công",
+        "submit": "Gửi",
+        "cancel": "Hủy",
+        "save": "Lưu",
+        "delete": "Xóa",
+        "edit": "Sửa",
+        "search": "Tìm kiếm",
+        "filter": "Lọc",
+        "logout": "Đăng xuất"
+    },
+    "menu": {
+        "title": "Thực Đơn",
+        "searchPlaceholder": "Tìm món ăn...",
+        "allCategories": "Tất cả",
+        "noItems": "Không tìm thấy món nào",
+        "addToCart": "Thêm vào giỏ"
+    },
+    "cart": {
+        "title": "Giỏ Hàng",
+        "empty": "Giỏ hàng trống",
+        "total": "Tổng cộng",
+        "checkout": "Gửi Đơn Bếp",
+        "items": "món",
+        "quantity": "Số lượng"
+    },
+    "orders": {
+        "title": "Đơn Hàng Của Bạn",
+        "orderNumber": "Đơn #",
+        "status": "Trạng thái",
+        "total": "Tổng",
+        "sessionTotal": "Tổng Cộng Phiên",
+        "noOrders": "Chưa có đơn hàng nào",
+        "goToMenu": "Xem Thực Đơn",
+        "browseMenu": "Xem Thực Đơn",
+        "callWaiter": "Gọi Nhân Viên",
+        "pay": "Thanh Toán",
+        "paid": "Đã Thanh Toán",
+        "orderTotal": "Tổng Đơn"
+    },
+    "auth": {
+        "login": "Đăng Nhập",
+        "register": "Đăng Ký",
+        "email": "Email",
+        "password": "Mật khẩu",
+        "name": "Họ và Tên",
+        "phone": "Số điện thoại",
+        "loginSuccess": "Đăng nhập thành công!",
+        "registerSuccess": "Đăng ký thành công! Vui lòng đăng nhập.",
+        "alreadyHaveAccount": "Đã có tài khoản?",
+        "noAccount": "Chưa có tài khoản?",
+        "registerCustomer": "Đăng ký tài khoản Customer",
+        "loginNow": "Đăng nhập ngay",
+        "continueWithGoogle": "Tiếp tục với Google"
+    },
+    "review": {
+        "title": "Đánh Giá Món Ăn",
+        "rating": "Chất lượng (Sao)",
+        "comment": "Nhận xét (Tùy chọn)",
+        "placeholder": "Món ăn ngon tuyệt...",
+        "submit": "Gửi Đánh Giá",
+        "success": "Cảm ơn bạn đã đánh giá! ⭐",
+        "loginRequired": "Vui lòng đăng nhập để đánh giá!",
+        "sessionExpired": "Phiên đăng nhập hết hạn. Vui lòng đăng nhập lại!"
+    },
+    "status": {
+        "PENDING": "Chờ xử lý",
+        "ACCEPTED": "Đã chấp nhận",
+        "PREPARING": "Đang nấu",
+        "READY": "Sẵn sàng",
+        "SERVED": "Đã phục vụ",
+        "COMPLETED": "Hoàn thành",
+        "REJECTED": "Từ chối",
+        "CANCELLED": "Đã hủy"
+    }
+}
