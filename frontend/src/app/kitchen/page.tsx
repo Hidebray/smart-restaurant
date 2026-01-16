@@ -31,10 +31,9 @@ export default function KitchenPage() {
     }
   };
 
-  // Tự động tải lại sau mỗi 5 giây (Polling đơn giản thay cho Socket)
+  // Tải lại khi vào trang
   useEffect(() => {
     fetchOrders();
-    const interval = setInterval(fetchOrders, 5000);
 
     // Setup socket to receive orders when waiter sends to kitchen
     let socket: any = null;
@@ -67,7 +66,6 @@ export default function KitchenPage() {
       .catch((err) => console.error('Socket import error', err));
 
     return () => {
-      clearInterval(interval);
       if (socket) socket.disconnect();
     };
   }, []);
@@ -103,7 +101,6 @@ export default function KitchenPage() {
       <header className="flex justify-between items-center mb-8">
         <h1 className="text-3xl font-bold text-gray-800">👨‍🍳 Màn hình Bếp</h1>
         <div className="flex items-center gap-4">
-          <div className="text-sm text-gray-600">Tự động cập nhật mỗi 5s</div>
           <button
             onClick={async () => {
               await fetch('/api/auth/logout', { method: 'POST' });

@@ -34,7 +34,6 @@ export default function WaiterPage() {
 
   useEffect(() => {
     fetchOrders();
-    const interval = setInterval(fetchOrders, 5000); // Polling 5s
 
     // Setup socket.io client for real-time notifications
     let socket: any = null;
@@ -65,7 +64,6 @@ export default function WaiterPage() {
     }).catch(err => console.error('Socket import error', err));
 
     return () => {
-      clearInterval(interval);
       if (socket) socket.disconnect();
     };
   }, []);
