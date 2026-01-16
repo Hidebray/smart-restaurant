@@ -1,12 +1,17 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import useSWR from "swr";
 import type { Product } from "@/types";
 import {
   productsApi,
   type AdminProductUpsertPayload,
 } from "@/lib/api/products";
+import {
+  modifiersApi,
+  ModifierGroupWithWithOptions,
+} from "@/lib/api/modifiers";
 import {
   Dialog,
   DialogContent,
@@ -24,6 +29,7 @@ type FormValues = {
   status: "AVAILABLE" | "UNAVAILABLE" | "SOLD_OUT";
   categoryName: string;
   imageUrl: string;
+  modifierGroupIds: string[];
 };
 
 export default function ProductFormModal({
@@ -35,10 +41,17 @@ export default function ProductFormModal({
   product: Product | null;
   onClose: (shouldRefresh?: boolean) => void;
 }) {
+  const { data: modifierGroups } = useSWR<ModifierGroupWithWithOptions[]>(
+    "modifiers",
+    modifiersApi.getAllGroups
+  );
+
   const {
     register,
     handleSubmit,
     reset,
+    control,
+    watch,
     formState: { isSubmitting, errors },
   } = useForm<FormValues>({
     defaultValues: {
@@ -48,8 +61,11 @@ export default function ProductFormModal({
       status: "AVAILABLE",
       categoryName: "",
       imageUrl: "",
+      modifierGroupIds: [],
     },
   });
+
+  const selectedModifierGroupIds = watch("modifierGroupIds");
 
   useEffect(() => {
     if (!open) return;
@@ -61,6 +77,7 @@ export default function ProductFormModal({
         status: "AVAILABLE",
         categoryName: "",
         imageUrl: "",
+        modifierGroupIds: [],
       });
       return;
     }
@@ -74,6 +91,8 @@ export default function ProductFormModal({
       status: product.status,
       categoryName: product.category?.name ?? "",
       imageUrl: primaryImage,
+      modifierGroupIds:
+        product.modifierGroups?.map((pmg) => pmg.modifierGroupId) || [],
     });
   }, [open, product, reset]);
 
@@ -88,15 +107,26 @@ export default function ProductFormModal({
     };
 
     try {
+      let updatedProduct: Product;
       if (product) {
-        await productsApi.update(product.id, payload);
+        updatedProduct = await productsApi.update(product.id, payload);
       } else {
-        await productsApi.create(payload);
+        updatedProduct = await productsApi.create(payload);
       }
+      await modifiersApi.updateProductModifierGroups(
+        updatedProduct.id,
+        values.modifierGroupIds
+      );
       onClose(true);
     } catch (error: any) {
-      console.error('Product form error:', error);
-      alert(`Error: ${error.response?.data?.message || error.message || 'Failed to save product'}`);
+      console.error("Product form error:", error);
+      alert(
+        `Error: ${
+          error.response?.data?.message ||
+          error.message ||
+          "Failed to save product"
+        }`
+      );
     }
   };
 
@@ -181,6 +211,25 @@ export default function ProductFormModal({
             <Input {...register("imageUrl")} placeholder="https://..." />
             <div className="text-xs text-gray-600">
               Nếu bỏ trống, hệ thống sẽ dùng hình mặc định trên menu.
+            </div>
+          </div>
+
+          <div className="space-y-1">
+            <label className="text-sm font-semibold">Modifier Groups</label>
+            <div className="grid grid-cols-2 gap-2">
+              {modifierGroups?.map((group) => (
+                <label
+                  key={group.id}
+                  className="flex items-center gap-2 rounded-md border p-2"
+                >
+                  <input
+                    type="checkbox"
+                    value={group.id}
+                    {...register("modifierGroupIds")}
+                  />
+                  <span>{group.name}</span>
+                </label>
+              ))}
             </div>
           </div>
 

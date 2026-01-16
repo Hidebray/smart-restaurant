@@ -4,6 +4,7 @@ import { useCartStore } from "@/store/useCartStore";
 import Image from "next/image";
 import { useState } from "react";
 import toast from "react-hot-toast";
+import { ordersApi } from "@/lib/api/orders";
 
 interface CartDrawerProps {
   isOpen: boolean;
@@ -32,8 +33,6 @@ export default function CartDrawer({ isOpen, onClose, tableId }: CartDrawerProps
 
     try {
       // 1. Chuẩn bị dữ liệu gửi lên Backend
-      // Lưu ý: Hiện tại Backend mới chỉ nhận productId và quantity. 
-      // Phần modifiers chúng ta sẽ nâng cấp Backend sau.
       const orderData = {
         tableId: tableId,
         items: items.map(item => ({
@@ -46,17 +45,8 @@ export default function CartDrawer({ isOpen, onClose, tableId }: CartDrawerProps
       };
 
       // 2. Gọi API
-      const res = await fetch("http://localhost:5000/orders", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(orderData),
-      });
-
-      if (!res.ok) {
-        const errorData = await res.json();
-        throw new Error(errorData.message || "Lỗi đặt hàng");
-      }
-
+      await ordersApi.create(orderData);
+      
       // 3. Thành công
       toast.success("🎉 Đặt món thành công! Bếp đang chuẩn bị.");
       clearCart(); // Xóa giỏ
@@ -64,7 +54,7 @@ export default function CartDrawer({ isOpen, onClose, tableId }: CartDrawerProps
 
     } catch (error: any) {
       console.error(error);
-      toast.error(`Lỗi: ${error.message}`);
+      toast.error(`Lỗi: ${error.response?.data?.message || error.message}`);
     } finally {
       setIsSubmitting(false);
     }

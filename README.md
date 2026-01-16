@@ -27,6 +27,7 @@ A comprehensive full-stack restaurant management system with real-time order tra
 
 #### 🛡️ Admin Dashboard
 - **Product Management**: Create, edit, delete menu items with categories
+- **Modifier Management**: Create, edit, delete modifier groups and options (e.g., Size, Toppings)
 - **Table Management**: Manage tables with QR code generation
 - **Staff Management**: Create/delete staff accounts (Waiter, Kitchen, Admin)
 - **Smart Delete**: Tables with order history are set to INACTIVE instead of deleted
@@ -246,6 +247,21 @@ After seeding, use these accounts (Password: `password@123`):
 4. **Verify**: Staff appears in respective section
 5. Click "Delete" to remove staff
 
+#### Modifier Management
+1. Login as admin: `admin@smart.restaurant`
+2. Navigate to **Modifiers**
+3. Click "Add New Group"
+4. Fill form:
+   - Name: `Size`
+   - Selection Type: `SINGLE`
+   - Add options: `Small` (0), `Medium` (+5000), `Large` (+10000)
+5. Save the group.
+6. Navigate to **Products** and edit an existing product.
+7. In the form, check the `Size` modifier group to associate it with the product.
+8. Save the product.
+9. Open the customer menu for any table and find the product you just edited.
+10. **Verify**: When you click on the product, a modal opens showing the "Size" options.
+
 ---
 
 ## 🆕 Recent Updates
@@ -277,6 +293,14 @@ After seeding, use these accounts (Password: `password@123`):
 - ✅ Improved text contrast for better readability
 - ✅ Added loading states and disabled states for better UX
 
+### Modifier Management
+- ✅ Implemented backend API for full CRUD on modifier groups and options.
+- ✅ Added admin UI to create, edit, and delete modifier groups and their options.
+- ✅ Integrated modifier selection into the product form, allowing admins to assign modifiers to products.
+- ✅ Updated customer product modal to display modifier options (single/multiple choice) and dynamically update prices.
+- ✅ Ensured selected modifiers and their price adjustments are correctly reflected in the shopping cart and order creation.
+- ✅ Fixed a bug preventing the deletion of modifier options.
+
 ---
 
 ## 📝 API Endpoints
@@ -290,6 +314,16 @@ After seeding, use these accounts (Password: `password@123`):
 - `POST /products` - Create product
 - `PATCH /products/:id` - Update product
 - `DELETE /products/:id` - Delete product
+- `POST /products/:id/modifier-groups` - Associate modifier groups with a product
+
+### Modifiers (Admin only)
+- `GET /modifiers/groups` - List all modifier groups with their options
+- `POST /modifiers/groups` - Create a new modifier group
+- `PATCH /modifiers/groups/:id` - Update a modifier group
+- `DELETE /modifiers/groups/:id` - Delete a modifier group
+- `POST /modifiers/options` - Create a new modifier option for a group
+- `PATCH /modifiers/options/:id` - Update a modifier option
+- `DELETE /modifiers/options/:id` - Delete a modifier option
 
 ### Tables (Admin only)
 - `GET /tables` - List all tables

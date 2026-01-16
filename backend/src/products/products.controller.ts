@@ -50,4 +50,17 @@ export class ProductsController {
   remove(@Param('id') id: string) {
     return this.productsService.remove(id);
   }
+
+  @Post(':id/modifier-groups')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.ADMIN)
+  updateProductModifierGroups(
+    @Param('id') id: string,
+    @Body() { modifierGroupIds }: { modifierGroupIds: string[] },
+  ) {
+    return this.productsService.updateProductModifierGroups(
+      id,
+      modifierGroupIds,
+    );
+  }
 }

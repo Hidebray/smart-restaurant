@@ -151,4 +151,27 @@ export class ProductsService {
     // Cascades will remove related product_images due to Prisma schema
     return this.prisma.product.delete({ where: { id } });
   }
+
+  async updateProductModifierGroups(
+    productId: string,
+    modifierGroupIds: string[],
+  ) {
+    // Delete existing
+    await this.prisma.productModifierGroup.deleteMany({
+      where: { productId },
+    });
+
+    // Create new ones
+    const createData = modifierGroupIds.map((groupId, index) => ({
+      productId,
+      modifierGroupId: groupId,
+      displayOrder: index,
+    }));
+
+    await this.prisma.productModifierGroup.createMany({
+      data: createData,
+    });
+
+    return this.findOne(productId);
+  }
 }
