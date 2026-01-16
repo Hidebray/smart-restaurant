@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import BillModal from "@/components/waiter/BillModal";
 import { Order } from "@/types";
+import LanguageSwitcher from "@/components/LanguageSwitcher";
 
 // Extended Order type to include table info if not fully covered in @/types for this specific view
 // Assuming @/types Order does not have `table` object populated fully in the frontend types yet based on previous file view
@@ -29,45 +30,51 @@ export default function WaiterPage() {
   const fetchOrders = async () => {
     try {
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:5000'}/orders`);
-      const data = await res.json();
-      // Keep all orders; we'll filter into groups in the UI
-      setOrders(data);
+      const result = await res.json();
+      setOrders(result ?? []);
     } catch (error) {
-      console.error("Lỗi:", error);
+      console.error('Error loading orders:', error);
     }
   };
 
   useEffect(() => {
     fetchOrders();
+    // Set up polling every 5s
+    const interval = setInterval(fetchOrders, 5000);
+    return () => clearInterval(interval);
+  }, []);
 
-    // Setup socket.io client for reall-time notifications
-    let socket: any = null;
-    import('socket.io-client').then(({ io }) => {
-      socket = io(process.env.NEXT_PUBLIC_SOCKET_URL || 'http://localhost:5000');
+  useEffect(() => {
+    // Socket.IO: Listen for order updates from Kitchen
+    const socketUrl = process.env.NEXT_PUBLIC_SOCKET_URL || 'http://localhost:5000';
 
-      socket.on('connect', () => {
-        console.log('Waiter socket connected', socket.id);
-        socket.emit('join', 'waiter');
+    const socketModule = import('socket.io-client').then((mod) => {
+      const socket = mod.io(socketUrl, {
+        transports: ['websocket', 'polling'],
       });
 
-      socket.on('new_order', (order: OrderWithRelations) => {
-        setOrders((prev) => {
-          if (prev.some(o => o.id === order.id)) return prev;
-          setTimeout(() => toast.success('Đơn hàng mới đã đến!'), 0);
-          return [order, ...prev];
+      // Join 'waiter' room
+      socket.emit('join_role', 'waiter');
+
+      // Listen for new orders or order status changes
+      socket.on('new_order', () => {
+        toast('🔔 Đơn mới vừa tới!', {
+          duration: 5000,
+          position: 'top-right',
+          style: {
+            background: '#f59e0b',
+            color: '#fff',
+            padding: '16px',
+            borderRadius: '8px',
+            fontSize: '1rem',
+          },
+          icon: '📋',
         });
+        fetchOrders();
       });
 
-      socket.on('order_updated', (order: OrderWithRelations) => {
-        setOrders((prev) => {
-          const idx = prev.findIndex((o) => o.id === order.id);
-          if (idx > -1) {
-            const copy = [...prev];
-            copy[idx] = order;
-            return copy;
-          }
-          return prev;
-        });
+      socket.on('order_updated_to_kitchen', () => {
+        fetchOrders();
       });
 
       socket.on('table_notification', (data: any) => {
@@ -87,10 +94,15 @@ export default function WaiterPage() {
           icon: '🏃',
         });
       });
-    }).catch(err => console.error('Socket import error', err));
 
+      return () => {
+        socket.disconnect();
+      };
+    });
+
+    // Cleanup
     return () => {
-      if (socket) socket.disconnect();
+      socketModule.then((cleanup) => cleanup && cleanup());
     };
   }, []);
 
@@ -139,6 +151,7 @@ export default function WaiterPage() {
               Đang ăn: {servedOrders.length}
             </span>
           </div>
+          <LanguageSwitcher />
           <button
             onClick={async () => {
               await fetch('/api/auth/logout', { method: 'POST' });

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import clsx from "clsx";
+import LanguageSwitcher from "@/components/LanguageSwitcher";
 
 const navItems = [
   { label: "Products", href: "/admin/products" },
@@ -48,7 +49,10 @@ export default function AdminLayout({
           })}
         </nav>
 
-        <div className="p-4 border-t border-gray-800">
+        <div className="p-4 border-t border-gray-800 space-y-3">
+          <div className="flex justify-center">
+            <LanguageSwitcher />
+          </div>
           <button
             onClick={async () => {
               await fetch('/api/auth/logout', { method: 'POST' });

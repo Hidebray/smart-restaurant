@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import LanguageSwitcher from "@/components/LanguageSwitcher";
 
 // Định nghĩa kiểu dữ liệu đơn giản cho Order
 interface Order {
@@ -105,6 +106,7 @@ export default function KitchenPage() {
       <header className="flex justify-between items-center mb-8">
         <h1 className="text-3xl font-bold text-gray-800">👨‍🍳 Màn hình Bếp</h1>
         <div className="flex items-center gap-4">
+          <LanguageSwitcher />
           <button
             onClick={async () => {
               await fetch('/api/auth/logout', { method: 'POST' });
