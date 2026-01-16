@@ -138,6 +138,16 @@ DATABASE_URL="postgresql://admin:admin-postgres-pwd-3@localhost:5433/smart_resta
 JWT_SECRET="your-super-secret-jwt-key"
 FRONTEND_URL="http://localhost:3000"
 
+# Email Configuration (Gmail)
+MAIL_USER="your-email@gmail.com"
+MAIL_PASS="your-app-password"
+
+# Google Auth
+GOOGLE_CLIENT_ID="your-google-client-id"
+GOOGLE_CLIENT_SECRET="your-google-client-secret"
+GOOGLE_CALLBACK_URL="http://localhost:5000/auth/google/callback"
+
+
 # Start database
 docker compose up -d
 
@@ -296,6 +306,13 @@ After seeding, use these accounts (Password: `password@123`):
 - ✅ Improved text contrast for better readability
 - ✅ Added loading states and disabled states for better UX
 
+### Customer Features
+- ✅ **Customer Registration**: New public registration page for customers
+- ✅ **Email Verification**: Integrated Gmail-based email verification flow
+- ✅ **Google Authentication**: One-click login/registration using Google OAuth2
+- ✅ **Profile Management**: Dedicated profile page for customers to view info and status
+- ✅ **Secure Logout**: Complete session cleanup (Cookies + LocalStorage)
+
 ### Modifier Management
 - ✅ Implemented backend API for full CRUD on modifier groups and options.
 - ✅ Added admin UI to create, edit, and delete modifier groups and their options.
@@ -309,7 +326,11 @@ After seeding, use these accounts (Password: `password@123`):
 ## 📝 API Endpoints
 
 ### Authentication
+- `POST /auth/register` - Customer registration
 - `POST /auth/login` - User login
+- `POST /auth/verify-email` - Verify email token
+- `GET /auth/google` - Initiate Google Login
+- `GET /auth/google/callback` - Google Login callback
 - `POST /api/auth/logout` - User logout
 
 ### Products (Admin only)
