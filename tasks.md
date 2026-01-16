@@ -130,13 +130,14 @@ The working order rotates daily following this sequence:
 
 **Goal:** Package and run the system across different environments.
 
-- [ ] **Task 5.1: Dockerfile**
-
-  - [ ] Create a production-ready `Dockerfile` for the Next.js application.
+- [x] **Task 5.1: Dockerfile**
+  - [x] Create a production-ready `Dockerfile` for the Next.js application.
+  - [x] Create a production-ready `Dockerfile` for the NestJS application.
   - _Commit:_ `ops: add Dockerfile for production build`
 
-- [ ] **Task 5.2: Full Stack Docker Compose**
-  - [ ] Update `docker-compose.yml` to include App, Database, and Socket services.
+- [x] **Task 5.2: Full Stack Docker Compose**
+  - [x] Update `docker-compose.yml` to include App, Database, and Socket services.
+  - [x] Created `docker-compose.prod.yml` for full stack deployment.
   - _Commit:_ `ops: finalize docker-compose setup for full-stack deployment`
 
 ---

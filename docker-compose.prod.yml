@@ -1,0 +1,66 @@
+version: '3.8'
+
+services:
+  # Database Service
+  postgres:
+    image: postgres:15
+    container_name: smart_restaurant_db_prod
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin-postgres-pwd-3
+      POSTGRES_DB: smart_restaurant
+    volumes:
+      - postgres_data_prod:/var/lib/postgresql/data
+    ports:
+      - "5434:5432" # Use 5434 to avoid conflict with dev db
+    networks:
+      - app-network
+    restart: always
+
+  # Backend Service
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: smart_restaurant_backend
+    environment:
+      DATABASE_URL: "postgresql://admin:admin-postgres-pwd-3@postgres:5432/smart_restaurant?schema=public"
+      PORT: 5000
+      JWT_SECRET: "your-super-secret-jwt-key"
+      FRONTEND_URL: "http://localhost:3000"
+      MAIL_USER: "your-email@gmail.com"
+      MAIL_PASS: "your-app-password"
+      GOOGLE_CLIENT_ID: "your-google-client-id"
+      GOOGLE_CLIENT_SECRET: "your-google-client-secret"
+      GOOGLE_CALLBACK_URL: "http://localhost:5000/auth/google/callback"
+      STRIPE_SECRET_KEY: "sk_test_placeholder"
+    ports:
+      - "5000:5000"
+    depends_on:
+      - postgres
+    networks:
+      - app-network
+    restart: always
+
+  # Frontend Service
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: smart_restaurant_frontend
+    environment:
+      NEXT_PUBLIC_API_BASE_URL: "http://localhost:5000"
+      NEXT_PUBLIC_SOCKET_URL: "http://localhost:5000"
+      NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY: "pk_test_placeholder"
+    ports:
+      - "3000:3000"
+    networks:
+      - app-network
+    restart: always
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  postgres_data_prod:
