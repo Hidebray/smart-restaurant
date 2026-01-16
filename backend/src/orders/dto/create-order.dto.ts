@@ -8,12 +8,12 @@ class OrderItemDto {
     @IsInt()
     @Min(1)
     quantity: number;
-    
-        @IsOptional()
-        @IsArray()
-        @ValidateNested({ each: true })
-        @Type(() => ModifierDto)
-        modifiers?: ModifierDto[];
+
+    @IsOptional()
+    @IsArray()
+    @ValidateNested({ each: true })
+    @Type(() => ModifierDto)
+    modifiers?: ModifierDto[];
 }
 
 class ModifierDto {
@@ -26,6 +26,11 @@ export class CreateOrderDto {
     @IsString()
     @IsUUID(4)
     tableId: string;
+
+    @IsOptional()
+    @IsString()
+    @IsUUID(4)
+    customerId?: string;
 
     @IsArray()
     @ValidateNested({ each: true })

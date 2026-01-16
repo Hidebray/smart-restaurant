@@ -4,14 +4,14 @@ import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
-import { User } from '@prisma/client';
+import { User, UserRole } from '@prisma/client';
 
 @Injectable()
 export class AuthService {
   constructor(
     private userService: UserService,
     private jwtService: JwtService,
-  ) {}
+  ) { }
 
   async register(registerDto: RegisterDto) {
     const { email, password, name, phone, role } = registerDto;
@@ -28,7 +28,7 @@ export class AuthService {
       password: hashedPassword,
       name,
       phone,
-      role, // Role is optional and defaults in schema
+      role: UserRole.CUSTOMER,
     });
 
     // Exclude password from the returned user object
@@ -50,9 +50,9 @@ export class AuthService {
     if (!user) {
       throw new UnauthorizedException('Invalid credentials');
     }
-    
+
     const payload = { sub: user.id, email: user.email, role: user.role };
-    
+
     return {
       accessToken: this.jwtService.sign(payload),
       user: {

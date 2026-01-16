@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Image from "next/image";
-import { useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { Product } from "@/types";
 import ProductModal from "@/components/ProductModal";
 import CartDrawer from "@/components/CartDrawer";
@@ -28,6 +28,7 @@ const formatPrice = (price: number | string) => {
 };
 
 export default function Home() {
+  const router = useRouter();
   const [products, setProducts] = useState<Product[]>([]);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -57,6 +58,16 @@ export default function Home() {
     setIsModalOpen(true);
   };
 
+  const handleLogout = async () => {
+    try {
+      await fetch("/api/auth/logout", { method: "POST" });
+      localStorage.removeItem("accessToken");
+      router.push("/login");
+    } catch (error) {
+      console.error("Logout failed", error);
+    }
+  };
+
   return (
     <main className="min-h-screen bg-gray-50 p-4 md:p-8 pb-32">
       <div className="max-w-7xl mx-auto">
@@ -64,7 +75,26 @@ export default function Home() {
           <h1 className="text-3xl font-bold text-gray-800">
             🍽️ Smart Restaurant
           </h1>
-          {/* Chỗ này sau này sẽ để nút Giỏ hàng */}
+          <button
+            onClick={handleLogout}
+            className="flex items-center gap-2 bg-white px-4 py-2 rounded-lg shadow-sm hover:bg-gray-50 text-gray-700 font-medium transition-colors"
+          >
+            <span>Đăng xuất</span>
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              strokeWidth={1.5}
+              stroke="currentColor"
+              className="w-5 h-5"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15m3 0 2.062-2.062a.908.908 0 0 0 0-1.285L18.75 12m4.5 0-4.5 0"
+              />
+            </svg>
+          </button>
         </header>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">

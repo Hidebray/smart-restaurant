@@ -80,6 +80,7 @@ export class OrdersService {
           where: { id: existingOrder.id },
           data: {
             totalAmount: updatedTotal,
+            ...(createOrderDto.customerId ? { customerId: createOrderDto.customerId } : {}),
             items: {
               create: orderItemsData,
             },
@@ -99,6 +100,7 @@ export class OrdersService {
           tableId,
           totalAmount,
           status: 'PENDING',
+          customerId: createOrderDto.customerId,
           items: {
             create: orderItemsData,
           },
@@ -119,8 +121,9 @@ export class OrdersService {
     })
   }
 
-  findAll() {
+  findAll(filter?: any) {
     return this.prisma.order.findMany({
+      where: filter,
       include: {
         items: { include: { product: true, modifiers: { include: { modifierOption: true } } } },
         table: true
