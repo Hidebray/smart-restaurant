@@ -13,7 +13,9 @@ export default function GuestLayout({
                 <TableSync />
             </Suspense>
             {children}
-            <BottomNav />
+            <Suspense>
+                <BottomNav />
+            </Suspense>
         </div>
     );
 }

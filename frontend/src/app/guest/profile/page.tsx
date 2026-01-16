@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -19,7 +19,17 @@ interface CustomerProfile {
     role: string;
 }
 
-export default function ProfilePage() {
+function MenuItem({ icon, label, href }: { icon: string, label: string, href: string }) {
+    return (
+        <Link href={href} className="flex items-center gap-4 p-4 border-b border-gray-50 last:border-0 hover:bg-gray-50 active:bg-gray-100 transition-colors">
+            <span className="text-xl">{icon}</span>
+            <span className="font-medium text-gray-700 flex-1">{label}</span>
+            <span className="text-gray-400">›</span>
+        </Link>
+    )
+}
+
+function ProfileContent() {
     const [profile, setProfile] = useState<CustomerProfile | null>(null);
     const [loading, setLoading] = useState(true);
     const router = useRouter();
@@ -69,15 +79,15 @@ export default function ProfilePage() {
 
     if (loading) {
         return (
-            <main className="min-h-screen bg-[#f5f6fa] flex items-center justify-center">
+            <div className="flex items-center justify-center min-h-[60vh]">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#e74c3c]"></div>
-            </main>
+            </div>
         );
     }
 
     if (!profile) {
         return (
-            <main className="min-h-screen bg-[#f5f6fa]">
+            <>
                 <Header title="Profile" showBack backUrl={`/guest?tableId=${tableId || ""}`} tableId={tableId} />
                 <div className="p-6 flex flex-col items-center justify-center min-h-[60vh] text-center space-y-4">
                     <div className="text-6xl mb-2">👤</div>
@@ -90,12 +100,12 @@ export default function ProfilePage() {
                         Log In / Register
                     </Link>
                 </div>
-            </main>
+            </>
         );
     }
 
     return (
-        <main className="min-h-screen bg-[#f5f6fa]">
+        <>
             <Header title="My Profile" showBack backUrl={`/guest?tableId=${tableId || ""}`} tableId={tableId} />
 
             <div className="p-4 safe-area-pb space-y-4">
@@ -155,16 +165,16 @@ export default function ProfilePage() {
                     Version 1.0.0
                 </div>
             </div>
-        </main>
+        </>
     );
 }
 
-function MenuItem({ icon, label, href }: { icon: string, label: string, href: string }) {
+export default function ProfilePage() {
     return (
-        <Link href={href} className="flex items-center gap-4 p-4 border-b border-gray-50 last:border-0 hover:bg-gray-50 active:bg-gray-100 transition-colors">
-            <span className="text-xl">{icon}</span>
-            <span className="font-medium text-gray-700 flex-1">{label}</span>
-            <span className="text-gray-400">›</span>
-        </Link>
-    )
+        <main className="min-h-screen bg-[#f5f6fa]">
+            <Suspense fallback={<div>Loading...</div>}>
+                <ProfileContent />
+            </Suspense>
+        </main>
+    );
 }

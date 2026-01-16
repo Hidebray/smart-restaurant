@@ -48,7 +48,10 @@ export default function KitchenPage() {
 
         socket.on('order_to_kitchen', (order: Order) => {
           // new order sent to kitchen
-          setOrders((prev) => [order, ...prev]);
+          setOrders((prev) => {
+            if (prev.some(o => o.id === order.id)) return prev;
+            return [order, ...prev];
+          });
         });
 
         socket.on('order_updated', (order: Order) => {
@@ -59,7 +62,8 @@ export default function KitchenPage() {
               copy[idx] = order;
               return copy;
             }
-            return [order, ...prev];
+            // Optionally handle adding if not found
+            return prev;
           });
         });
       })

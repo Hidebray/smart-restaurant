@@ -2,7 +2,7 @@
 
 import { useCartStore } from "@/store/useCartStore";
 import Image from "next/image";
-import { useState } from "react";
+import { useState, Suspense } from "react";
 import toast from "react-hot-toast";
 import { ordersApi } from "@/lib/api/orders";
 import Header from "@/components/mobile/Header";
@@ -10,7 +10,7 @@ import { useSearchParams, useRouter } from "next/navigation";
 import { useTableStore } from "@/store/useTableStore";
 import Link from "next/link";
 
-export default function CartPage() {
+function CartContent() {
     const { items, totalAmount, removeFromCart, updateQuantity, clearCart } =
         useCartStore();
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -66,7 +66,7 @@ export default function CartPage() {
     };
 
     return (
-        <main className="min-h-screen bg-[#f5f6fa]">
+        <>
             <Header title="Your Cart" showBack backUrl={`/guest?tableId=${tableId || ""}`} tableId={tableId} />
 
             <div className="p-4 safe-area-pb space-y-4">
@@ -197,6 +197,16 @@ export default function CartPage() {
                     </div>
                 )}
             </div>
+        </>
+    );
+}
+
+export default function CartPage() {
+    return (
+        <main className="min-h-screen bg-[#f5f6fa]">
+            <Suspense fallback={<div>Loading...</div>}>
+                <CartContent />
+            </Suspense>
         </main>
     );
 }

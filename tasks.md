@@ -102,10 +102,10 @@ The working order rotates daily following this sequence:
 
 **Goal:** Complete the order lifecycle.
 
-- [ ] **Task 4.1: Bill & Payment UI**
+- [x] **Task 4.1: Bill & Payment UI**
 
-  - [ ] Create a "Temporary Bill" modal on the Waiter screen.
-  - [ ] Display a static payment QR code (demo purpose).
+  - [x] Create a "Temporary Bill" modal on the Waiter screen.
+  - [x] Display a static payment QR code (demo purpose).
   - _Commit:_ `feat: display order bill summary modal`
 
 - [x] **Task 4.2: Checkout Logic**

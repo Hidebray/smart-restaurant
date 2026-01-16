@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, Suspense } from "react";
 import Image from "next/image";
 import { useSearchParams } from "next/navigation";
 import { Product } from "@/types";
@@ -27,7 +27,7 @@ const formatPrice = (price: number | string) => {
   }).format(Number(price));
 };
 
-export default function GuestMenuPage() {
+function GuestMenuContent() {
   const [products, setProducts] = useState<Product[]>([]);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -74,7 +74,7 @@ export default function GuestMenuPage() {
   };
 
   return (
-    <main className="min-h-screen bg-[#f5f6fa]">
+    <>
       <Header title="Smart Restaurant" tableId={tableId} />
 
       {/* Search Bar */}
@@ -158,6 +158,16 @@ export default function GuestMenuPage() {
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
       />
+    </>
+  );
+}
+
+export default function GuestMenuPage() {
+  return (
+    <main className="min-h-screen bg-[#f5f6fa]">
+      <Suspense fallback={<div>Loading...</div>}>
+        <GuestMenuContent />
+      </Suspense>
     </main>
   );
 }

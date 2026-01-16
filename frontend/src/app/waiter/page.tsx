@@ -3,22 +3,27 @@
 
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
+import BillModal from "@/components/waiter/BillModal";
+import { Order } from "@/types";
 
-interface Order {
-  id: string;
+// Extended Order type to include table info if not fully covered in @/types for this specific view
+// Assuming @/types Order does not have `table` object populated fully in the frontend types yet based on previous file view
+// However, the previous view showed `table` as part of Order in `waiter/page.tsx`'s local interface. 
+// We should check if the API returns the table object. The local interface had: table: { tableNumber: string }.
+// The imported Order type has `tableId: string`. 
+// We must intersect the type or extend it to match what the API actually returns (which includes relations).
+interface OrderWithRelations extends Order {
   table: { tableNumber: string };
-  status: string;
-  createdAt: string;
-  totalAmount: number;
-  items: {
-    id: string;
-    quantity: number;
+  items: (Order['items'][0] & {
     product: { name: string };
-  }[];
+    modifiers?: { name?: string; modifierOption?: { name: string } }[];
+  })[];
 }
 
 export default function WaiterPage() {
-  const [orders, setOrders] = useState<Order[]>([]);
+  const [orders, setOrders] = useState<OrderWithRelations[]>([]);
+  const [selectedOrder, setSelectedOrder] = useState<OrderWithRelations | null>(null);
+  const [isBillModalOpen, setIsBillModalOpen] = useState(false);
 
   // Tải đơn hàng (Chỉ lấy đơn nào có món đã xong hoặc đang ăn)
   const fetchOrders = async () => {
@@ -35,7 +40,7 @@ export default function WaiterPage() {
   useEffect(() => {
     fetchOrders();
 
-    // Setup socket.io client for real-time notifications
+    // Setup socket.io client for reall-time notifications
     let socket: any = null;
     import('socket.io-client').then(({ io }) => {
       socket = io(process.env.NEXT_PUBLIC_SOCKET_URL || 'http://localhost:5000');
@@ -45,12 +50,15 @@ export default function WaiterPage() {
         socket.emit('join', 'waiter');
       });
 
-      socket.on('new_order', (order: Order) => {
-        toast.success('Đơn hàng mới đã đến!');
-        setOrders((prev) => [order, ...prev]);
+      socket.on('new_order', (order: OrderWithRelations) => {
+        setOrders((prev) => {
+          if (prev.some(o => o.id === order.id)) return prev;
+          setTimeout(() => toast.success('Đơn hàng mới đã đến!'), 0);
+          return [order, ...prev];
+        });
       });
 
-      socket.on('order_updated', (order: Order) => {
+      socket.on('order_updated', (order: OrderWithRelations) => {
         setOrders((prev) => {
           const idx = prev.findIndex((o) => o.id === order.id);
           if (idx > -1) {
@@ -58,7 +66,8 @@ export default function WaiterPage() {
             copy[idx] = order;
             return copy;
           }
-          return [order, ...prev];
+          // Optionally handle adding if not found, but typically updates are for existing
+          return prev; // Or [order, ...prev] if you want to add updates that weren't there
         });
       });
     }).catch(err => console.error('Socket import error', err));
@@ -88,6 +97,11 @@ export default function WaiterPage() {
     } catch (error) {
       toast.error("Lỗi cập nhật");
     }
+  };
+
+  const handleOpenBill = (order: OrderWithRelations) => {
+    setSelectedOrder(order);
+    setIsBillModalOpen(true);
   };
 
   // Tách ra 2 nhóm: Cần bưng (Ready) và Đang ăn (Served)
@@ -139,7 +153,7 @@ export default function WaiterPage() {
                 </div>
                 <ul className="mb-4 bg-white p-2 rounded border border-yellow-100">
                   {order.items.map((item) => {
-                    const modNames = (item as any).modifiers?.map((m: any) => m.modifierOption?.name ?? m.name).filter(Boolean) ?? [];
+                    const modNames = item.modifiers?.map((m: any) => m.modifierOption?.name ?? m.name).filter(Boolean) ?? [];
                     return (
                       <li key={item.id} className="font-medium text-gray-800">
                         <div>• {item.quantity} x {item.product?.name ?? 'Unknown item'}</div>
@@ -187,7 +201,7 @@ export default function WaiterPage() {
                 </div>
                 <ul className="mb-4 bg-white p-2 rounded border border-green-100">
                   {order.items.map((item) => {
-                    const modNames = (item as any).modifiers?.map((m: any) => m.modifierOption?.name ?? m.name).filter(Boolean) ?? [];
+                    const modNames = item.modifiers?.map((m: any) => m.modifierOption?.name ?? m.name).filter(Boolean) ?? [];
                     return (
                       <li key={item.id} className="font-medium text-gray-800">
                         <div>• {item.quantity} x {item.product?.name ?? 'Unknown item'}</div>
@@ -209,7 +223,7 @@ export default function WaiterPage() {
           </div>
         </div>
 
-        {/* CỘT 2: KHÁCH ĐANG ĂN - CHỜ THANH TOÁN */}
+        {/* CỘT 3: KHÁCH ĐANG ĂN - CHỜ THANH TOÁN */}
         <div className="bg-white p-4 rounded-xl shadow-sm border-t-4 border-blue-500 min-h-[500px]">
           <h2 className="text-xl font-bold mb-4 flex items-center gap-2 text-blue-700">
             🍽️ Đang Ăn (Served)
@@ -225,22 +239,36 @@ export default function WaiterPage() {
                 </div>
                 <div className="text-sm text-gray-600 mb-3 line-clamp-1">
                   {order.items.map(i => {
-                    const mods = (i as any).modifiers?.map((m: any) => m.modifierOption?.name ?? m.name).filter(Boolean) ?? [];
+                    const mods = i.modifiers?.map((m: any) => m.modifierOption?.name ?? m.name).filter(Boolean) ?? [];
                     return mods.length ? `${i.product?.name ?? 'Unknown'} (${mods.join(', ')})` : (i.product?.name ?? 'Unknown');
                   }).join(", ")}
                 </div>
-                <button
-                  onClick={() => updateStatus(order.id, 'COMPLETED')}
-                  className="w-full bg-gray-800 hover:bg-gray-900 text-white font-bold py-2 rounded text-sm"
-                >
-                  💰 Thanh Toán & Dọn Bàn
-                </button>
+                <div className="flex flex-col gap-2">
+                  <button
+                    onClick={() => handleOpenBill(order)}
+                    className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 rounded text-sm"
+                  >
+                    🧾 Xem Hóa Đơn Tạm
+                  </button>
+                  <button
+                    onClick={() => updateStatus(order.id, 'COMPLETED')}
+                    className="w-full bg-gray-800 hover:bg-gray-900 text-white font-bold py-2 rounded text-sm"
+                  >
+                    💰 Thanh Toán & Dọn Bàn
+                  </button>
+                </div>
               </div>
             ))}
           </div>
         </div>
-
       </div>
+
+      <BillModal
+        isOpen={isBillModalOpen}
+        onClose={() => setIsBillModalOpen(false)}
+        order={selectedOrder}
+        tableNumber={selectedOrder?.table.tableNumber ?? "?"}
+      />
     </main>
   );
 }

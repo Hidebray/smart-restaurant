@@ -30,7 +30,7 @@ async function main() {
     data: [
       {
         email: 'admin@smart.restaurant',
-        password: hashedPassword, 
+        password: hashedPassword,
         name: 'Chủ Quán (Admin)',
         role: UserRole.ADMIN,
       },
@@ -102,7 +102,7 @@ async function main() {
 
   // 6. Tạo Sản phẩm (Products)
   console.log('Creating products...')
-  
+
   // Phở Bò
   await prisma.product.create({
     data: {
@@ -113,7 +113,7 @@ async function main() {
       status: ProductStatus.AVAILABLE,
       isChefRecommended: true,
       images: {
-        create: { url: 'https://images.unsplash.com/photo-1582878826618-c053af6ec47d?auto=format&fit=crop&w=800', isPrimary: true }
+        create: { url: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=800', isPrimary: true }
       }
     }
   })
@@ -126,7 +126,7 @@ async function main() {
       price: 55000,
       categoryId: catFood.id,
       images: {
-        create: { url: 'https://images.unsplash.com/photo-1603133872878-684f1084261d?auto=format&fit=crop&w=800', isPrimary: true }
+        create: { url: 'https://images.unsplash.com/photo-1512058564366-18510be2db19?auto=format&fit=crop&w=800', isPrimary: true }
       }
     }
   })

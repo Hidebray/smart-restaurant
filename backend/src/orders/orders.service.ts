@@ -163,7 +163,10 @@ export class OrdersService {
       // Notify waiters about status change
       this.ordersGateway.emitOrderUpdatedToWaiters(updated);
 
-      // If waiter accepted the order, send it to kitchen
+      // Notify kitchen about status updates
+      this.ordersGateway.emitOrderUpdatedToKitchen(updated);
+
+      // If waiter accepted the order, explicitly send 'new order' event to kitchen
       if (updated.status === 'ACCEPTED') {
         this.ordersGateway.emitOrderToKitchen(updated);
       }
