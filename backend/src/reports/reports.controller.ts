@@ -9,11 +9,11 @@ import { UserRole } from '@prisma/client';
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Roles(UserRole.ADMIN)
 export class ReportsController {
-  constructor(private readonly reportsService: ReportsService) {}
+  constructor(private readonly reportsService: ReportsService) { }
 
   @Get('summary')
-  getSummary() {
-    return this.reportsService.getSummary();
+  getSummary(@Query('from') from: string, @Query('to') to: string) {
+    return this.reportsService.getSummary(from, to);
   }
   @Get('top-products')
   getTopProducts(@Query('take') take: string) {

@@ -1,5 +1,7 @@
 "use client";
 
+import { useState } from "react";
+
 import useSWR from "swr";
 import { getSummary, getTopProducts } from "@/lib/api/reports";
 import {
@@ -37,9 +39,12 @@ const SummaryCard = ({
 );
 
 export default function ReportsPage() {
+  const [fromDate, setFromDate] = useState("");
+  const [toDate, setToDate] = useState("");
+
   const { data: summary, error: summaryError } = useSWR(
-    "/reports/summary",
-    getSummary
+    [`/reports/summary`, fromDate, toDate],
+    () => getSummary(fromDate, toDate)
   );
   const { data: topProducts, error: topProductsError } = useSWR(
     "/reports/top-products",
@@ -66,7 +71,29 @@ export default function ReportsPage() {
 
   return (
     <div className="space-y-6">
-      <h1 className="text-3xl font-bold text-gray-800">Reports</h1>
+      <div className="flex justify-between items-center">
+        <h1 className="text-3xl font-bold text-gray-800">Reports</h1>
+        <div className="flex gap-4">
+          <div>
+            <label className="block text-xs text-gray-500 mb-1">From</label>
+            <input
+              type="date"
+              value={fromDate}
+              onChange={(e) => setFromDate(e.target.value)}
+              className="border border-gray-300 rounded px-2 py-1 text-sm bg-white"
+            />
+          </div>
+          <div>
+            <label className="block text-xs text-gray-500 mb-1">To</label>
+            <input
+              type="date"
+              value={toDate}
+              onChange={(e) => setToDate(e.target.value)}
+              className="border border-gray-300 rounded px-2 py-1 text-sm bg-white"
+            />
+          </div>
+        </div>
+      </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <SummaryCard
@@ -79,10 +106,10 @@ export default function ReportsPage() {
           value={summary?.totalOrders ?? 0}
         />
         <Card className="p-6 col-span-1 md:col-span-2">
-            <h3 className="text-lg font-medium text-gray-500">Period</h3>
-            <p className="text-xl font-bold text-gray-800">
-                {summary?.firstOrderDate ? new Date(summary.firstOrderDate).toLocaleDateString() : 'N/A'} - {summary?.lastOrderDate ? new Date(summary.lastOrderDate).toLocaleDateString() : 'N/A'}
-            </p>
+          <h3 className="text-lg font-medium text-gray-500">Period</h3>
+          <p className="text-xl font-bold text-gray-800">
+            {summary?.firstOrderDate ? new Date(summary.firstOrderDate).toLocaleDateString() : 'N/A'} - {summary?.lastOrderDate ? new Date(summary.lastOrderDate).toLocaleDateString() : 'N/A'}
+          </p>
         </Card>
       </div>
 

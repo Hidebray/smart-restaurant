@@ -4,11 +4,19 @@ import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class ReportsService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService) { }
 
-  async getSummary() {
+  async getSummary(from?: string, to?: string) {
+    const whereClause: any = { status: OrderStatus.COMPLETED };
+
+    if (from || to) {
+      whereClause.createdAt = {};
+      if (from) whereClause.createdAt.gte = new Date(from);
+      if (to) whereClause.createdAt.lte = new Date(to);
+    }
+
     const aggregates = await this.prisma.order.aggregate({
-      where: { status: OrderStatus.COMPLETED },
+      where: whereClause,
       _sum: {
         totalAmount: true,
       },
@@ -18,15 +26,17 @@ export class ReportsService {
     });
 
     const firstOrder = await this.prisma.order.findFirst({
-        orderBy: {
-            createdAt: 'asc'
-        }
+      where: whereClause,
+      orderBy: {
+        createdAt: 'asc'
+      }
     });
-    
+
     const lastOrder = await this.prisma.order.findFirst({
-        orderBy: {
-            createdAt: 'desc'
-        }
+      where: whereClause,
+      orderBy: {
+        createdAt: 'desc'
+      }
     });
 
     return {
@@ -61,7 +71,7 @@ export class ReportsService {
       where: {
         id: {
           in: productIds
-         }
+        }
       },
       include: {
         images: {
@@ -69,15 +79,15 @@ export class ReportsService {
         }
       }
     });
- 
+
     const productMap = new Map(products.map(p => [p.id, p]));
 
     return topProductItems.map(item => {
-        const product = productMap.get(item.productId);
-        return {
-            ...product,
-            totalSold: item._sum.quantity,
-        }
+      const product = productMap.get(item.productId);
+      return {
+        ...product,
+        totalSold: item._sum.quantity,
+      }
     })
   }
 }

@@ -1,7 +1,10 @@
 import { api } from './api';
 
-export const getSummary = async () => {
-  const response = await api.get('/reports/summary');
+export const getSummary = async (from?: string, to?: string) => {
+  const query = new URLSearchParams();
+  if (from) query.append("from", from);
+  if (to) query.append("to", to);
+  const response = await api.get(`/reports/summary?${query.toString()}`);
   return response.data;
 };
 
