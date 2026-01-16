@@ -54,8 +54,8 @@ export default function BottomNav() {
                     <span className="text-xs font-medium">Orders</span>
                 </Link>
                 <Link
-                    href="/login"
-                    className={`flex flex-col items-center justify-center w-full h-full ${"text-gray-400"
+                    href={`/guest/profile?tableId=${tableId || ""}`}
+                    className={`flex flex-col items-center justify-center w-full h-full ${isActive("/guest/profile") ? "text-[#e74c3c]" : "text-gray-400"
                         }`}
                 >
                     <span className="text-2xl mb-1">👤</span>

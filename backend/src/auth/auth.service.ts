@@ -73,7 +73,8 @@ export class AuthService {
     }
 
     // Optional: Check if email is verified
-    if (!user.isEmailVerified) {
+    // Optional: Check if email is verified (Only for Customers)
+    if (user.role === UserRole.CUSTOMER && !user.isEmailVerified) {
       throw new UnauthorizedException('Please verify your email first');
     }
 
