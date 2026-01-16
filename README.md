@@ -30,6 +30,7 @@ A comprehensive full-stack restaurant management system with real-time order tra
 - **Modifier Management**: Create, edit, delete modifier groups and options (e.g., Size, Toppings)
 - **Table Management**: Manage tables with QR code generation
 - **Staff Management**: Create/delete staff accounts (Waiter, Kitchen, Admin)
+- **Analytics & Reporting**: View key metrics, including total revenue, total orders, and top-selling products.
 - **Smart Delete**: Tables with order history are set to INACTIVE instead of deleted
 
 #### 🤵 Waiter Dashboard
@@ -341,6 +342,10 @@ After seeding, use these accounts (Password: `password@123`):
 - `GET /users` - List all users
 - `POST /users` - Create user
 - `DELETE /users/:id` - Delete user
+
+### Reports (Admin only)
+- `GET /reports/summary` - Get sales summary
+- `GET /reports/top-products` - Get top selling products
 
 ---
 

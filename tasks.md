@@ -72,11 +72,10 @@ The working order rotates daily following this sequence:
   - [x] Update frontend UI to allow admins to add/edit modifiers for a product.
   - _Commit:_ `feat: implement product modifier management`
 
-- [ ] **Task 2.5: Analytics and Reporting**
-  - [ ] Design and implement a dashboard to show key metrics (revenue, top-selling products, etc.).
-  - [ ] Create backend APIs to fetch analytics data.
+- [x] **Task 2.5: Analytics and Reporting**
+  - [x] Design and implement a dashboard to show key metrics (revenue, top-selling products, etc.).
+  - [x] Create backend APIs to fetch analytics data.
   - _Commit:_ `feat: implement analytics and reporting dashboard`
-
 ---
 
 ## Module 3: Table & QR Code Management

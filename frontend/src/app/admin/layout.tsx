@@ -9,6 +9,7 @@ const navItems = [
   { label: "Tables", href: "/admin/tables" },
   { label: "Modifiers", href: "/admin/modifiers" },
   { label: "Staff", href: "/admin/staff" },
+  { label: "Reports", href: "/admin/reports" },
 ];
 
 export default function AdminLayout({

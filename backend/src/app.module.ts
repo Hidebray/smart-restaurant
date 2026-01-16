@@ -8,6 +8,7 @@ import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
 import { TablesModule } from './tables/tables.module';
 import { ModifiersModule } from './modifiers/modifiers.module';
+import { ReportsModule } from './reports/reports.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { ModifiersModule } from './modifiers/modifiers.module';
     AuthModule,
     UserModule,
     ModifiersModule,
+    ReportsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
