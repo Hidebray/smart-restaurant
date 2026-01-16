@@ -68,8 +68,8 @@ export class TablesService {
       });
     }
 
-    // TODO: Use a configurable frontend URL
-    const frontendUrl = `http://localhost:3000/table/${qrToken}`;
+    // Use configurable frontend URL
+    const frontendUrl = `${process.env.FRONTEND_URL || 'http://localhost:3000'}/table/${qrToken}`;
 
     return qrcode.toDataURL(frontendUrl);
   }

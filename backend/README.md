@@ -23,6 +23,10 @@ npm install
 Create a `.env` file in this directory (`/backend`) and add the following variables. A PostgreSQL instance is required.
 
 ```env
+# Server Configuration
+PORT=5000
+FRONTEND_URL="http://localhost:3000"
+
 # Example for Docker Compose setup in the project root
 DATABASE_URL="postgresql://user:password@localhost:5432/smart_restaurant_db?schema=public"
 

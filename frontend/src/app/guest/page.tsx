@@ -9,7 +9,7 @@ import Header from "@/components/mobile/Header";
 import CategoryTabs from "@/components/mobile/CategoryTabs";
 
 async function getProducts(): Promise<Product[]> {
-  const res = await fetch("http://localhost:5000/products", {
+  const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:5000'}/products`, {
     cache: "no-store",
   });
 

@@ -21,7 +21,7 @@ export default function TablesPage() {
     const fetchTables = async () => {
       setLoading(true);
       try {
-        const res = await fetch("http://localhost:5000/tables", { cache: "no-store" });
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:5000'}/tables`, { cache: "no-store" });
         if (!res.ok) throw new Error("Failed to fetch tables");
         const data = await res.json();
         setTables(data || []);
@@ -31,7 +31,7 @@ export default function TablesPage() {
         await Promise.all(
           (data || []).map(async (t: any) => {
             try {
-              const r = await fetch(`http://localhost:5000/tables/${t.id}/generate-qr`, { method: "POST" });
+              const r = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:5000'}/tables/${t.id}/generate-qr`, { method: "POST" });
               if (!r.ok) return;
               const json = await r.json();
               map[t.id] = json.qrCodeDataUrl;

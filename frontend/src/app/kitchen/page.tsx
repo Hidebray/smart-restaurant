@@ -22,7 +22,7 @@ export default function KitchenPage() {
   // Hàm tải danh sách đơn
   const fetchOrders = async () => {
     try {
-      const res = await fetch("http://localhost:5000/orders");
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:5000'}/orders`);
       const data = await res.json();
       setOrders(data);
       setLoading(false);
@@ -40,7 +40,7 @@ export default function KitchenPage() {
     let socket: any = null;
     import('socket.io-client')
       .then(({ io }) => {
-        socket = io('http://localhost:5000');
+        socket = io(process.env.NEXT_PUBLIC_SOCKET_URL || 'http://localhost:5000');
 
         socket.on('connect', () => {
           console.log('Kitchen socket connected', socket.id);
@@ -82,7 +82,7 @@ export default function KitchenPage() {
   const updateStatus = async (orderId: string, newStatus: string) => {
     try {
       // 1. Gọi API
-      await fetch(`http://localhost:5000/orders/${orderId}/status`, {
+      await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:5000'}/orders/${orderId}/status`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status: newStatus }),

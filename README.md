@@ -136,6 +136,7 @@ cp .env.example .env
 PORT=5000
 DATABASE_URL="postgresql://admin:admin-postgres-pwd-3@localhost:5433/smart_restaurant?schema=public"
 JWT_SECRET="your-super-secret-jwt-key"
+FRONTEND_URL="http://localhost:3000"
 
 # Start database
 docker compose up -d
@@ -165,6 +166,7 @@ cp .env.example .env
 
 # Update .env with:
 NEXT_PUBLIC_API_BASE_URL=http://localhost:5000
+NEXT_PUBLIC_SOCKET_URL=http://localhost:5000
 JWT_SECRET=your-super-secret-jwt-key  # Must match backend JWT_SECRET
 NODE_ENV=development
 

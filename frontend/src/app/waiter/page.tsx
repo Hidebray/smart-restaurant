@@ -23,7 +23,7 @@ export default function WaiterPage() {
   // Tải đơn hàng (Chỉ lấy đơn nào có món đã xong hoặc đang ăn)
   const fetchOrders = async () => {
     try {
-      const res = await fetch("http://localhost:5000/orders");
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:5000'}/orders`);
       const data = await res.json();
       // Keep all orders; we'll filter into groups in the UI
       setOrders(data);
@@ -39,7 +39,7 @@ export default function WaiterPage() {
     // Setup socket.io client for real-time notifications
     let socket: any = null;
     import('socket.io-client').then(({ io }) => {
-      socket = io('http://localhost:5000');
+      socket = io(process.env.NEXT_PUBLIC_SOCKET_URL || 'http://localhost:5000');
 
       socket.on('connect', () => {
         console.log('Waiter socket connected', socket.id);
@@ -72,7 +72,7 @@ export default function WaiterPage() {
 
   const updateStatus = async (orderId: string, newStatus: string) => {
     try {
-      await fetch(`http://localhost:5000/orders/${orderId}/status`, {
+      await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:5000'}/orders/${orderId}/status`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status: newStatus }),
