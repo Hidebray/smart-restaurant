@@ -146,9 +146,9 @@ The working order rotates daily following this sequence:
 
 **Goal:** Enhance the application with advanced functionalities.
 
-- [ ] **Task 6.1: Customer Self-Registration**
-  - [ ] Create a registration page for customers.
-  - [ ] Implement API `POST /auth/register`.
+- [x] **Task 6.1: Customer Self-Registration**
+  - [x] Create a registration page for customers.
+  - [x] Implement API `POST /auth/register`.
   - _Commit:_ `feat: implement customer self-registration`
 
 - [ ] **Task 6.2: Super Admin Role**
