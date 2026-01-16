@@ -112,6 +112,58 @@ export class AuthService {
     return { message: 'Email verified successfully' };
   }
 
+  async validateGoogleUser(details: { email: string, name: string, avatar: string, googleId: string, accessToken: string }) {
+    // 1. Check by googleId
+    // @ts-ignore
+    let user = await this.userService.findOne({ googleId: details.googleId });
+
+    if (user) return user;
+
+    // 2. Check by email (link account)
+    user = await this.userService.findOne({ email: details.email });
+    if (user) {
+      // Link account
+      return this.prisma.user.update({
+        where: { id: user.id },
+        data: {
+          // @ts-ignore
+          googleId: details.googleId,
+          avatar: user.avatar || details.avatar,
+          isEmailVerified: true, // Google verifies email
+        }
+      });
+    }
+
+    // 3. Create new user
+    const password = await bcrypt.hash(uuidv4(), 10); // Random password
+    return this.userService.createUser({
+      email: details.email,
+      name: details.name,
+      password,
+      role: UserRole.CUSTOMER,
+      avatar: details.avatar,
+      // @ts-ignore
+      googleId: details.googleId,
+      isEmailVerified: true,
+    });
+  }
+
+  async googleLogin(user: any) {
+    if (!user) throw new BadRequestException('No user from google');
+
+    const payload = { sub: user.id, email: user.email, role: user.role };
+    return {
+      accessToken: this.jwtService.sign(payload),
+      user: {
+        id: user.id,
+        email: user.email,
+        name: user.name,
+        role: user.role,
+        isEmailVerified: user.isEmailVerified
+      }
+    };
+  }
+
   private async sendVerificationEmail(email: string, token: string) {
     const url = `${process.env.FRONTEND_URL || 'http://localhost:3000'}/verify-email?token=${token}`;
 

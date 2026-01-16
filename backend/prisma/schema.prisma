@@ -57,6 +57,7 @@ model User {
   email     String   @unique
   password  String   // Hash password
   name      String
+  googleId  String?  @unique @map("google_id")
   role      UserRole @default(CUSTOMER)
   phone     String?
   avatar    String?
