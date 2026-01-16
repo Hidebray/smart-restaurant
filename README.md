@@ -1,6 +1,6 @@
 # 🍽️ Smart Restaurant Management System
 
-A comprehensive full-stack restaurant management system with real-time order tracking, QR code table ordering, and role-based access control.
+A comprehensive full-stack restaurant management system with real-time order tracking, QR code table ordering, role-based access control, and online payments.
 
 ## 📋 Table of Contents
 - [Features](#-features)
@@ -9,7 +9,9 @@ A comprehensive full-stack restaurant management system with real-time order tra
 - [Getting Started](#-getting-started)
 - [User Roles](#-user-roles)
 - [Testing Guide](#-testing-guide)
-- [Recent Updates](#-recent-updates)
+- [Recent Updates (Changelog)](#-recent-updates-changelog)
+- [Deployment](#-deployment)
+- [Troubleshooting](#-troubleshooting)
 
 ---
 
@@ -30,14 +32,15 @@ A comprehensive full-stack restaurant management system with real-time order tra
 - **Modifier Management**: Create, edit, delete modifier groups and options (e.g., Size, Toppings)
 - **Table Management**: Manage tables with QR code generation
 - **Staff Management**: Create/delete staff accounts (Waiter, Kitchen, Admin)
-- **Analytics & Reporting**: View key metrics, including total revenue, total orders, and top-selling products.
+- **Analytics & Reporting**: View key metrics, including total revenue, total orders, and top-selling products
 - **Smart Delete**: Tables with order history are set to INACTIVE instead of deleted
 
 #### 🤵 Waiter Dashboard
 - **Order Approval**: Accept or reject incoming orders
 - **Order Tracking**: Monitor orders across all stages (Pending → Ready → Served)
 - **Table Service**: Mark orders as served and complete payments
-- **Real-time Notifications**: Instant alerts for new orders
+- **Bill Management**: View bill summaries and QR codes for tables
+- **Real-time Notifications**: Instant alerts for new orders and payment requests (Bell Ring)
 
 #### 👨‍🍳 Kitchen Dashboard
 - **Order Queue**: View approved orders ready for preparation
@@ -49,12 +52,12 @@ A comprehensive full-stack restaurant management system with real-time order tra
 - **Cart Management**: Add items with modifiers (toppings, sizes)
 - **Order Placement**: Submit orders directly from table
 - **Order History**: View current and past orders
-- **Online Payment**: Pay via Stripe (Credit Card) directly from the app
-- **Call Waiter**: Request assistance or cash payment with one tap
+- **Online Payment**: Pay via Stripe (Credit Card) or simulate payment in Mock Mode
+- **Call Waiter**: Request assistance or cash payment with one tap ("zRing Bell")
 
 ---
 
-## �️ Tech Stack
+## 🛠️ Tech Stack
 
 ### Frontend
 - **Framework**: Next.js 16.1.1 (App Router, Turbopack)
@@ -73,6 +76,7 @@ A comprehensive full-stack restaurant management system with real-time order tra
 - **ORM**: Prisma
 - **Authentication**: JWT with Passport
 - **Real-time**: Socket.IO Gateway
+- **Payments**: Stripe SDK
 - **Validation**: class-validator, class-transformer
 - **Security**: bcrypt for password hashing
 
@@ -147,12 +151,10 @@ MAIL_PASS="your-app-password"
 # Google Auth
 GOOGLE_CLIENT_ID="your-google-client-id"
 GOOGLE_CLIENT_SECRET="your-google-client-secret"
-GOOGLE_CLIENT_SECRET="your-google-client-secret"
 GOOGLE_CALLBACK_URL="http://localhost:5000/auth/google/callback"
 
-# Stripe (Backend)
-STRIPE_SECRET_KEY="sk_test_..."
-
+# Stripe (Backend) - Use "placeholder" to enable Mock Mode
+STRIPE_SECRET_KEY="sk_test_placeholder"
 
 # Start database
 docker compose up -d
@@ -184,7 +186,7 @@ cp .env.example .env
 NEXT_PUBLIC_API_BASE_URL=http://localhost:5000
 NEXT_PUBLIC_SOCKET_URL=http://localhost:5000
 JWT_SECRET=your-super-secret-jwt-key  # Must match backend JWT_SECRET
-NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_... # Stripe Frontend Key
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_placeholder # Use placeholder for Mock Mode
 NODE_ENV=development
 
 # Start development server
@@ -208,16 +210,15 @@ After seeding, use these accounts (Password: `password@123`):
 
 ### Role Permissions
 - **ADMIN**: Products, Tables, Staff, Orders (full CRUD)
-- **WAITER**: View/Update orders, Manage table service
+- **WAITER**: View/Update orders, Manage table service, View Bills
 - **KITCHEN**: View/Update order preparation status
-- **CUSTOMER**: Browse menu, Place orders
+- **CUSTOMER**: Browse menu, Place orders, Pay Online, Call Waiter
 
 ---
 
 ## 🧪 Testing Guide
 
 ### Scenario 1: Customer Orders Food
-
 1. Navigate to `http://localhost:3000/tables`
 2. Click "Open Menu" on any table (or scan QR code)
 3. Browse menu and add items to cart
@@ -225,187 +226,56 @@ After seeding, use these accounts (Password: `password@123`):
 5. **Verify**: Order appears in Waiter dashboard
 
 ### Scenario 2: Waiter Processes Order
-
 1. Login as waiter: `waiter@smart.restaurant`
 2. **Pending Orders**: See new order in yellow column
 3. Click "✅ Chấp Nhận" to accept order
 4. **Verify**: Order moves to Kitchen dashboard
 5. When kitchen marks "Ready", order appears in green "Món Chờ Bưng"
 6. Click "🏃 Bưng Ra Bàn Ngay" → Order moves to "Đang Ăn"
-7. Click "💰 Thanh Toán & Dọn Bàn" to complete
-8. **Verify**: Table status returns to AVAILABLE
 
-### Scenario 3: Kitchen Prepares Food
-
-1. Login as kitchen: `kitchen@smart.restaurant`
-2. **Đơn Đã Duyệt**: See accepted orders
-3. Click "👨‍🍳 Nhận Nấu" → Order moves to "Đang Nấu"
-4. Click "✅ Nấu Xong" → Order moves to "Trả Món"
-5. **Verify**: Waiter sees order in "Ready" column
-
-### Scenario 4: Admin Manages System
-
-#### Product Management
-1. Login as admin: `admin@smart.restaurant`
-2. Navigate to **Products**
-3. Click "Add Product" → Fill form → Save
-4. **Verify**: Product appears in customer menu
-5. Edit/Delete products as needed
-
-#### Table Management
-1. Navigate to **Tables**
-2. Click "Add Table" → Enter details → Save
-3. Click QR icon to generate QR code
-4. **Smart Delete**: 
-   - Tables without orders: Deleted permanently
-   - Tables with order history: Set to INACTIVE
-
-#### Staff Management
-1. Navigate to **Staff**
-2. Click "Add New Staff"
-3. Fill form (Name, Email, Password, Role)
-4. **Verify**: Staff appears in respective section
-5. Click "Delete" to remove staff
-
-#### Modifier Management
-1. Login as admin: `admin@smart.restaurant`
-2. Navigate to **Modifiers**
-3. Click "Add New Group"
-4. Fill form:
-   - Name: `Size`
-   - Selection Type: `SINGLE`
-   - Add options: `Small` (0), `Medium` (+5000), `Large` (+10000)
-5. Save the group.
-6. Navigate to **Products** and edit an existing product.
-7. In the form, check the `Size` modifier group to associate it with the product.
-8. Save the product.
-9. Open the customer menu for any table and find the product you just edited.
-10. **Verify**: When you click on the product, a modal opens showing the "Size" options.
+### Scenario 3: Payment & Completion
+1. **Guest**: Go to "Your Orders" -> Click "🔔" to call waiter OR Click "💳 Pay All".
+2. **Waiter (Manual)**: Click "💰 Thanh Toán & Dọn Bàn".
+3. **Guest (Stripe)**: Enter card details (or use Mock Button) -> Success.
+4. **Verify**: Order marked COMPLETED, Table becomes AVAILABLE.
 
 ---
 
-## 🆕 Recent Updates
+## 🆕 Recent Updates (Changelog)
 
-### Authentication System
-- ✅ Fixed JWT secret synchronization between AuthModule and JwtStrategy
-- ✅ Implemented Axios request interceptor for automatic token attachment
-- ✅ Added localStorage token management for client-side requests
-- ✅ Enhanced logout to clear both cookie and localStorage
+### Module 1: Stability & Fixes
+- ✅ Fixed duplicate key errors in Socket.io lists (Waiter/Kitchen dashboards).
+- ✅ Fixed `Suspense` boundary issues in Next.js App Router.
+- ✅ Fixed Database Seeding uniqueness constraints.
+- ✅ Resolved port conflict issues (`EADDRINUSE`).
 
-### Order Management
-- ✅ Auto-update table status: AVAILABLE → OCCUPIED (on order) → AVAILABLE (on completion)
-- ✅ Fixed order merging logic to only merge with PENDING orders
-- ✅ Prevented completed orders from appearing on table after payment
+### Module 4: Payment System
+- ✅ **Bill Modal**: Implemented Bill View for Waiters.
+- ✅ **Stripe Integration**: Added backend/frontend support for Stripe Payments.
+- ✅ **Mock Mode**: Added "Simulate Payment" for easy testing without keys.
+- ✅ **Call Assistance**: Added "Ring Bell" feature for guests to notify waiters (Cash/Help).
+- ✅ **Real-time Notifications**: Waiters receive toast alerts when guests request payment.
 
-### Table Management
-- ✅ Implemented smart delete: INACTIVE status for tables with order history
-- ✅ Fixed foreign key constraint issues
-- ✅ Enhanced error messages with actionable suggestions
-
-### Staff Management
-- ✅ Added full CRUD operations for staff accounts
-- ✅ Implemented role-based staff creation (Waiter, Kitchen, Admin)
-- ✅ Added delete functionality with confirmation dialogs
-
-### UI/UX Improvements
-- ✅ Fixed dialog closing issues in forms
-- ✅ Enhanced error handling with detailed toast notifications
-- ✅ Improved text contrast for better readability
-- ✅ Added loading states and disabled states for better UX
-
-### Customer Features
-- ✅ **Customer Registration**: New public registration page for customers
-- ✅ **Email Verification**: Integrated Gmail-based email verification flow
-- ✅ **Google Authentication**: One-click login/registration using Google OAuth2
-- ✅ **Profile Management**: Dedicated profile page for customers to view info and status
-- ✅ **Secure Logout**: Complete session cleanup (Cookies + LocalStorage)
-
-### Modifier Management
-- ✅ Implemented backend API for full CRUD on modifier groups and options.
-- ✅ Added admin UI to create, edit, and delete modifier groups and their options.
-- ✅ Integrated modifier selection into the product form, allowing admins to assign modifiers to products.
-- ✅ Updated customer product modal to display modifier options (single/multiple choice) and dynamically update prices.
-- ✅ Ensured selected modifiers and their price adjustments are correctly reflected in the shopping cart and order creation.
-- ✅ Fixed a bug preventing the deletion of modifier options.
-- ✅ **Bill Modal**: Waiter can view bill summary and QR code for any table.
-- ✅ **Stripe Integration**: Guests can pay online via Credit Card (Test Mode).
-- ✅ **Call Assistance**: Guests can ring a bell to notify waiters (Cash/Assistance).
-- ✅ **Real-time Notifications**: Waiters receive instant alerts for payment requests.
+### Module 5: Deployment
+- ✅ **Dockerfiles**: Production-ready Dockerfiles for Frontend and Backend.
+- ✅ **Docker Compose**: Full stack orchestration (`docker-compose.prod.yml`).
 
 ---
 
-## 📝 API Endpoints
+## 🐳 Deployment
 
-### Authentication
-- `POST /auth/register` - Customer registration
-- `POST /auth/login` - User login
-- `POST /auth/verify-email` - Verify email token
-- `GET /auth/google` - Initiate Google Login
-- `GET /auth/google/callback` - Google Login callback
-- `POST /api/auth/logout` - User logout
+To run the application in a production-like Docker environment:
 
-### Products (Admin only)
-- `GET /products` - List all products
-- `POST /products` - Create product
-- `PATCH /products/:id` - Update product
-- `DELETE /products/:id` - Delete product
-- `POST /products/:id/modifier-groups` - Associate modifier groups with a product
+```bash
+# Stop local servers first
+docker compose -f docker-compose.prod.yml up -d --build
 
-### Modifiers (Admin only)
-- `GET /modifiers/groups` - List all modifier groups with their options
-- `POST /modifiers/groups` - Create a new modifier group
-- `PATCH /modifiers/groups/:id` - Update a modifier group
-- `DELETE /modifiers/groups/:id` - Delete a modifier group
-- `POST /modifiers/options` - Create a new modifier option for a group
-- `PATCH /modifiers/options/:id` - Update a modifier option
-- `DELETE /modifiers/options/:id` - Delete a modifier option
+# Initialize Prod DB
+docker exec -it smart_restaurant_backend npx prisma db push
+docker exec -it smart_restaurant_backend npx prisma db seed
+```
 
-### Tables (Admin only)
-- `GET /tables` - List all tables
-- `POST /tables` - Create table
-- `PATCH /tables/:id` - Update table
-- `DELETE /tables/:id` - Delete/Deactivate table
-- `POST /tables/:id/generate-qr` - Generate QR code
-
-### Orders
-- `GET /orders` - List all orders
-- `POST /orders` - Create order
-- `PATCH /orders/:id/status` - Update order status
-
-### Users (Admin only)
-- `GET /users` - List all users
-- `POST /users` - Create user
-- `DELETE /users/:id` - Delete user
-
-### Reports (Admin only)
-- `GET /reports/summary` - Get sales summary
-- `GET /reports/top-products` - Get top selling products
-
----
-
-## 🔒 Security Features
-
-- JWT-based authentication with HTTP-only cookies
-- Password hashing with bcrypt (10 rounds)
-- Role-based access control (RBAC)
-- Protected API routes with Guards
-- CORS configuration
-- Input validation with DTOs
-- SQL injection prevention via Prisma ORM
-
----
-
-## 📦 Database Schema
-
-### Key Models
-- **User**: Authentication and role management
-- **Table**: Restaurant tables with QR tokens
-- **Product**: Menu items with categories
-- **Category**: Product categorization
-- **Order**: Customer orders with status tracking
-- **OrderItem**: Individual items in orders
-- **ModifierGroup**: Customization options (sizes, toppings)
-- **ModifierOption**: Specific modifier choices
+App available at `http://localhost:3000`.
 
 ---
 
@@ -421,38 +291,18 @@ taskkill /PID <PID> /F
 npm run start:dev
 ```
 
-### Database connection failed
-```bash
-# Ensure Docker is running
-docker ps
-
-# Restart containers
-docker compose down
-docker compose up -d
-
-# Re-push schema
-npx prisma db push
-```
-
-### Frontend can't connect to backend
-- Check backend is running on port 5000
-- Verify CORS is enabled in `main.ts`
-- Check `NEXT_PUBLIC_API_BASE_URL` in frontend
+### Stripe Error: "Invalid API Key"
+- Ensure you have set `STRIPE_SECRET_KEY` in `backend/.env`.
+- For testing, use `sk_test_placeholder` to trigger Mock Mode.
 
 ---
 
 ## 📄 License
-
 This project is for educational purposes.
 
----
-
 ## 👥 Contributors
-
 - Dan
 - Hiep
 - Vu
-
----
 
 **Built with ❤️ using Next.js and NestJS**
