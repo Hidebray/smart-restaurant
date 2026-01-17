@@ -57,6 +57,31 @@
         "loginNow": "Đăng nhập ngay",
         "continueWithGoogle": "Tiếp tục với Google"
     },
+    "waiter": {
+        "title": "Màn hình Phục Vụ",
+        "readyToServe": "Cần bưng",
+        "currentlyServing": "Đang ăn",
+        "serveFood": "Bưng món",
+        "markComplete": "Hoàn thành",
+        "table": "Bàn"
+    },
+    "kitchen": {
+        "title": "Màn hình Bếp",
+        "newOrders": "Đơn mới",
+        "preparing": "Đang nấu",
+        "ready": "Đã xong",
+        "startCooking": "Nhận nấu",
+        "markReady": "Nấu xong"
+    },
+    "admin": {
+        "dashboard": "Quản Trị Viên",
+        "products": "Sản Phẩm",
+        "tables": "Bàn Ăn",
+        "orders": "Đơn Hàng",
+        "modifiers": "Tùy Chọn",
+        "staff": "Nhân Viên",
+        "reports": "Báo Cáo"
+    },
     "review": {
         "title": "Đánh Giá Món Ăn",
         "rating": "Chất lượng (Sao)",

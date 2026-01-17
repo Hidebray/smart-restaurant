@@ -6,6 +6,7 @@ import toast from "react-hot-toast";
 import BillModal from "@/components/waiter/BillModal";
 import { Order } from "@/types";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
+import { useI18n } from "@/contexts/I18nContext";
 
 // Extended Order type to include table info if not fully covered in @/types for this specific view
 // Assuming @/types Order does not have `table` object populated fully in the frontend types yet based on previous file view
@@ -22,6 +23,7 @@ interface OrderWithRelations extends Order {
 }
 
 export default function WaiterPage() {
+  const { t } = useI18n();
   const [orders, setOrders] = useState<OrderWithRelations[]>([]);
   const [selectedOrder, setSelectedOrder] = useState<OrderWithRelations | null>(null);
   const [isBillModalOpen, setIsBillModalOpen] = useState(false);
@@ -141,14 +143,14 @@ export default function WaiterPage() {
   return (
     <main className="min-h-screen bg-gray-50 p-6">
       <header className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold text-gray-800">🤵 Màn hình Phục Vụ</h1>
+        <h1 className="text-3xl font-bold text-gray-800">🤵 {t('waiter.title')}</h1>
         <div className="flex items-center gap-4">
           <div className="flex gap-2 text-sm font-bold">
             <span className="bg-green-100 text-green-800 px-3 py-1 rounded-full">
-              Cần bưng: {readyOrders.length}
+              {t('waiter.readyToServe')}: {readyOrders.length}
             </span>
             <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full">
-              Đang ăn: {servedOrders.length}
+              {t('waiter.currentlyServing')}: {servedOrders.length}
             </span>
           </div>
           <LanguageSwitcher />

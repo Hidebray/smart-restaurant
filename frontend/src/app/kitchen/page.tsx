@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
+import { useI18n } from "@/contexts/I18nContext";
 
 // Định nghĩa kiểu dữ liệu đơn giản cho Order
 interface Order {
@@ -17,6 +18,7 @@ interface Order {
 }
 
 export default function KitchenPage() {
+  const { t } = useI18n();
   const [orders, setOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -104,7 +106,7 @@ export default function KitchenPage() {
   return (
     <main className="min-h-screen bg-gray-100 p-6">
       <header className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold text-gray-800">👨‍🍳 Màn hình Bếp</h1>
+        <h1 className="text-3xl font-bold text-gray-800">👨‍🍳 {t('kitchen.title')}</h1>
         <div className="flex items-center gap-4">
           <LanguageSwitcher />
           <button

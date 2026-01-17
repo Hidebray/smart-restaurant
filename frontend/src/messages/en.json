@@ -57,6 +57,31 @@
         "loginNow": "Login now",
         "continueWithGoogle": "Continue with Google"
     },
+    "waiter": {
+        "title": "Waiter Dashboard",
+        "readyToServe": "Ready to Serve",
+        "currentlyServing": "Currently Serving",
+        "serveFood": "Serve Food",
+        "markComplete": "Mark Complete",
+        "table": "Table"
+    },
+    "kitchen": {
+        "title": "Kitchen Dashboard",
+        "newOrders": "New Orders",
+        "preparing": "Preparing",
+        "ready": "Ready",
+        "startCooking": "Start Cooking",
+        "markReady": "Mark Ready"
+    },
+    "admin": {
+        "dashboard": "Admin Dashboard",
+        "products": "Products",
+        "tables": "Tables",
+        "orders": "Orders",
+        "modifiers": "Modifiers",
+        "staff": "Staff",
+        "reports": "Reports"
+    },
     "review": {
         "title": "Review Item",
         "rating": "Rating (Stars)",

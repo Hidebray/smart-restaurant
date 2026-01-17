@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import clsx from "clsx";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
+import { useI18n } from "@/contexts/I18nContext";
 
 const navItems = [
   { label: "Products", href: "/admin/products" },
@@ -19,14 +20,24 @@ export default function AdminLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const { t } = useI18n();
   const pathname = usePathname();
+
+  const navItems = [
+    { label: t('admin.products'), href: "/admin/products" },
+    { label: t('admin.tables'), href: "/admin/tables" },
+    { label: t('admin.orders'), href: "/admin/orders" },
+    { label: t('admin.modifiers'), href: "/admin/modifiers" },
+    { label: t('admin.staff'), href: "/admin/staff" },
+    { label: t('admin.reports'), href: "/admin/reports" },
+  ];
 
   return (
     <div className="min-h-screen flex bg-gray-100 text-gray-900">
       {/* Sidebar */}
       <aside className="w-64 bg-gray-900 text-white flex flex-col">
         <div className="h-16 flex items-center justify-center text-lg font-semibold border-b border-gray-700">
-          Admin Dashboard
+          {t('admin.dashboard')}
         </div>
 
         <nav className="flex-1 p-4 space-y-1">
