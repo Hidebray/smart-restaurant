@@ -173,3 +173,157 @@ The working order rotates daily following this sequence:
   - [x] Added language switcher component to header
   - [x] Integrated translations in guest menu page
   - _Commit:_ `feat: add multi-language support`
+
+---
+
+## **Module 7: Essential Missing Features**
+
+### Critical Features (Required for Submission)
+
+- [ ] **Task 7.1: Demo Video**
+  - [ ] Create comprehensive demo video (25-30 minutes)
+  - [ ] Cover all user roles (Admin, Waiter, Kitchen, Customer)
+  - [ ] Demonstrate real-time features
+  - [ ] Show advanced features (Stripe, Socket.IO, i18n)
+  - [ ] Upload to YouTube/Google Drive
+  - _Points:_ -5 (critical missing requirement)
+
+- [ ] **Task 7.2: Public Hosting Deployment**
+  - [ ] Deploy frontend to Vercel/Netlify
+  - [ ] Deploy backend to Railway/Render
+  - [ ] Setup production PostgreSQL database
+  - [ ] Configure environment variables
+  - [ ] Test all features on production
+  - _Points:_ -1 (required for submission)
+
+### High Priority Features
+
+- [ ] **Task 7.3: View Item Reviews**
+  - [ ] Display reviews in Product Modal
+  - [ ] Show average rating
+  - [ ] Pagination for reviews list
+  - [ ] Filter/sort reviews
+  - _Points:_ -0.5
+
+- [ ] **Task 7.4: QR Code Download/Print**
+  - [ ] Add download QR as PNG button
+  - [ ] Add download QR as PDF option
+  - [ ] Implement print functionality
+  - _Points:_ -0.25
+
+- [ ] **Task 7.5: Print Bill Feature**
+  - [ ] Install react-to-print library
+  - [ ] Create printable bill template
+  - [ ] Add print button to Bill Modal
+  - _Points:_ -0.25
+
+- [ ] **Task 7.6: Menu Item Pagination**
+  - [ ] Implement pagination in guest menu (12 items/page)
+  - [ ] Add page navigation controls
+  - [ ] Update URL with page parameter
+  - _Points:_ -0.75
+
+- [ ] **Task 7.7: Email Verification**
+  - [ ] Setup email service (NodeMailer/SendGrid)
+  - [ ] Send verification email on registration
+  - [ ] Create email verification endpoint
+  - [ ] Add email verification page
+  - _Points:_ -0.25
+
+- [ ] **Task 7.8: Forgot Password**
+  - [ ] Create forgot password page
+  - [ ] Send reset password email
+  - [ ] Implement password reset flow
+  - [ ] Add reset password endpoint
+  - _Points:_ -0.25
+
+### Medium Priority Features
+
+- [ ] **Task 7.9: User Profile Management**
+  - [ ] Create customer profile page
+  - [ ] Edit name, email, phone
+  - [ ] Change password feature
+  - [ ] Upload avatar image
+  - _Points:_ -1.0
+
+- [ ] **Task 7.10: Revenue Reports & Charts**
+  - [ ] Install Chart.js or Recharts
+  - [ ] Create daily/weekly/monthly revenue charts
+  - [ ] Top products pie chart
+  - [ ] Order trends line chart
+  - [ ] Time range filter
+  - _Points:_ -0.75
+
+- [ ] **Task 7.11: Sort Menu Items (Admin)**
+  - [ ] Add sort dropdown in admin products list
+  - [ ] Sort by: creation date, price, name, popularity
+  - [ ] Persist sort preference
+  - _Points:_ -0.25
+
+- [ ] **Task 7.12: Order Timer & Alerts**
+  - [ ] Calculate order preparation time
+  - [ ] Highlight overdue orders in Kitchen Display
+  - [ ] Show countdown timer
+  - [ ] Sound alert for overdue orders
+  - _Points:_ -0.25
+
+- [ ] **Task 7.13: QR Code Regeneration**
+  - [ ] Add regenerate QR button
+  - [ ] Invalidate old QR codes
+  - [ ] Update table QR in database
+  - _Points:_ -0.25
+
+### Low Priority Features
+
+- [ ] **Task 7.14: Chef Recommendations**
+  - [ ] Add `isRecommended` field to Product model
+  - [ ] Add recommendation toggle in admin
+  - [ ] Display badge on menu items
+  - [ ] Filter by recommendations
+  - _Points:_ -0.25
+
+- [ ] **Task 7.15: Related Items Suggestions**
+  - [ ] Suggest items from same category
+  - [ ] Show in product detail modal
+  - [ ] Based on popularity
+  - _Points:_ -0.25
+
+- [ ] **Task 7.16: Multi-Image Upload**
+  - [ ] Update Product model for multiple images
+  - [ ] Implement image gallery
+  - [ ] Add/remove images in admin
+  - _Points:_ -0.5
+
+- [ ] **Task 7.17: Discount System**
+  - [ ] Add discount field to orders
+  - [ ] Percentage and fixed amount discounts
+  - [ ] Apply discount in Bill Modal
+  - _Points:_ -0.25
+
+- [ ] **Task 7.18: Menu Item Detail Page**
+  - [ ] Create dedicated product detail page
+  - [ ] Show full description, allergens
+  - [ ] Display item availability status
+  - _Points:_ -0.5
+
+- [ ] **Task 7.19: Sort by Popularity**
+  - [ ] Track order count per product
+  - [ ] Add sort option in guest menu
+  - [ ] Show "Popular" badge
+  - _Points:_ -0.25
+
+---
+
+## **Estimated Points Summary**
+
+### Current Implementation
+- ✅ Modules 1-6: ~68-70 points
+
+### After Critical Tasks (7.1-7.2)
+- Target: ~74-75 points
+
+### After High Priority (7.3-7.8)
+- Target: ~77-78 points
+
+### Full Completion
+- Maximum Possible: ~85+ points (with advanced features bonus)
