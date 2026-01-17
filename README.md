@@ -299,6 +299,12 @@ After seeding, use these accounts (Password: `password@123`):
 - ✅ **Review Modal**: Interactive UI for submitting ratings with authentication check
 - ✅ **I18n Context**: Custom internationalization system with localStorage persistence
 
+### Module 7: Admin & Waiter Enhancements
+- ✅ **QR Code Download**: Download table QR codes as PNG with one click (Task 7.4)
+- ✅ **Print Bill**: Professional bill printing with react-to-print library (Task 7.5)
+- ✅ **Print-Optimized Layout**: Bills include restaurant header, item details, and footer
+- ✅ **Enhanced QR Modal**: Download and print buttons with icons for better UX
+
 ---
 
 ## 🐳 Deployment

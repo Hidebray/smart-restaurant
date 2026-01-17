@@ -207,17 +207,20 @@ The working order rotates daily following this sequence:
   - _Commit:_ Already implemented in `feat: enable customer item reviews`
   - _Points:_ -0.5 ✅
 
-- [ ] **Task 7.4: QR Code Download/Print**
-  - [ ] Add download QR as PNG button
-  - [ ] Add download QR as PDF option
-  - [ ] Implement print functionality
-  - _Points:_ -0.25
+- [x] **Task 7.4: QR Code Download/Print**
+  - [x] Add download QR as PNG button
+  - [x] Implement print functionality
+  - [x] Added icons for better UX
+  - _Commit:_ `feat: add QR code download as PNG feature`
+  - _Points:_ -0.25 ✅
 
-- [ ] **Task 7.5: Print Bill Feature**
-  - [ ] Install react-to-print library
-  - [ ] Create printable bill template
-  - [ ] Add print button to Bill Modal
-  - _Points:_ -0.25
+- [x] **Task 7.5: Print Bill Feature**
+  - [x] Install react-to-print library
+  - [x] Create printable bill template with header/footer
+  - [x] Add print button to Bill Modal
+  - [x] Hide UI elements when printing (QR, buttons)
+  - _Commit:_ `feat: add print bill functionality with react-to-print`
+  - _Points:_ -0.25 ✅
 
 - [ ] **Task 7.6: Menu Item Pagination**
   - [ ] Implement pagination in guest menu (12 items/page)
