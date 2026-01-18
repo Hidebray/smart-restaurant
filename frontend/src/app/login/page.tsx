@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import toast from "react-hot-toast";
+import Cookies from "js-cookie";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 import { useI18n } from "@/contexts/I18nContext";
 import { ArrowLeft, Mail, Lock, LogIn, Info } from "lucide-react";
@@ -20,14 +21,6 @@ function LoginForm() {
     email: "",
     password: "",
   });
-
-  useEffect(() => {
-    if (token) {
-      localStorage.setItem("accessToken", token);
-      toast.success(t('auth.loginSuccess'));
-      router.push("/guest");
-    }
-  }, [token, router, t]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -50,13 +43,14 @@ function LoginForm() {
 
       if (data.accessToken) {
         localStorage.setItem("accessToken", data.accessToken);
+        Cookies.set("accessToken", data.accessToken, { expires: 7 }); // Expires in 7 days
       }
 
       const role = data.role ? data.role.toUpperCase() : "";
       // Redirect based on role
       switch (role) {
         case "ADMIN":
-          router.push("/admin/tables"); // Redirect to tables management for now
+          router.push("/admin/dashboard");
           break;
         case "WAITER":
           router.push("/waiter");
@@ -65,7 +59,7 @@ function LoginForm() {
           router.push("/kitchen");
           break;
         default:
-          router.push("/guest");
+          router.push("/tables");
       }
     } catch (error: any) {
       toast.error(error.message);
@@ -74,6 +68,48 @@ function LoginForm() {
     }
   };
 
+  useEffect(() => {
+    // Handle Google Auth Token
+    if (token) {
+      localStorage.setItem("accessToken", token);
+      Cookies.set("accessToken", token, { expires: 7 });
+      toast.success(t('auth.loginSuccess'));
+      router.push("/tables");
+      return;
+    }
+
+    // Check for existing session
+    const storedToken = localStorage.getItem("accessToken");
+    if (storedToken) {
+      // Sync cookie if missing
+      if (!Cookies.get("accessToken")) {
+        Cookies.set("accessToken", storedToken, { expires: 7 });
+      }
+
+      fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:5000'}/auth/profile`, {
+        headers: { Authorization: `Bearer ${storedToken}` }
+      })
+        .then(res => {
+          if (res.ok) return res.json();
+          throw new Error("Invalid token");
+        })
+        .then(user => {
+          const role = user.role ? user.role.toUpperCase() : "";
+          if (role === 'ADMIN') {
+            router.push('/admin/dashboard');
+          } else if (role === 'WAITER') {
+            router.push('/waiter');
+          } else if (role === 'KITCHEN') {
+            router.push('/kitchen');
+          } else {
+            router.push('/tables');
+          }
+        })
+        .catch(() => {
+          // Invalid token, stay on login
+        });
+    }
+  }, [token, router, t]);
   return (
     <div className="w-full max-w-md space-y-8">
       <div>

@@ -6,15 +6,6 @@ import clsx from "clsx";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 import { useI18n } from "@/contexts/I18nContext";
 
-const navItems = [
-  { label: "Products", href: "/admin/products" },
-  { label: "Tables", href: "/admin/tables" },
-  { label: "Orders", href: "/admin/orders" },
-  { label: "Modifiers", href: "/admin/modifiers" },
-  { label: "Staff", href: "/admin/staff" },
-  { label: "Reports", href: "/admin/reports" },
-];
-
 export default function AdminLayout({
   children,
 }: {
@@ -24,6 +15,7 @@ export default function AdminLayout({
   const pathname = usePathname();
 
   const navItems = [
+    { label: t('admin.dashboard'), href: "/admin/dashboard" },
     { label: t('admin.products'), href: "/admin/products" },
     { label: t('admin.tables'), href: "/admin/tables" },
     { label: t('admin.orders'), href: "/admin/orders" },
