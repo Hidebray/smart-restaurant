@@ -46,7 +46,7 @@ function LoginForm() {
         Cookies.set("accessToken", data.accessToken, { expires: 7 }); // Expires in 7 days
       }
 
-      const role = data.role ? data.role.toUpperCase() : "";
+      const role = data.user?.role ? data.user.role.toUpperCase() : "";
       // Redirect based on role
       switch (role) {
         case "ADMIN":
@@ -70,11 +70,34 @@ function LoginForm() {
 
   useEffect(() => {
     // Handle Google Auth Token
+    // Handle Google Auth Token
     if (token) {
       localStorage.setItem("accessToken", token);
       Cookies.set("accessToken", token, { expires: 7 });
       toast.success(t('auth.loginSuccess'));
-      router.push("/tables");
+
+      // Fetch profile to determine where to redirect
+      fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:5000'}/auth/profile`, {
+        headers: { Authorization: `Bearer ${token}` }
+      })
+        .then(res => res.json())
+        .then(user => {
+          const role = user.role ? user.role.toUpperCase() : "";
+          if (role === 'ADMIN') {
+            router.push('/admin/dashboard');
+          } else if (role === 'WAITER') {
+            router.push('/waiter');
+          } else if (role === 'KITCHEN') {
+            router.push('/kitchen');
+          } else {
+            router.push('/tables');
+          }
+        })
+        .catch((err) => {
+          console.error("Google login redirection error:", err);
+          // Fallback
+          router.push("/tables");
+        });
       return;
     }
 
