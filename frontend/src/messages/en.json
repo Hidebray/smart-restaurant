@@ -18,7 +18,8 @@
         "searchPlaceholder": "Search menu items...",
         "allCategories": "All",
         "noItems": "No items found",
-        "addToCart": "Add to Cart"
+        "addToCart": "Add to Cart",
+        "showingItems": "Showing {start}-{end} of {total} items"
     },
     "cart": {
         "title": "Your Cart",
@@ -26,7 +27,19 @@
         "total": "Total",
         "checkout": "Send Order",
         "items": "items",
-        "quantity": "Quantity"
+        "quantity": "Quantity",
+        "startOrdering": "Start Ordering",
+        "specialInstructions": "Special Instructions",
+        "instructionsPlaceholder": "Any special requests? (e.g. no onions)",
+        "summary": "Order Summary",
+        "subtotal": "Subtotal",
+        "payAfterMealTitle": "Pay After Your Meal",
+        "payAfterMealDesc": "You can place multiple orders. Payment will be processed when you request the bill.",
+        "placingOrder": "Placing Order...",
+        "placeOrder": "Place Order",
+        "continueBrowsing": "Continue Browsing",
+        "orderPlacedSuccess": "Order placed successfully!",
+        "tableIdError": "Error: Table ID not found. Please rescan QR code."
     },
     "orders": {
         "title": "Your Orders",
@@ -40,7 +53,13 @@
         "callWaiter": "Call Waiter",
         "pay": "Pay",
         "paid": "Paid",
-        "orderTotal": "Order Total"
+        "orderTotal": "Order Total",
+        "allPaid": "All orders paid!",
+        "remainingToPay": "Remaining to pay:",
+        "paymentUpdateError": "Payment successful but status update failed.",
+        "callWaiterSuccess": "Staff called! Please wait a moment.",
+        "callWaiterError": "Error calling staff.",
+        "callPayment": "Request Bill"
     },
     "auth": {
         "login": "Login",
@@ -101,5 +120,27 @@
         "COMPLETED": "Completed",
         "REJECTED": "Rejected",
         "CANCELLED": "Cancelled"
+    },
+    "nav": {
+        "home": "Home",
+        "cart": "Cart",
+        "orders": "Orders",
+        "profile": "Profile"
+    },
+    "profile": {
+        "title": "My Profile",
+        "notLoggedIn": "Not Logged In",
+        "notLoggedInDesc": "Log in to view your profile and order history.",
+        "loginRegister": "Log In / Register",
+        "points": "Points",
+        "memberStatus": "Member Status",
+        "member": "Member",
+        "menu": {
+            "orderHistory": "Order History",
+            "favorites": "Favorite Items",
+            "settings": "Account Settings",
+            "help": "Help & Support"
+        },
+        "version": "Version"
     }
 }

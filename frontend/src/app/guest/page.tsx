@@ -247,8 +247,12 @@ function GuestMenuContent() {
       )}
 
       {/* Items info */}
-      <div className="px-4 pb-4 text-center text-sm text-gray-500">
-        Showing {startIndex + 1}-{Math.min(endIndex, filteredProducts.length)} of {filteredProducts.length} items
+      <div className="px-4 pb-4 mt-4 text-center text-sm text-gray-500">
+        {filteredProducts.length > 0 && t('menu.showingItems', {
+          start: startIndex + 1,
+          end: Math.min(endIndex, filteredProducts.length),
+          total: filteredProducts.length
+        })}
       </div>
 
       <ProductModal

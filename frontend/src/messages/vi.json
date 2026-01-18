@@ -18,7 +18,8 @@
         "searchPlaceholder": "Tìm món ăn...",
         "allCategories": "Tất cả",
         "noItems": "Không tìm thấy món nào",
-        "addToCart": "Thêm vào giỏ"
+        "addToCart": "Thêm vào giỏ",
+        "showingItems": "Hiển thị {start}-{end} trên {total} món"
     },
     "cart": {
         "title": "Giỏ Hàng",
@@ -26,7 +27,19 @@
         "total": "Tổng cộng",
         "checkout": "Gửi Đơn Bếp",
         "items": "món",
-        "quantity": "Số lượng"
+        "quantity": "Số lượng",
+        "startOrdering": "Bắt đầu đặt món",
+        "specialInstructions": "Ghi chú đặc biệt",
+        "instructionsPlaceholder": "Yêu cầu đặc biệt? (ví dụ: không hành)",
+        "summary": "Tóm tắt đơn hàng",
+        "subtotal": "Tạm tính",
+        "payAfterMealTitle": "Thanh toán sau bữa ăn",
+        "payAfterMealDesc": "Bạn có thể đặt nhiều lần. Thanh toán sẽ được thực hiện khi bạn yêu cầu hóa đơn.",
+        "placingOrder": "Đang gửi...",
+        "placeOrder": "Đặt Món",
+        "continueBrowsing": "Tiếp tục xem menu",
+        "orderPlacedSuccess": "Đặt món thành công!",
+        "tableIdError": "Lỗi: Không tìm thấy số bàn. Vui lòng quét lại mã QR."
     },
     "orders": {
         "title": "Đơn Hàng Của Bạn",
@@ -40,7 +53,13 @@
         "callWaiter": "Gọi Nhân Viên",
         "pay": "Thanh Toán",
         "paid": "Đã Thanh Toán",
-        "orderTotal": "Tổng Đơn"
+        "orderTotal": "Tổng Đơn",
+        "allPaid": "Đã thanh toán tất cả đơn hàng!",
+        "remainingToPay": "Còn lại cần thanh toán:",
+        "paymentUpdateError": "Thanh toán thành công nhưng lỗi cập nhật trạng thái.",
+        "callWaiterSuccess": "Đã gọi nhân viên! Vui lòng đợi trong giây lát.",
+        "callWaiterError": "Lỗi khi gọi nhân viên.",
+        "callPayment": "Gọi tính tiền"
     },
     "auth": {
         "login": "Đăng Nhập",
@@ -101,5 +120,27 @@
         "COMPLETED": "Hoàn thành",
         "REJECTED": "Từ chối",
         "CANCELLED": "Đã hủy"
+    },
+    "nav": {
+        "home": "Trang Chủ",
+        "cart": "Giỏ Hàng",
+        "orders": "Đơn Hàng",
+        "profile": "Tài Khoản"
+    },
+    "profile": {
+        "title": "Hồ Sơ Của Tôi",
+        "notLoggedIn": "Chưa Đăng Nhập",
+        "notLoggedInDesc": "Đăng nhập để xem hồ sơ và lịch sử đơn hàng.",
+        "loginRegister": "Đăng Nhập / Đăng Ký",
+        "points": "Điểm Tích Lũy",
+        "memberStatus": "Hạng Thành Viên",
+        "member": "Thành Viên",
+        "menu": {
+            "orderHistory": "Lịch Sử Đơn Hàng",
+            "favorites": "Món Yêu Thích",
+            "settings": "Cài Đặt Tài Khoản",
+            "help": "Trợ Giúp & Hỗ Trợ"
+        },
+        "version": "Phiên bản"
     }
 }

@@ -8,6 +8,7 @@ import Header from "@/components/mobile/Header";
 import { api } from "@/lib/api/api";
 import { useTableStore } from "@/store/useTableStore";
 import { useSearchParams } from "next/navigation";
+import { useI18n } from "@/contexts/I18nContext";
 import { User, History, Heart, Settings, HelpCircle, LogOut } from "lucide-react";
 
 interface CustomerProfile {
@@ -30,8 +31,8 @@ function MenuItem({ icon, label, href }: { icon: React.ReactNode, label: string,
     )
 }
 
-
 function ProfileContent() {
+    const { t } = useI18n();
     const [profile, setProfile] = useState<CustomerProfile | null>(null);
     const [loading, setLoading] = useState(true);
     const router = useRouter();
@@ -79,18 +80,18 @@ function ProfileContent() {
     if (!profile) {
         return (
             <>
-                <Header title="Profile" showBack backUrl={`/guest?tableId=${tableId || ""}`} tableId={tableId} />
+                <Header title={t('profile.title')} showBack backUrl={`/guest?tableId=${tableId || ""}`} tableId={tableId} />
                 <div className="p-6 flex flex-col items-center justify-center min-h-[60vh] text-center space-y-4">
                     <div className="w-24 h-24 bg-slate-100 rounded-full flex items-center justify-center text-slate-400 mb-2">
                         <User className="w-12 h-12" />
                     </div>
-                    <h2 className="text-xl font-bold text-gray-800">Not Logged In</h2>
-                    <p className="text-gray-500">Log in to view your profile and order history.</p>
+                    <h2 className="text-xl font-bold text-gray-800">{t('profile.notLoggedIn')}</h2>
+                    <p className="text-gray-500">{t('profile.notLoggedInDesc')}</p>
                     <Link
                         href="/login"
                         className="w-full max-w-xs bg-orange-600 text-white font-bold py-3 rounded-xl shadow-lg shadow-orange-200 hover:bg-orange-700 transition-colors"
                     >
-                        Log In / Register
+                        {t('profile.loginRegister')}
                     </Link>
                 </div>
             </>
@@ -99,7 +100,7 @@ function ProfileContent() {
 
     return (
         <>
-            <Header title="My Profile" showBack backUrl={`/guest?tableId=${tableId || ""}`} tableId={tableId} />
+            <Header title={t('profile.title')} showBack backUrl={`/guest?tableId=${tableId || ""}`} tableId={tableId} />
 
             <div className="p-4 safe-area-pb space-y-4">
                 {/* Profile Card */}
@@ -127,21 +128,21 @@ function ProfileContent() {
                     <div className="grid grid-cols-2 gap-4 w-full">
                         <div className="bg-orange-50 p-3 rounded-xl text-center">
                             <div className="text-orange-600 font-bold text-xl">0</div>
-                            <div className="text-xs text-orange-600/80 uppercase font-bold tracking-wider">Points</div>
+                            <div className="text-xs text-orange-600/80 uppercase font-bold tracking-wider">{t('profile.points')}</div>
                         </div>
                         <div className="bg-blue-50 p-3 rounded-xl text-center">
-                            <div className="text-blue-600 font-bold text-xl">Member</div>
-                            <div className="text-xs text-blue-600/80 uppercase font-bold tracking-wider">Status</div>
+                            <div className="text-blue-600 font-bold text-xl">{t('profile.member')}</div>
+                            <div className="text-xs text-blue-600/80 uppercase font-bold tracking-wider">{t('profile.memberStatus')}</div>
                         </div>
                     </div>
                 </div>
 
                 {/* Menu Options */}
                 <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
-                    <MenuItem icon={<History className="w-5 h-5" />} label="Order History" href="#" />
-                    <MenuItem icon={<Heart className="w-5 h-5" />} label="Favorite Items" href="#" />
-                    <MenuItem icon={<Settings className="w-5 h-5" />} label="Account Settings" href="#" />
-                    <MenuItem icon={<HelpCircle className="w-5 h-5" />} label="Help & Support" href="#" />
+                    <MenuItem icon={<History className="w-5 h-5" />} label={t('profile.menu.orderHistory')} href="#" />
+                    <MenuItem icon={<Heart className="w-5 h-5" />} label={t('profile.menu.favorites')} href="#" />
+                    <MenuItem icon={<Settings className="w-5 h-5" />} label={t('profile.menu.settings')} href="#" />
+                    <MenuItem icon={<HelpCircle className="w-5 h-5" />} label={t('profile.menu.help')} href="#" />
                 </div>
 
                 {/* Logout Button */}
@@ -150,11 +151,11 @@ function ProfileContent() {
                     className="w-full bg-white text-red-500 font-bold py-4 rounded-2xl shadow-sm hover:bg-red-50 transition-colors flex items-center justify-center gap-2"
                 >
                     <LogOut className="w-5 h-5" />
-                    Log Out
+                    {t('common.logout')}
                 </button>
 
                 <div className="text-center text-xs text-gray-400 py-4">
-                    Version 1.0.0
+                    {t('profile.version')} 1.0.0
                 </div>
             </div>
         </>

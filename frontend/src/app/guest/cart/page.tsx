@@ -12,7 +12,10 @@ import Link from "next/link";
 
 import { ShoppingCart, Trash2, Info } from "lucide-react";
 
+import { useI18n } from "@/contexts/I18nContext";
+
 function CartContent() {
+    const { t } = useI18n();
     const { items, totalAmount, removeFromCart, updateQuantity, clearCart } =
         useCartStore();
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -33,7 +36,7 @@ function CartContent() {
         if (items.length === 0) return;
 
         if (!tableId) {
-            toast.error("Error: Table ID not found. Please rescan QR code.");
+            toast.error(t('cart.tableIdError'));
             return;
         }
 
@@ -56,7 +59,7 @@ function CartContent() {
 
             await ordersApi.create(orderData);
 
-            toast.success("Order placed successfully!");
+            toast.success(t('cart.orderPlacedSuccess'));
             clearCart();
             router.push(`/guest/orders?tableId=${tableId}`);
         } catch (error: any) {
@@ -69,15 +72,15 @@ function CartContent() {
 
     return (
         <>
-            <Header title="Your Cart" showBack backUrl={`/guest?tableId=${tableId || ""}`} tableId={tableId} />
+            <Header title={t('cart.title')} showBack backUrl={`/guest?tableId=${tableId || ""}`} tableId={tableId} />
 
             <div className="p-4 safe-area-pb space-y-4">
                 {/* Cart Items */}
                 {items.length === 0 ? (
                     <div className="flex flex-col items-center justify-center p-10 text-slate-400">
                         <ShoppingCart className="w-16 h-16 mb-4 stroke-1" />
-                        <p>Your cart is empty.</p>
-                        <Link href={`/guest?tableId=${tableId || ""}`} className="mt-4 text-orange-600 font-bold hover:underline">Start Ordering</Link>
+                        <p>{t('cart.empty')}</p>
+                        <Link href={`/guest?tableId=${tableId || ""}`} className="mt-4 text-orange-600 font-bold hover:underline">{t('cart.startOrdering')}</Link>
                     </div>
                 ) : (
                     items.map((item, index) => (
@@ -144,11 +147,11 @@ function CartContent() {
                 {items.length > 0 && (
                     <div className="bg-white p-4 rounded-xl shadow-sm border border-slate-100">
                         <h4 className="font-bold text-gray-800 mb-2">
-                            Special Instructions
+                            {t('cart.specialInstructions')}
                         </h4>
                         <textarea
                             className="w-full bg-slate-50 rounded-lg p-3 text-sm focus:outline-none focus:ring-1 focus:ring-[#e74c3c] text-slate-800 placeholder:text-slate-500 border border-slate-200"
-                            placeholder="Any special requests? (e.g. no onions)"
+                            placeholder={t('cart.instructionsPlaceholder')}
                             rows={2}
                         />
                     </div>
@@ -157,14 +160,14 @@ function CartContent() {
                 {/* Summary */}
                 {items.length > 0 && (
                     <div className="bg-white p-4 rounded-xl shadow-sm space-y-2 border border-slate-100">
-                        <h4 className="font-bold text-gray-800 mb-2">Order Summary</h4>
+                        <h4 className="font-bold text-gray-800 mb-2">{t('cart.summary')}</h4>
                         <div className="flex justify-between text-gray-600">
-                            <span>Subtotal</span>
+                            <span>{t('cart.subtotal')}</span>
                             <span>{formatPrice(totalAmount)}</span>
                         </div>
                         {/* Tax logic can be added here if needed */}
                         <div className="flex justify-between font-bold text-lg text-gray-900 pt-2 border-t border-slate-100">
-                            <span>Total</span>
+                            <span>{t('cart.total')}</span>
                             <span className="text-[#e74c3c]">{formatPrice(totalAmount)}</span>
                         </div>
                     </div>
@@ -175,8 +178,8 @@ function CartContent() {
                     <div className="bg-blue-50 p-4 rounded-xl flex items-start gap-3 border border-blue-100">
                         <Info className="w-5 h-5 text-blue-500 shrink-0 mt-0.5" />
                         <div className="text-sm text-blue-700">
-                            <strong>Pay After Your Meal</strong><br />
-                            You can place multiple orders. Payment will be processed when you request the bill.
+                            <strong>{t('cart.payAfterMealTitle')}</strong><br />
+                            {t('cart.payAfterMealDesc')}
                         </div>
                     </div>
                 )}
@@ -189,11 +192,11 @@ function CartContent() {
                             disabled={isSubmitting}
                             className="w-full bg-[#e74c3c] text-white font-bold py-4 rounded-xl hover:bg-[#c0392b] active:scale-95 transition-all shadow-lg shadow-red-200 disabled:bg-gray-400"
                         >
-                            {isSubmitting ? "Placing Order..." : `Place Order - ${formatPrice(totalAmount)}`}
+                            {isSubmitting ? t('cart.placingOrder') : `${t('cart.placeOrder')} - ${formatPrice(totalAmount)}`}
                         </button>
                         <Link href={`/guest?tableId=${tableId || ""}`} className="w-full">
                             <button className="w-full bg-white text-[#e74c3c] border-2 border-[#e74c3c] font-bold py-3 rounded-xl">
-                                Continue Browsing
+                                {t('cart.continueBrowsing')}
                             </button>
                         </Link>
                     </div>

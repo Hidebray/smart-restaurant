@@ -10,7 +10,7 @@ type Messages = typeof enMessages;
 interface I18nContextType {
     locale: Locale;
     setLocale: (locale: Locale) => void;
-    t: (key: string) => string;
+    t: (key: string, params?: Record<string, string | number>) => string;
     messages: Messages;
 }
 
@@ -37,7 +37,7 @@ export function I18nProvider({ children }: { children: ReactNode }) {
         localStorage.setItem('locale', newLocale);
     };
 
-    const t = (key: string): string => {
+    const t = (key: string, params?: Record<string, string | number>): string => {
         const keys = key.split('.');
         let value: any = messages[locale];
 
@@ -45,7 +45,15 @@ export function I18nProvider({ children }: { children: ReactNode }) {
             value = value?.[k];
         }
 
-        return value || key;
+        let result = value || key;
+
+        if (params && typeof result === 'string') {
+            Object.entries(params).forEach(([key, value]) => {
+                result = result.replace(`{${key}}`, String(value));
+            });
+        }
+
+        return result;
     };
 
     return (

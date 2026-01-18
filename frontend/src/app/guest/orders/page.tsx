@@ -32,6 +32,7 @@ const formatPrice = (price: number) =>
         currency: "VND",
     }).format(price);
 
+
 function OrdersContent() {
     const { t } = useI18n();
     const [orders, setOrders] = useState<Order[]>([]);
@@ -82,11 +83,11 @@ function OrdersContent() {
                     body: JSON.stringify({ status: 'COMPLETED' })
                 })
             ));
-            toast.success("Đã thanh toán tất cả đơn hàng!");
+            toast.success(t('orders.allPaid'));
             fetchOrders();
         } catch (error) {
             console.error("Payment update failed", error);
-            toast.error("Thanh toán thành công nhưng lỗi cập nhật trạng thái.");
+            toast.error(t('orders.paymentUpdateError'));
         }
     };
 
@@ -97,16 +98,16 @@ function OrdersContent() {
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ type })
             });
-            toast.success("Đã gọi nhân viên! Vui lòng đợi trong giây lát.");
+            toast.success(t('orders.callWaiterSuccess'));
         } catch (e) {
-            toast.error("Lỗi khi gọi nhân viên.");
+            toast.error(t('orders.callWaiterError'));
         }
     };
 
     return (
         <div className="safe-area-pb space-y-6">
             <Header
-                title={t('nav.orders') || "Đơn hàng của bạn"}
+                title={t('nav.orders') || t('orders.title')}
                 showBack
                 backUrl={`/guest?tableId=${tableId || ""}`}
                 tableId={tableId}
@@ -117,7 +118,7 @@ function OrdersContent() {
                     <div className="bg-gradient-to-r from-orange-600 to-red-600 text-white p-5 rounded-2xl shadow-lg shadow-orange-200">
                         <div className="flex justify-between items-center mb-1">
                             <div>
-                                <div className="text-sm font-medium opacity-90">Tổng cộng</div>
+                                <div className="text-sm font-medium opacity-90">{t('orders.total')}</div>
                                 <div className="text-3xl font-bold tracking-tight">
                                     {formatPrice(sessionTotal)}
                                 </div>
@@ -127,7 +128,7 @@ function OrdersContent() {
                                 <button
                                     onClick={() => handleCallWaiter('PAYMENT_CASH')}
                                     className="bg-white/20 text-white p-3 rounded-full font-bold shadow-sm active:scale-95 transition-transform flex items-center justify-center backdrop-blur-sm hover:bg-white/30"
-                                    title="Gọi tính tiền tại bàn"
+                                    title={t('orders.callPayment')}
                                 >
                                     <Bell className="w-5 h-5" />
                                 </button>
@@ -137,26 +138,26 @@ function OrdersContent() {
                                         className="bg-white text-orange-600 px-5 py-2 rounded-full font-bold shadow-sm active:scale-95 transition-transform flex items-center gap-2 hover:bg-orange-50"
                                     >
                                         <CreditCard className="w-4 h-4" />
-                                        <span>Thanh toán</span>
+                                        <span>{t('orders.pay')}</span>
                                     </button>
                                 ) : (
                                     <span className="bg-white/20 px-4 py-2 rounded-full text-sm font-medium flex items-center gap-2 border border-white/20">
                                         <Check className="w-4 h-4" />
-                                        <span>Đã thanh toán</span>
+                                        <span>{t('orders.paid')}</span>
                                     </span>
                                 )}
                             </div>
                         </div>
-                        {canPay && <div className="text-xs opacity-75 mt-2 text-right">Còn lại cần thanh toán: {formatPrice(unpaidTotal)}</div>}
+                        {canPay && <div className="text-xs opacity-75 mt-2 text-right">{t('orders.remainingToPay')} {formatPrice(unpaidTotal)}</div>}
                     </div>
                 )}
 
                 {loading ? (
-                    <div className="text-center py-12 text-slate-500">Đang tải đơn hàng...</div>
+                    <div className="text-center py-12 text-slate-500">{t('common.loading')}</div>
                 ) : orders.length === 0 ? (
                     <div className="flex flex-col items-center justify-center py-20 text-slate-400">
                         <ClipboardList className="w-16 h-16 mb-4 stroke-1" />
-                        <p className="font-medium">Chưa có đơn hàng nào.</p>
+                        <p className="font-medium">{t('orders.noOrders')}</p>
                     </div>
                 ) : (
                     <div className="space-y-4">
@@ -165,7 +166,7 @@ function OrdersContent() {
                                 <div className="flex justify-between items-center p-4 border-b border-slate-50 bg-slate-50/50">
                                     <div>
                                         <div className="font-bold text-slate-800 flex items-center gap-2">
-                                            Order #{order.id.slice(0, 8)}
+                                            {t('orders.orderNumber')}{order.id.slice(0, 8)}
                                         </div>
                                         <div className="text-xs text-slate-500 flex items-center gap-1 mt-0.5">
                                             <Clock className="w-3 h-3" />
@@ -173,7 +174,7 @@ function OrdersContent() {
                                         </div>
                                     </div>
                                     <span className={`px-3 py-1 rounded-full text-xs font-bold border ${getStatusColor(order.status)}`}>
-                                        {order.status}
+                                        {t(`status.${order.status}`)}
                                     </span>
                                 </div>
 
