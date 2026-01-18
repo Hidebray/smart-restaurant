@@ -9,18 +9,7 @@ import Header from "@/components/mobile/Header";
 import CategoryTabs from "@/components/mobile/CategoryTabs";
 import { useI18n } from "@/contexts/I18nContext";
 import { Search } from "lucide-react";
-
-async function getProducts(): Promise<Product[]> {
-  const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:5000'}/products`, {
-    cache: "no-store",
-  });
-
-  if (!res.ok) {
-    throw new Error("Failed to fetch products");
-  }
-
-  return res.json();
-}
+import { useMenuStore } from "@/store/useMenuStore";
 
 const formatPrice = (price: number | string) => {
   return new Intl.NumberFormat("vi-VN", {
@@ -31,7 +20,7 @@ const formatPrice = (price: number | string) => {
 
 function GuestMenuContent() {
   const { t } = useI18n();
-  const [products, setProducts] = useState<Product[]>([]);
+  const { products, fetchProducts, isLoading } = useMenuStore();
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [activeCategory, setActiveCategory] = useState("");
@@ -56,40 +45,14 @@ function GuestMenuContent() {
       const page = parseInt(pageParam, 10);
       if (page > 0) setCurrentPage(page);
     }
-  }, [tableId, router, searchParams]); // Added dependencies
+  }, [tableId, router, searchParams]);
 
+  // Fetch products (cached in store)
   useEffect(() => {
-    if (!tableId) return; // Skip fetch if redirecting
-
-    const fetchProducts = async () => {
-      try {
-        // Use search API if there's a query, otherwise get all products
-        const endpoint = searchQuery.trim()
-          ? `/products/search?q=${encodeURIComponent(searchQuery)}`
-          : '/products';
-
-        const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:5000'}${endpoint}`, {
-          cache: "no-store",
-        });
-
-        if (!res.ok) throw new Error("Failed to fetch products");
-
-        const data = await res.json();
-        setProducts(data);
-        // Reset to page 1 when search changes
-        setCurrentPage(1);
-      } catch (error) {
-        console.error("Error loaded menu:", error);
-      }
-    };
-
-    // Debounce search requests
-    const timeoutId = setTimeout(() => {
+    if (tableId) {
       fetchProducts();
-    }, 300);
-
-    return () => clearTimeout(timeoutId);
-  }, [searchQuery]);
+    }
+  }, [tableId, fetchProducts]);
 
   // Update URL when page changes
   useEffect(() => {
@@ -107,17 +70,28 @@ function GuestMenuContent() {
     return [t('menu.allCategories'), ...Array.from(cats).sort()];
   }, [products, t]);
 
-  // Filter products by category only (search is handled by backend)
+  // Filter products by category AND search client-side
   const filteredProducts = useMemo(() => {
-    const filtered = products.filter((product) => {
-      const matchesCategory =
-        activeCategory === "" ||
-        (product.category?.name || "Other") === activeCategory;
-      return matchesCategory;
-    });
+    let filtered = products;
+
+    // Filter by Search Query
+    if (searchQuery.trim()) {
+      const lowerQuery = searchQuery.toLowerCase();
+      filtered = filtered.filter(p =>
+        p.name.toLowerCase().includes(lowerQuery) ||
+        (p.description && p.description.toLowerCase().includes(lowerQuery))
+      );
+    }
+
+    // Filter by Category
+    if (activeCategory !== "") {
+      filtered = filtered.filter((product) =>
+        (product.category?.name || "Other") === activeCategory
+      );
+    }
 
     return filtered;
-  }, [products, activeCategory]);
+  }, [products, activeCategory, searchQuery]);
 
   // Calculate pagination
   const totalPages = Math.ceil(filteredProducts.length / ITEMS_PER_PAGE);
