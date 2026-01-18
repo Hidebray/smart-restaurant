@@ -26,6 +26,7 @@ function GuestMenuContent() {
   const [activeCategory, setActiveCategory] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+  const [isValidating, setIsValidating] = useState(true);
   const router = useRouter();
 
   const searchParams = useSearchParams();
@@ -40,6 +41,32 @@ function GuestMenuContent() {
       return;
     }
 
+    // Validate table existence
+    const validateTable = async () => {
+      try {
+        const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:5000'}/tables/${tableId}`);
+        if (!res.ok) {
+          throw new Error('Table not found');
+        }
+
+        const text = await res.text();
+        if (!text) {
+          throw new Error('Empty response');
+        }
+
+        const data = JSON.parse(text);
+        if (!data || !data.id) {
+          throw new Error('Invalid table data');
+        }
+
+        setIsValidating(false);
+      } catch (error) {
+        router.replace('/tables');
+      }
+    };
+
+    validateTable();
+
     const pageParam = searchParams.get("page");
     if (pageParam) {
       const page = parseInt(pageParam, 10);
@@ -49,10 +76,11 @@ function GuestMenuContent() {
 
   // Fetch products (cached in store)
   useEffect(() => {
-    if (tableId) {
+    if (tableId && !isValidating) {
       fetchProducts();
     }
-  }, [tableId, fetchProducts]);
+  }, [tableId, isValidating, fetchProducts]);
+
 
   // Update URL when page changes
   useEffect(() => {
@@ -108,6 +136,17 @@ function GuestMenuContent() {
     setSelectedProduct(product);
     setIsModalOpen(true);
   };
+
+  if (isValidating) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-[#f5f6fa]">
+        <div className="flex flex-col items-center gap-4">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-600"></div>
+          <p className="text-gray-500">{t('common.loading')}</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <>
