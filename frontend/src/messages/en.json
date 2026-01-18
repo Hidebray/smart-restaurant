@@ -195,6 +195,23 @@
             "settings": "Account Settings",
             "help": "Help & Support"
         },
-        "version": "Version"
+        "version": "Version",
+        "save": "Save changes",
+        "updateSuccess": "Profile updated successfully",
+        "uploadAvatar": "Upload avatar",
+        "avatarUpdated": "Avatar updated successfully",
+        "name": "Name",
+        "email": "Email",
+        "phone": "Phone",
+        "emailNote": "If you change email, you may need to verify again.",
+        "changePassword": "Change password",
+        "currentPassword": "Current password",
+        "newPassword": "New password (min 8 chars)",
+        "confirmNewPassword": "Confirm new password",
+        "updatePassword": "Update password",
+        "pwRequired": "Please fill in all password fields",
+        "pwMin": "New password must be at least 8 characters",
+        "pwMismatch": "New password confirmation does not match",
+        "pwChanged": "Password changed successfully"
     }
 }

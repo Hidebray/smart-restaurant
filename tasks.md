@@ -26,14 +26,12 @@ The working order rotates daily following this sequence:
 **Goal:** Secure internal pages (Kitchen, Waiter, Admin).
 
 - [x] **Task 1.1: Authentication Logic & API**
-
   - [x] Install `jsonwebtoken`, `cookies-next`.
   - [x] Create `lib/auth.ts` (JWT sign & verify utilities).
   - [x] Implement API `POST /api/auth/login`.
   - _Commit:_ `feat: implement jwt authentication logic and login API`
 
 - [x] **Task 1.2: Login UI**
-
   - [x] Create `app/login/page.tsx`.
   - [x] Build login form (Email / Password).
   - [x] Handle redirect after successful login.
@@ -51,7 +49,6 @@ The working order rotates daily following this sequence:
 **Goal:** Manage products and tables without modifying code or database directly.
 
 - [x] **Task 2.1: Admin Layout & Product Listing**
-
   - [x] Create `app/admin/layout.tsx` (Sidebar navigation).
   - [x] Create `app/admin/products/page.tsx` (Product table view).
   - _Commit:_ `feat: setup admin layout and product list view`
@@ -76,6 +73,7 @@ The working order rotates daily following this sequence:
   - [x] Design and implement a dashboard to show key metrics (revenue, top-selling products, etc.).
   - [x] Create backend APIs to fetch analytics data.
   - _Commit:_ `feat: implement analytics and reporting dashboard`
+
 ---
 
 ## Module 3: Table & QR Code Management
@@ -83,7 +81,6 @@ The working order rotates daily following this sequence:
 **Goal:** Generate QR codes for each table.
 
 - [x] **Task 3.1: Table Management**
-
   - [x] Create `app/admin/tables/page.tsx`.
   - [x] Display table list fetched from the database.
   - [x] Implement functionality to add new tables.
@@ -103,7 +100,6 @@ The working order rotates daily following this sequence:
 **Goal:** Complete the order lifecycle.
 
 - [x] **Task 4.1: Bill & Payment UI**
-
   - [x] Create a "Temporary Bill" modal on the Waiter screen.
   - [x] Display a static payment QR code (demo purpose).
   - _Commit:_ `feat: display order bill summary modal`
@@ -247,11 +243,11 @@ The working order rotates daily following this sequence:
 
 ### Medium Priority Features
 
-- [ ] **Task 7.9: User Profile Management**
-  - [ ] Create customer profile page
-  - [ ] Edit name, email, phone
-  - [ ] Change password feature
-  - [ ] Upload avatar image
+- [x] **Task 7.9: User Profile Management**
+  - [x] Create customer profile page
+  - [x] Edit name, email, phone
+  - [x] Change password feature
+  - [x] Upload avatar image
   - _Points:_ -1.0
 
 - [ ] **Task 7.10: Revenue Reports & Charts**
@@ -325,13 +321,17 @@ The working order rotates daily following this sequence:
 ## **Estimated Points Summary**
 
 ### Current Implementation
+
 - ✅ Modules 1-6: ~68-70 points
 
 ### After Critical Tasks (7.1-7.2)
+
 - Target: ~74-75 points
 
 ### After High Priority (7.3-7.8)
+
 - Target: ~77-78 points
 
 ### Full Completion
+
 - Maximum Possible: ~85+ points (with advanced features bonus)

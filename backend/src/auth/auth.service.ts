@@ -1,4 +1,9 @@
-import { Injectable, UnauthorizedException, ConflictException, BadRequestException } from '@nestjs/common';
+import {
+  Injectable,
+  UnauthorizedException,
+  ConflictException,
+  BadRequestException,
+} from '@nestjs/common';
 import { UserService } from '../user/user.service';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
@@ -8,6 +13,8 @@ import { User, UserRole } from '@prisma/client';
 import * as nodemailer from 'nodemailer';
 import { v4 as uuidv4 } from 'uuid';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { UpdateProfileDto } from './dto/update-profile.dto';
+import { ChangePasswordDto } from './dto/change-password.dto';
 
 @Injectable()
 export class AuthService {
@@ -33,7 +40,10 @@ export class AuthService {
     if (!user) {
       console.log(`[ForgotPassword] User not found for email: ${email}`);
       // Don't reveal if user exists
-      return { message: 'If your email is registered, you will receive a password reset link.' };
+      return {
+        message:
+          'If your email is registered, you will receive a password reset link.',
+      };
     }
     console.log(`[ForgotPassword] User found: ${user.id}`);
 
@@ -53,7 +63,10 @@ export class AuthService {
 
     await this.sendResetPasswordEmail(user.email, resetToken);
 
-    return { message: 'If your email is registered, you will receive a password reset link.' };
+    return {
+      message:
+        'If your email is registered, you will receive a password reset link.',
+    };
   }
 
   async resetPassword(token: string, newPassword: string) {
@@ -87,7 +100,6 @@ export class AuthService {
 
     return { message: 'Password has been reset successfully' };
   }
-
 
   async register(registerDto: RegisterDto) {
     const { email, password, name, phone, role } = registerDto;
@@ -150,13 +162,13 @@ export class AuthService {
         name: user.name,
         role: user.role,
         isEmailVerified: user.isEmailVerified,
-      }
+      },
     };
   }
 
   async verifyEmail(token: string) {
     const user = await this.prisma.user.findFirst({
-      where: { verificationToken: token }
+      where: { verificationToken: token },
     });
 
     if (!user) {
@@ -168,13 +180,19 @@ export class AuthService {
       data: {
         isEmailVerified: true,
         verificationToken: null, // Clear token
-      }
+      },
     });
 
     return { message: 'Email verified successfully' };
   }
 
-  async validateGoogleUser(details: { email: string, name: string, avatar: string, googleId: string, accessToken: string }) {
+  async validateGoogleUser(details: {
+    email: string;
+    name: string;
+    avatar: string;
+    googleId: string;
+    accessToken: string;
+  }) {
     // 1. Check by googleId
     // @ts-ignore
     let user = await this.userService.findOne({ googleId: details.googleId });
@@ -192,7 +210,7 @@ export class AuthService {
           googleId: details.googleId,
           avatar: user.avatar || details.avatar,
           isEmailVerified: true, // Google verifies email
-        }
+        },
       });
     }
 
@@ -221,8 +239,8 @@ export class AuthService {
         email: user.email,
         name: user.name,
         role: user.role,
-        isEmailVerified: user.isEmailVerified
-      }
+        isEmailVerified: user.isEmailVerified,
+      },
     };
   }
 
@@ -275,4 +293,77 @@ export class AuthService {
     }
   }
 
+  async updateProfile(userId: string, dto: UpdateProfileDto) {
+    // If email is changed -> check unique
+    if (dto.email) {
+      const existing = await this.prisma.user.findUnique({
+        where: { email: dto.email },
+      });
+      if (existing && existing.id !== userId) {
+        throw new ConflictException('Email already registered');
+      }
+    }
+
+    // If email changed -> set isEmailVerified = false, create new verificationToken (optional)
+    const current = await this.prisma.user.findUnique({
+      where: { id: userId },
+    });
+    if (!current) throw new UnauthorizedException();
+
+    const emailChanged = dto.email && dto.email !== current.email;
+
+    const data: any = {
+      ...(dto.name !== undefined ? { name: dto.name } : {}),
+      ...(dto.phone !== undefined ? { phone: dto.phone } : {}),
+      ...(dto.email !== undefined ? { email: dto.email } : {}),
+    };
+
+    if (emailChanged) {
+      const verificationToken = uuidv4();
+      data.isEmailVerified = false;
+      data.verificationToken = verificationToken;
+
+      // Try sending verification email (won't block if env missing)
+      try {
+        await this.sendVerificationEmail(dto.email!, verificationToken);
+      } catch (e) {
+        // ignore
+      }
+    }
+
+    const updated = await this.prisma.user.update({
+      where: { id: userId },
+      data,
+    });
+
+    const { password, ...result } = updated as any;
+    return result;
+  }
+
+  async changePassword(userId: string, dto: ChangePasswordDto) {
+    const user = await this.prisma.user.findUnique({ where: { id: userId } });
+    if (!user) throw new UnauthorizedException();
+
+    const ok = await bcrypt.compare(dto.currentPassword, user.password);
+    if (!ok) throw new UnauthorizedException('Current password is incorrect');
+
+    const hashedPassword = await bcrypt.hash(dto.newPassword, 10);
+
+    await this.prisma.user.update({
+      where: { id: userId },
+      data: { password: hashedPassword },
+    });
+
+    return { message: 'Password changed successfully' };
+  }
+
+  async updateAvatar(userId: string, avatarUrl: string) {
+    const updated = await this.prisma.user.update({
+      where: { id: userId },
+      data: { avatar: avatarUrl },
+    });
+
+    const { password, ...result } = updated as any;
+    return result;
+  }
 }
