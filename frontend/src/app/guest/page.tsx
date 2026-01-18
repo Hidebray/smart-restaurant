@@ -137,7 +137,12 @@ function GuestMenuContent() {
 
   return (
     <>
-      <Header title={t('common.appName')} tableId={tableId} />
+      <Header
+        title={t('common.appName')}
+        tableId={tableId}
+        showBack={true}
+        backUrl="/tables"
+      />
 
       {/* Search Bar */}
       <div className="bg-white px-4 pb-3 sticky top-[57px] z-30 pt-2 shadow-sm">
