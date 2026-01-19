@@ -19,8 +19,17 @@ import {
   Save,
   KeyRound,
   Award,
+  X,
+  ChevronRight,
+  Mail,
+  Phone,
+  Shield,
+  Edit2,
+  Eye,
+  EyeOff,
 } from "lucide-react";
 import toast from "react-hot-toast";
+import { Dialog, DialogPanel, DialogTitle } from "@headlessui/react";
 
 interface CustomerProfile {
   id: string;
@@ -36,19 +45,45 @@ function MenuItem({
   icon,
   label,
   href,
+  onClick,
+  badge,
 }: {
   icon: React.ReactNode;
   label: string;
-  href: string;
+  href?: string;
+  onClick?: () => void;
+  badge?: string;
 }) {
-  return (
-    <Link
-      href={href}
-      className="flex items-center gap-4 p-4 border-b border-gray-50 last:border-0 hover:bg-gray-50 active:bg-gray-100 transition-colors"
-    >
+  const content = (
+    <>
       <span className="text-slate-500">{icon}</span>
       <span className="font-medium text-gray-700 flex-1">{label}</span>
-      <span className="text-gray-400">›</span>
+      {badge && (
+        <span className="bg-orange-100 text-orange-600 text-xs font-bold px-2 py-0.5 rounded-full">
+          {badge}
+        </span>
+      )}
+      <ChevronRight className="w-4 h-4 text-gray-400" />
+    </>
+  );
+
+  if (onClick) {
+    return (
+      <button
+        onClick={onClick}
+        className="w-full flex items-center gap-4 p-4 border-b border-gray-50 last:border-0 hover:bg-gray-50 active:bg-gray-100 transition-colors text-left"
+      >
+        {content}
+      </button>
+    );
+  }
+
+  return (
+    <Link
+      href={href || "#"}
+      className="flex items-center gap-4 p-4 border-b border-gray-50 last:border-0 hover:bg-gray-50 active:bg-gray-100 transition-colors"
+    >
+      {content}
     </Link>
   );
 }
@@ -57,6 +92,15 @@ function ProfileContent() {
   const { t } = useI18n();
   const [profile, setProfile] = useState<CustomerProfile | null>(null);
   const [loading, setLoading] = useState(true);
+
+  // Modal states
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [showPasswordModal, setShowPasswordModal] = useState(false);
+
+  // Password visibility states
+  const [showCurrentPw, setShowCurrentPw] = useState(false);
+  const [showNewPw, setShowNewPw] = useState(false);
+  const [showConfirmPw, setShowConfirmPw] = useState(false);
 
   const [savingProfile, setSavingProfile] = useState(false);
   const [savingPassword, setSavingPassword] = useState(false);
@@ -101,7 +145,6 @@ function ProfileContent() {
 
   useEffect(() => {
     fetchProfile();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router]);
 
   const handleLogout = async () => {
@@ -143,6 +186,7 @@ function ProfileContent() {
       const res = await api.patch("/auth/profile", payload);
       setProfile(res.data);
       toast.success(t("profile.updateSuccess") || "Profile updated successfully");
+      setShowEditModal(false);
     } catch (e: any) {
       const message = e?.response?.data?.message || "Update failed";
       toast.error(Array.isArray(message) ? message.join(", ") : message);
@@ -157,15 +201,11 @@ function ProfileContent() {
       return;
     }
     if (pw.newPassword.length < 8) {
-      toast.error(
-        t("profile.pwMin") || "New password must be at least 8 characters",
-      );
+      toast.error(t("profile.pwMin") || "New password must be at least 8 characters");
       return;
     }
     if (pw.newPassword !== pw.confirmNewPassword) {
-      toast.error(
-        t("profile.pwMismatch") || "New password confirmation does not match",
-      );
+      toast.error(t("profile.pwMismatch") || "New password confirmation does not match");
       return;
     }
 
@@ -177,9 +217,15 @@ function ProfileContent() {
       });
       toast.success(t("profile.pwChanged") || "Password changed successfully");
       setPw({ currentPassword: "", newPassword: "", confirmNewPassword: "" });
+      setShowPasswordModal(false);
     } catch (e: any) {
       const message = e?.response?.data?.message || "Change password failed";
-      toast.error(Array.isArray(message) ? message.join(", ") : message);
+      // Map common English backend errors to translated messages
+      if (message.includes("Current password is incorrect") || message.includes("incorrect")) {
+        toast.error(t("profile.pwIncorrect") || "Mật khẩu hiện tại không đúng");
+      } else {
+        toast.error(Array.isArray(message) ? message.join(", ") : message);
+      }
     } finally {
       setSavingPassword(false);
     }
@@ -198,8 +244,6 @@ function ProfileContent() {
       });
 
       setProfile(res.data);
-
-      // bust cache a bit (optional)
       toast.success(t("profile.avatarUpdated") || "Avatar updated successfully");
     } catch (e: any) {
       const message = e?.response?.data?.message || "Upload avatar failed";
@@ -212,7 +256,7 @@ function ProfileContent() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[60vh]">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#e74c3c]"></div>
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-600"></div>
       </div>
     );
   }
@@ -227,7 +271,7 @@ function ProfileContent() {
           tableId={tableId}
         />
         <div className="p-6 flex flex-col items-center justify-center min-h-[60vh] text-center space-y-4">
-          <div className="w-24 h-24 bg-slate-100 rounded-full flex items-center justify-center text-slate-400 mb-2">
+          <div className="w-24 h-24 bg-gradient-to-br from-orange-100 to-red-100 rounded-full flex items-center justify-center text-orange-400 mb-2">
             <User className="w-12 h-12" />
           </div>
           <h2 className="text-xl font-bold text-gray-800">
@@ -236,7 +280,7 @@ function ProfileContent() {
           <p className="text-gray-500">{t("profile.notLoggedInDesc")}</p>
           <Link
             href="/login"
-            className="w-full max-w-xs bg-orange-600 text-white font-bold py-3 rounded-xl shadow-lg shadow-orange-200 hover:bg-orange-700 transition-colors"
+            className="w-full max-w-xs bg-gradient-to-r from-orange-500 to-red-500 text-white font-bold py-3 rounded-xl shadow-lg shadow-orange-200 hover:shadow-orange-300 transition-all text-center"
           >
             {t("profile.loginRegister")}
           </Link>
@@ -245,8 +289,6 @@ function ProfileContent() {
     );
   }
 
-  // If backend returns absolute url, use it directly.
-  // If backend returns relative url, prefix with apiBase.
   const avatarSrc = profile.avatar
     ? profile.avatar.startsWith("http")
       ? profile.avatar
@@ -263,195 +305,93 @@ function ProfileContent() {
       />
 
       <div className="p-4 safe-area-pb space-y-4">
-
-
-        {/* Profile Card */}
-        <div className="bg-white p-6 rounded-2xl shadow-sm">
-          <div className="flex flex-col items-center">
-            <div className="relative w-24 h-24 mb-3">
-              <div className="w-full h-full rounded-full overflow-hidden bg-gray-100 border-4 border-white shadow flex items-center justify-center">
+        {/* Profile Card - Clean display only */}
+        <div className="bg-gradient-to-br from-orange-500 to-red-500 p-6 rounded-2xl shadow-lg text-white">
+          <div className="flex items-center gap-4">
+            {/* Avatar */}
+            <div className="relative w-20 h-20 shrink-0">
+              <div className="w-full h-full rounded-full overflow-hidden bg-white/20 ring-4 ring-white/70 shadow-lg flex items-center justify-center">
                 {avatarSrc ? (
                   <Image
                     src={avatarSrc}
                     alt={profile.name || "User"}
                     fill
-                    className="object-cover"
+                    className="object-cover rounded-full"
                   />
                 ) : (
-                  <span className="text-4xl font-bold text-gray-400">
+                  <span className="text-3xl font-bold text-white/80">
                     {(profile.name || "U").charAt(0).toUpperCase()}
                   </span>
                 )}
               </div>
 
               <label
-                className={`absolute -bottom-1 -right-1 p-2 rounded-full border-2 border-white shadow cursor-pointer ${uploading
-                  ? "bg-gray-300 text-gray-600"
-                  : "bg-orange-600 text-white"
+                className={`absolute -bottom-1 -right-1 p-1.5 rounded-full border-2 border-white shadow cursor-pointer ${uploading ? "bg-gray-400" : "bg-white"
                   }`}
-                title={t("profile.uploadAvatar") || "Upload avatar"}
               >
-                <Camera className="w-4 h-4" />
+                <Camera className={`w-3 h-3 ${uploading ? "text-gray-600" : "text-orange-600"}`} />
                 <input
                   type="file"
                   accept="image/png,image/jpeg,image/webp"
                   className="hidden"
                   disabled={uploading}
-                  onChange={(e) =>
-                    handleAvatarUpload(e.target.files?.[0] || null)
-                  }
+                  onChange={(e) => handleAvatarUpload(e.target.files?.[0] || null)}
                 />
               </label>
             </div>
 
-            <h2 className="text-xl font-bold text-gray-800">{profile.name}</h2>
-            <p className="text-gray-500 text-sm">{profile.email}</p>
-            {profile.phone && (
-              <p className="text-gray-500 text-sm">{profile.phone}</p>
-            )}
-          </div>
-
-          {/* Edit form */}
-          <div className="mt-5 space-y-3">
-            <div>
-              <label className="text-sm font-semibold text-gray-700">
-                {t("profile.name") || "Name"}
-              </label>
-              <input
-                className="mt-1 w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-orange-200 text-slate-900 placeholder-slate-400"
-                value={form.name}
-                onChange={(e) =>
-                  setForm((s) => ({ ...s, name: e.target.value }))
-                }
-                placeholder="Nguyễn Văn A"
-              />
-            </div>
-
-            <div>
-              <label className="text-sm font-semibold text-gray-700">
-                {t("profile.email") || "Email"}
-              </label>
-              <input
-                className="mt-1 w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-orange-200 text-slate-900 placeholder-slate-400"
-                value={form.email}
-                onChange={(e) =>
-                  setForm((s) => ({ ...s, email: e.target.value }))
-                }
-                placeholder="abc@gmail.com"
-              />
-              <div className="text-xs text-gray-400 mt-1">
-                {t("profile.emailNote") ||
-                  "If you change email, you may need to verify again."}
+            {/* Info */}
+            <div className="flex-1 min-w-0">
+              <h2 className="text-xl font-bold truncate">{profile.name}</h2>
+              <div className="flex items-center gap-1.5 mt-1 text-white/80 text-sm">
+                <Mail className="w-3.5 h-3.5" />
+                <span className="truncate">{profile.email}</span>
               </div>
+              {profile.phone && (
+                <div className="flex items-center gap-1.5 mt-0.5 text-white/80 text-sm">
+                  <Phone className="w-3.5 h-3.5" />
+                  <span>{profile.phone}</span>
+                </div>
+              )}
+              {profile.isEmailVerified && (
+                <div className="flex items-center gap-1 mt-2">
+                  <Shield className="w-3 h-3 text-green-300" />
+                  <span className="text-xs text-green-200">Email đã xác thực</span>
+                </div>
+              )}
             </div>
-
-            <div>
-              <label className="text-sm font-semibold text-gray-700">
-                {t("profile.phone") || "Phone"}
-              </label>
-              <input
-                className="mt-1 w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-orange-200 text-slate-900 placeholder-slate-400"
-                value={form.phone}
-                onChange={(e) =>
-                  setForm((s) => ({ ...s, phone: e.target.value }))
-                }
-                placeholder="090xxxxxxx"
-              />
-            </div>
-
-            <button
-              onClick={handleSaveProfile}
-              disabled={savingProfile}
-              className={`w-full font-bold py-3 rounded-xl shadow-sm flex items-center justify-center gap-2 ${savingProfile
-                ? "bg-gray-300 text-gray-700"
-                : "bg-orange-600 text-white hover:bg-orange-700"
-                }`}
-            >
-              <Save className="w-5 h-5" />
-              {savingProfile
-                ? t("common.saving") || "Saving..."
-                : t("profile.save") || "Save changes"}
-            </button>
           </div>
         </div>
 
-        {/* Change password */}
-        <div className="bg-white p-6 rounded-2xl shadow-sm">
-          <div className="flex items-center gap-2 mb-3">
-            <KeyRound className="w-5 h-5 text-slate-500" />
-            <h3 className="font-bold text-gray-800">
-              {t("profile.changePassword") || "Change password"}
-            </h3>
-          </div>
-
-          <div className="space-y-3">
-            <input
-              type="password"
-              className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-orange-200 text-slate-900 placeholder-slate-400"
-              placeholder={t("profile.currentPassword") || "Current password"}
-              value={pw.currentPassword}
-              onChange={(e) =>
-                setPw((s) => ({ ...s, currentPassword: e.target.value }))
-              }
-            />
-            <input
-              type="password"
-              className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-orange-200 text-slate-900 placeholder-slate-400"
-              placeholder={
-                t("profile.newPassword") || "New password (min 8 chars)"
-              }
-              value={pw.newPassword}
-              onChange={(e) =>
-                setPw((s) => ({ ...s, newPassword: e.target.value }))
-              }
-            />
-            <input
-              type="password"
-              className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-orange-200 text-slate-900 placeholder-slate-400"
-              placeholder={
-                t("profile.confirmNewPassword") || "Confirm new password"
-              }
-              value={pw.confirmNewPassword}
-              onChange={(e) =>
-                setPw((s) => ({ ...s, confirmNewPassword: e.target.value }))
-              }
-            />
-
-            <button
-              onClick={handleChangePassword}
-              disabled={savingPassword}
-              className={`w-full font-bold py-3 rounded-xl shadow-sm ${savingPassword
-                ? "bg-gray-300 text-gray-700"
-                : "bg-slate-900 text-white hover:bg-slate-800"
-                }`}
-            >
-              {savingPassword
-                ? t("common.saving") || "Saving..."
-                : t("profile.updatePassword") || "Update password"}
-            </button>
-          </div>
+        {/* Quick Actions Menu */}
+        <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
+          <MenuItem
+            icon={<Edit2 className="w-5 h-5" />}
+            label={t("profile.editProfile") || "Chỉnh sửa thông tin"}
+            onClick={() => setShowEditModal(true)}
+          />
+          <MenuItem
+            icon={<KeyRound className="w-5 h-5" />}
+            label={t("profile.changePassword") || "Đổi mật khẩu"}
+            onClick={() => setShowPasswordModal(true)}
+          />
         </div>
 
-        {/* Menu Options (kept) */}
+        {/* Other Menu Options */}
         <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
           <MenuItem
             icon={<Award className="w-5 h-5" />}
             label="Điểm Tích Lũy & Voucher"
-            href="/guest/loyalty"
+            href={`/guest/loyalty?tableId=${tableId || ""}`}
           />
           <MenuItem
             icon={<History className="w-5 h-5" />}
             label={t("profile.menu.orderHistory")}
-            href="/guest/profile/orders"
+            href={`/guest/profile/orders?tableId=${tableId || ""}`}
           />
           <MenuItem
             icon={<Heart className="w-5 h-5" />}
             label={t("profile.menu.favorites")}
-            href="#"
-          />
-          <MenuItem
-            icon={<Settings className="w-5 h-5" />}
-            label={t("profile.menu.settings")}
             href="#"
           />
           <MenuItem
@@ -474,6 +414,169 @@ function ProfileContent() {
           {t("profile.version")} 1.0.0
         </div>
       </div>
+
+      {/* Edit Profile Modal */}
+      <Dialog open={showEditModal} onClose={() => setShowEditModal(false)} className="relative z-50">
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm" aria-hidden="true" />
+        <div className="fixed inset-0 flex items-center justify-center p-4">
+          <DialogPanel className="w-full max-w-md bg-white rounded-2xl shadow-2xl max-h-[85vh] overflow-y-auto">
+            <div className="sticky top-0 bg-white p-4 border-b border-gray-100 flex items-center justify-between">
+              <DialogTitle className="text-lg font-bold text-gray-800">
+                {t("profile.editProfile") || "Chỉnh sửa thông tin"}
+              </DialogTitle>
+              <button onClick={() => setShowEditModal(false)} className="p-1 hover:bg-gray-100 rounded-full">
+                <X className="w-5 h-5 text-gray-500" />
+              </button>
+            </div>
+
+            <div className="p-4 space-y-4">
+              <div>
+                <label className="text-sm font-semibold text-gray-700">
+                  {t("profile.name") || "Họ tên"}
+                </label>
+                <input
+                  className="mt-1 w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-orange-200 text-slate-900"
+                  value={form.name}
+                  onChange={(e) => setForm((s) => ({ ...s, name: e.target.value }))}
+                  placeholder="Nguyễn Văn A"
+                />
+              </div>
+
+              <div>
+                <label className="text-sm font-semibold text-gray-700">
+                  {t("profile.email") || "Email"}
+                </label>
+                <input
+                  className="mt-1 w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-orange-200 text-slate-900"
+                  value={form.email}
+                  onChange={(e) => setForm((s) => ({ ...s, email: e.target.value }))}
+                  placeholder="abc@gmail.com"
+                />
+                <p className="text-xs text-gray-400 mt-1">
+                  {t("profile.emailNote") || "Nếu đổi email, bạn cần xác thực lại."}
+                </p>
+              </div>
+
+              <div>
+                <label className="text-sm font-semibold text-gray-700">
+                  {t("profile.phone") || "Số điện thoại"}
+                </label>
+                <input
+                  className="mt-1 w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-orange-200 text-slate-900"
+                  value={form.phone}
+                  onChange={(e) => setForm((s) => ({ ...s, phone: e.target.value }))}
+                  placeholder="090xxxxxxx"
+                />
+              </div>
+
+              <button
+                onClick={handleSaveProfile}
+                disabled={savingProfile}
+                className={`w-full font-bold py-3 rounded-xl flex items-center justify-center gap-2 transition-all ${savingProfile
+                  ? "bg-gray-300 text-gray-600"
+                  : "bg-gradient-to-r from-orange-500 to-red-500 text-white shadow-lg shadow-orange-200"
+                  }`}
+              >
+                <Save className="w-5 h-5" />
+                {savingProfile ? t("common.saving") || "Đang lưu..." : t("profile.save") || "Lưu thay đổi"}
+              </button>
+            </div>
+          </DialogPanel>
+        </div>
+      </Dialog>
+
+      {/* Change Password Modal */}
+      <Dialog open={showPasswordModal} onClose={() => setShowPasswordModal(false)} className="relative z-50">
+        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm" aria-hidden="true" />
+        <div className="fixed inset-0 flex items-center justify-center p-4">
+          <DialogPanel className="w-full max-w-md bg-white rounded-2xl shadow-2xl max-h-[85vh] overflow-y-auto">
+            <div className="sticky top-0 bg-white p-4 border-b border-gray-100 flex items-center justify-between">
+              <DialogTitle className="text-lg font-bold text-gray-800">
+                {t("profile.changePassword") || "Đổi mật khẩu"}
+              </DialogTitle>
+              <button onClick={() => setShowPasswordModal(false)} className="p-1 hover:bg-gray-100 rounded-full">
+                <X className="w-5 h-5 text-gray-500" />
+              </button>
+            </div>
+
+            <div className="p-4 space-y-4">
+              <div>
+                <label className="text-sm font-semibold text-gray-700">
+                  {t("profile.currentPassword") || "Mật khẩu hiện tại"}
+                </label>
+                <div className="relative mt-1">
+                  <input
+                    type={showCurrentPw ? "text" : "password"}
+                    className="w-full px-4 py-3 pr-12 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-orange-200 text-slate-900"
+                    value={pw.currentPassword}
+                    onChange={(e) => setPw((s) => ({ ...s, currentPassword: e.target.value }))}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowCurrentPw(!showCurrentPw)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                  >
+                    {showCurrentPw ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                  </button>
+                </div>
+              </div>
+
+              <div>
+                <label className="text-sm font-semibold text-gray-700">
+                  {t("profile.newPassword") || "Mật khẩu mới (tối thiểu 8 ký tự)"}
+                </label>
+                <div className="relative mt-1">
+                  <input
+                    type={showNewPw ? "text" : "password"}
+                    className="w-full px-4 py-3 pr-12 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-orange-200 text-slate-900"
+                    value={pw.newPassword}
+                    onChange={(e) => setPw((s) => ({ ...s, newPassword: e.target.value }))}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowNewPw(!showNewPw)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                  >
+                    {showNewPw ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                  </button>
+                </div>
+              </div>
+
+              <div>
+                <label className="text-sm font-semibold text-gray-700">
+                  {t("profile.confirmNewPassword") || "Xác nhận mật khẩu mới"}
+                </label>
+                <div className="relative mt-1">
+                  <input
+                    type={showConfirmPw ? "text" : "password"}
+                    className="w-full px-4 py-3 pr-12 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-orange-200 text-slate-900"
+                    value={pw.confirmNewPassword}
+                    onChange={(e) => setPw((s) => ({ ...s, confirmNewPassword: e.target.value }))}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowConfirmPw(!showConfirmPw)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                  >
+                    {showConfirmPw ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                  </button>
+                </div>
+              </div>
+
+              <button
+                onClick={handleChangePassword}
+                disabled={savingPassword}
+                className={`w-full font-bold py-3 rounded-xl transition-all ${savingPassword
+                  ? "bg-gray-300 text-gray-600"
+                  : "bg-slate-900 text-white hover:bg-slate-800"
+                  }`}
+              >
+                {savingPassword ? t("common.saving") || "Đang lưu..." : t("profile.updatePassword") || "Đổi mật khẩu"}
+              </button>
+            </div>
+          </DialogPanel>
+        </div>
+      </Dialog>
     </>
   );
 }
@@ -487,3 +590,4 @@ export default function ProfilePage() {
     </main>
   );
 }
+

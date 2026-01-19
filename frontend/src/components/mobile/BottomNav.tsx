@@ -4,7 +4,7 @@ import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 import { useCartStore } from "@/store/useCartStore";
 import { useTableStore } from "@/store/useTableStore";
-import { Home, ShoppingCart, ClipboardList, User } from "lucide-react";
+import { UtensilsCrossed, ShoppingCart, ClipboardList, User } from "lucide-react";
 import { useI18n } from "@/contexts/I18nContext";
 
 export default function BottomNav() {
@@ -30,8 +30,8 @@ export default function BottomNav() {
                     className={`flex flex-col items-center justify-center w-full h-full transition-colors ${isActive("/guest") ? "text-orange-600" : "text-gray-400 hover:text-gray-600"
                         }`}
                 >
-                    <Home className="w-6 h-6 mb-1" strokeWidth={isActive("/guest") ? 2.5 : 2} />
-                    <span className="text-[10px] font-medium">{t('nav.home') || 'Trang chủ'}</span>
+                    <UtensilsCrossed className="w-6 h-6 mb-1" strokeWidth={isActive("/guest") ? 2.5 : 2} />
+                    <span className="text-[10px] font-medium">{t('menu.title') || 'Thực đơn'}</span>
                 </Link>
                 <Link
                     href={`/guest/cart?tableId=${tableId || ""}`}
