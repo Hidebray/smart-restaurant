@@ -74,6 +74,14 @@ enum InventoryTransactionType {
   RETURN
 }
 
+enum ReservationStatus {
+  PENDING
+  CONFIRMED
+  CANCELLED
+  COMPLETED
+  NO_SHOW
+}
+
 // =========================================================
 // 2. USER MANAGEMENT
 // =========================================================
@@ -101,6 +109,7 @@ model User {
   loyaltyPoints      LoyaltyPoints?
   pointsTransactions PointsTransaction[]
   voucherRedemptions VoucherRedemption[]
+  reservations       Reservation[]       @relation("CustomerReservations")
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -128,7 +137,8 @@ model Table {
   assignedWaiter   User?   @relation("WaiterTables", fields: [assignedWaiterId], references: [id])
 
   // Relations
-  orders Order[]
+  orders       Order[]
+  reservations Reservation[]
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
@@ -467,4 +477,42 @@ model InventoryTransaction {
   @@map("inventory_transactions")
 }
 
-// Add relation to Order model for inventory transactions
+// =========================================================
+// 10. TABLE RESERVATION SYSTEM
+// =========================================================
+
+model Reservation {
+  id      String @id @default(uuid())
+  tableId String @map("table_id")
+  table   Table  @relation(fields: [tableId], references: [id], onDelete: Cascade)
+
+  customerId String? @map("customer_id")
+  customer   User?   @relation("CustomerReservations", fields: [customerId], references: [id], onDelete: SetNull)
+
+  guestName  String  @map("guest_name")
+  guestPhone String  @map("guest_phone")
+  guestEmail String? @map("guest_email")
+
+  reservationDate DateTime @map("reservation_date")
+  reservationTime DateTime @map("reservation_time")
+  duration        Int      @default(120) // Duration in minutes
+  guestCount      Int      @default(2) @map("guest_count")
+
+  status          ReservationStatus @default(PENDING)
+  specialRequests String?           @map("special_requests")
+  notes           String? // Internal notes
+
+  confirmedAt DateTime? @map("confirmed_at")
+  cancelledAt DateTime? @map("cancelled_at")
+  completedAt DateTime? @map("completed_at")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([tableId])
+  @@index([customerId])
+  @@index([reservationDate])
+  @@index([status])
+  @@index([reservationTime])
+  @@map("reservations")
+}

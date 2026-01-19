@@ -23,6 +23,7 @@ export default function AdminLayout({
     { label: t('admin.staff'), href: "/admin/staff" },
     { label: "Loyalty", href: "/admin/loyalty" },
     { label: "Inventory", href: "/admin/inventory" },
+    { label: "Reservations", href: "/admin/reservations" },
     { label: t('admin.reports'), href: "/admin/reports" },
   ];
 
