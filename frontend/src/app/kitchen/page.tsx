@@ -38,6 +38,33 @@ export default function KitchenPage() {
     }
   };
 
+  const playNotification = () => {
+    try {
+      const AudioContext = window.AudioContext || (window as any).webkitAudioContext;
+      if (!AudioContext) return;
+
+      const ctx = new AudioContext();
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+
+      // Bell-like sound (Ding!)
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(660, ctx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(330, ctx.currentTime + 1);
+
+      gain.gain.setValueAtTime(0.3, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 1);
+
+      osc.start();
+      osc.stop(ctx.currentTime + 1);
+    } catch (e) {
+      console.error("Audio play failed", e);
+    }
+  };
+
   useEffect(() => {
     fetchOrders();
 
@@ -50,12 +77,15 @@ export default function KitchenPage() {
           socket.emit('join', 'kitchen');
         });
         socket.on('order_to_kitchen', (order: Order) => {
+          playNotification();
           setOrders((prev) => {
             if (prev.some(o => o.id === order.id)) return prev;
             return [order, ...prev];
           });
         });
         socket.on('order_updated', (order: Order) => {
+          // Optional: play sound on update? Maybe a different one?
+          // For now, let's just make sound on NEW orders.
           setOrders((prev) => {
             const idx = prev.findIndex((o) => o.id === order.id);
             if (idx > -1) {

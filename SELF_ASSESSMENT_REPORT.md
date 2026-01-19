@@ -104,7 +104,7 @@ Students must input minus points to every uncompleted feature in the SE column.
 |  | › Filter orders by status | \-0.25 | 0 |  | Filter: Received, Preparing, Ready, Completed |
 |  | › View order details | \-0.25 | 0 |  | Full order details with items, modifiers, notes |
 |  | › Update order status | \-0.25 | 0 |  | Progress order through states: Received → Preparing → Ready → Completed |
-|  | › Kitchen Display System (KDS) | -0.5 | chưa hoàn hiện (chưa có chuông) |  | Real-time order display for kitchen staff with sound notifications |
+|  | › Kitchen Display System (KDS) | -0.5 | 0 |  | Real-time order display for kitchen staff with sound notifications |
 |  | › Order Timer and Alerts | -0.25 | chưa làm |  | Highlight orders exceeding item's configured prep time |
 |  | Table Management |  |  |  |  |
 |  | › Create, edit, deactivate tables | -0.5 | chưa hoàn thiện (chưa vô hiệu hóa) |  | Create, edit, deactivate tables with capacity and location |
