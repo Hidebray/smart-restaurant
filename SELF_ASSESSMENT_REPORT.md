@@ -44,7 +44,7 @@ Students must input minus points to every uncompleted feature in the SE column.
 |  | › Category | \-0.25 | 0 |  | Filter by food categories (Appetizers, Main Dishes, Drinks, Desserts) |
 |  | Sort menu items by popularity | \-0.25 | 0 |  | Sort by most ordered items |
 |  | › Chef recommendation | \-0.25 | 0 |  | Filter/highlight items marked as chef's recommendations |
-|  | Menu item paging | \-0.75 | chưa làm |  | Pagination for large menus with infinite scroll. URL updated on search/filter/paging |
+|  | Menu item paging | \-0.75 | 0 |  | Pagination for large menus with infinite scroll. URL updated on search/filter/paging |
 |  | View menu item details | \-0.25 | 0 |  | Item detail page with full description, modifiers, allergen info |
 |  | View menu item status | \-0.25 | chưa làm (làm ở trang đặt món) |  | Display item availability status (Available, Unavailable, Sold out) |
 |  | Show related menu items | \-0.25 | chưa bấm được |  | Suggest items from same category or popular pairings |

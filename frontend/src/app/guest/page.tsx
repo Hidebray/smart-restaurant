@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo, Suspense } from "react";
+import { useState, useEffect, useMemo, Suspense, useRef, useCallback } from "react";
 import Image from "next/image";
 import { useSearchParams, useRouter } from "next/navigation";
 import { Product } from "@/types";
@@ -23,16 +23,16 @@ function GuestMenuContent() {
   const { products, fetchProducts, isLoading } = useMenuStore();
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [activeCategory, setActiveCategory] = useState("");
-  const [searchQuery, setSearchQuery] = useState("");
-  const [currentPage, setCurrentPage] = useState(1);
-  const [isValidating, setIsValidating] = useState(true);
-  const [sortBy, setSortBy] = useState<'default' | 'price_asc' | 'price_desc' | 'popularity'>('default');
-  const router = useRouter();
-
   const searchParams = useSearchParams();
   const tableIdParam = searchParams.get("tableId"); // Legacy
   const tokenParam = searchParams.get("token"); // New secure way
+
+  const [activeCategory, setActiveCategory] = useState(searchParams.get("category") || "");
+  const [searchQuery, setSearchQuery] = useState(searchParams.get("q") || "");
+  const [currentPage, setCurrentPage] = useState(parseInt(searchParams.get("page") || "1", 10));
+  const [isValidating, setIsValidating] = useState(true);
+  const [sortBy, setSortBy] = useState<'default' | 'price_asc' | 'price_desc' | 'popularity'>((searchParams.get("sort") as any) || 'default');
+  const router = useRouter();
 
   // We need to resolve the table ID either from the param or by fetching via token
   const [tableId, setTableId] = useState<string | null>(tableIdParam ?? null);
@@ -81,12 +81,11 @@ function GuestMenuContent() {
 
     resolveTable();
 
-    const pageParam = searchParams.get("page");
-    if (pageParam) {
-      const page = parseInt(pageParam, 10);
-      if (page > 0) setCurrentPage(page);
-    }
-  }, [tableIdParam, tokenParam, router, searchParams]);
+    resolveTable();
+  }, [tableIdParam, tokenParam, router]); // Remove searchParams dependency to avoid re-running on filter change causing loops with initialization logic if not careful, though harmless here as resolvedTable is idempotent-ish. Better:
+  // Actually, we just need to run resolveTable once or when major params change. 
+  // The state initialization from searchParams happens only on first render (useState initial value).
+  // So we are good.
 
   // Fetch products (cached in store)
   useEffect(() => {
@@ -96,14 +95,19 @@ function GuestMenuContent() {
   }, [tableId, isValidating, fetchProducts]);
 
 
-  // Update URL when page changes
+  // Update URL when page or filters changes
   useEffect(() => {
-    if (currentPage > 1 && tableId) {
-      router.replace(`/guest?tableId=${tableId}&page=${currentPage}`, { scroll: false });
-    } else if (tableId) {
-      router.replace(`/guest?tableId=${tableId}`, { scroll: false });
-    }
-  }, [currentPage, tableId, router]);
+    if (!tableId) return;
+
+    const params = new URLSearchParams();
+    params.set("tableId", tableId);
+    if (currentPage > 1) params.set("page", currentPage.toString());
+    if (activeCategory) params.set("category", activeCategory);
+    if (searchQuery) params.set("q", searchQuery);
+    if (sortBy !== 'default') params.set("sort", sortBy);
+
+    router.replace(`/guest?${params.toString()}`, { scroll: false });
+  }, [currentPage, tableId, activeCategory, searchQuery, sortBy, router]);
 
   // Extract unique categories
   const categories = useMemo(() => {
@@ -146,11 +150,33 @@ function GuestMenuContent() {
     return filtered;
   }, [products, activeCategory, searchQuery, sortBy]);
 
-  // Calculate pagination
+  // Calculate pagination (Infinite Scroll style: show 0 to N)
   const totalPages = Math.ceil(filteredProducts.length / ITEMS_PER_PAGE);
-  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-  const endIndex = startIndex + ITEMS_PER_PAGE;
-  const paginatedProducts = filteredProducts.slice(startIndex, endIndex);
+  const paginatedProducts = filteredProducts.slice(0, currentPage * ITEMS_PER_PAGE);
+
+  // Infinite Scroll Observer
+  const observerTarget = useRef(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting && currentPage < totalPages) {
+          setCurrentPage((prev) => prev + 1);
+        }
+      },
+      { threshold: 1.0 }
+    );
+
+    if (observerTarget.current) {
+      observer.observe(observerTarget.current);
+    }
+
+    return () => {
+      if (observerTarget.current) {
+        observer.unobserve(observerTarget.current);
+      }
+    };
+  }, [observerTarget, currentPage, totalPages]);
 
   // Reset to page 1 when filters change
   useEffect(() => {
@@ -281,63 +307,18 @@ function GuestMenuContent() {
         )}
       </div>
 
-      {/* Pagination Controls */}
-      {totalPages > 1 && (
-        <div className="px-4 py-6 flex justify-center items-center gap-2">
-          <button
-            onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
-            disabled={currentPage === 1}
-            className="px-4 py-2 rounded-lg bg-white text-gray-700 font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100 transition-colors shadow-sm"
-          >
-            ← {t('menu.prev')}
-          </button>
-
-          <div className="flex gap-2">
-            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => {
-              // Show first page, last page, current page, and pages around current
-              const shouldShow =
-                page === 1 ||
-                page === totalPages ||
-                (page >= currentPage - 1 && page <= currentPage + 1);
-
-              if (!shouldShow) {
-                // Show ellipsis
-                if (page === currentPage - 2 || page === currentPage + 2) {
-                  return <span key={page} className="px-2 py-2 text-gray-400">...</span>;
-                }
-                return null;
-              }
-
-              return (
-                <button
-                  key={page}
-                  onClick={() => setCurrentPage(page)}
-                  className={`px-4 py-2 rounded-lg font-medium transition-colors shadow-sm ${currentPage === page
-                    ? 'bg-[#e74c3c] text-white'
-                    : 'bg-white text-gray-700 hover:bg-gray-100'
-                    }`}
-                >
-                  {page}
-                </button>
-              );
-            })}
-          </div>
-
-          <button
-            onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
-            disabled={currentPage === totalPages}
-            className="px-4 py-2 rounded-lg bg-white text-gray-700 font-medium disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-100 transition-colors shadow-sm"
-          >
-            {t('menu.next')} →
-          </button>
+      {/* Infinite Scroll Loading Trigger */}
+      {currentPage < totalPages && (
+        <div ref={observerTarget} className="py-8 flex justify-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-orange-600"></div>
         </div>
       )}
 
       {/* Items info */}
       <div className="px-4 pb-4 mt-4 text-center text-sm text-gray-500">
         {filteredProducts.length > 0 && t('menu.showingItems', {
-          start: startIndex + 1,
-          end: Math.min(endIndex, filteredProducts.length),
+          start: 1,
+          end: Math.min(currentPage * ITEMS_PER_PAGE, filteredProducts.length),
           total: filteredProducts.length
         })}
       </div>
