@@ -1,0 +1,2 @@
+-- This migration is a duplicate of 20260119090000_add_inventory_management
+-- Marking as applied to avoid conflicts

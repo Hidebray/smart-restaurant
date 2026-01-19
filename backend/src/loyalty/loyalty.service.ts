@@ -252,31 +252,20 @@ export class LoyaltyService {
   async getAvailableVouchers(userId?: string) {
     const now = new Date();
 
-    return this.prisma.voucher.findMany({
+    // Prisma doesn't support field comparison in where clause, so we filter in memory
+    const vouchers = await this.prisma.voucher.findMany({
       where: {
         isActive: true,
-        AND: [
-          {
-            OR: [
-              { expiryDate: null },
-              { expiryDate: { gte: now } },
-            ],
-          },
-          {
-            OR: [
-              { maxUses: null },
-              {
-                AND: [
-                  { maxUses: { not: null } },
-                  { usedCount: { lt: Prisma.sql`max_uses` } },
-                ],
-              },
-            ],
-          },
+        OR: [
+          { expiryDate: null },
+          { expiryDate: { gte: now } },
         ],
       },
       orderBy: { discountValue: 'desc' },
     });
+    
+    // Filter out vouchers that have reached max uses
+    return vouchers.filter((v) => !v.maxUses || v.usedCount < v.maxUses);
   }
 
   /**

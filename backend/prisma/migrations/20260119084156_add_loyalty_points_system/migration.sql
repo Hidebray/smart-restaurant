@@ -1,3 +1,10 @@
+-- CreateEnum (if not exists)
+DO $$ BEGIN
+    CREATE TYPE "DiscountType" AS ENUM ('PERCENT', 'FIXED');
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;
+
 -- CreateEnum
 CREATE TYPE "LoyaltyTier" AS ENUM ('BRONZE', 'SILVER', 'GOLD', 'PLATINUM');
 

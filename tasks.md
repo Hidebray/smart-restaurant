@@ -303,13 +303,16 @@ The working order rotates daily following this sequence:
   - [x] Add discount field to orders
   - [x] Percentage and fixed amount discounts
   - [x] Apply discount in Bill Modal
-  - _Points:_ -0.25
+  - _Commit:_ `feat: implement discount system for orders`
+  - _Points:_ -0.25 ✅
 
-- [ ] **Task 7.18: Menu Item Detail Page**
-  - [ ] Create dedicated product detail page
-  - [ ] Show full description, allergens
-  - [ ] Display item availability status
-  - _Points:_ -0.5
+- [x] **Task 7.18: Menu Item Detail Page**
+  - [x] Create dedicated product detail page `/menu/items/[id]`
+  - [x] Show full description, allergens
+  - [x] Display item availability status
+  - [x] Link product cards to detail page
+  - _Commit:_ `feat: add product detail page with allergens and availability`
+  - _Points:_ -0.5 ✅
 
 - [x] **Task 7.19: Sort by Popularity**
   - [x] Track order count per product (Backend increment on Order Complete)
@@ -319,20 +322,61 @@ The working order rotates daily following this sequence:
 
 ---
 
+## **Module 8: Advanced Business Features**
+
+**Goal:** Implement advanced business management features for restaurant operations.
+
+- [x] **Task 8.1: Loyalty Points System**
+  - [x] Add loyalty points database schema (LoyaltyPoints, PointsTransaction, Voucher models)
+  - [x] Implement automatic points earning on order completion (1 point = 10,000 VND)
+  - [x] Create tier system (Bronze, Silver, Gold, Platinum)
+  - [x] Implement points redemption for discounts
+  - [x] Create voucher management system (Admin)
+  - [x] Add customer loyalty dashboard (`/guest/loyalty`)
+  - [x] Display points history and tier status
+  - _Commit:_ `feat: implement loyalty points system with vouchers and tier management`
+  - _Points:_ +2.0 (Advanced feature bonus)
+
+- [x] **Task 8.2: Inventory Management**
+  - [x] Add inventory database schema (Inventory, InventoryTransaction models)
+  - [x] Create inventory management UI (`/admin/inventory`)
+  - [x] Implement low stock alerts
+  - [x] Automatic inventory deduction on order completion
+  - [x] Restock and adjustment functionality
+  - [x] Transaction history tracking
+  - [x] Statistics dashboard
+  - _Commit:_ `feat: implement inventory management with low stock alerts`
+  - _Points:_ +1.5 (Advanced feature bonus)
+
+- [x] **Task 8.3: Table Reservation System**
+  - [x] Add reservation database schema (Reservation model)
+  - [x] Create reservation management UI (`/admin/reservations`)
+  - [x] Implement overlap detection
+  - [x] Status workflow (Pending → Confirmed → Completed/Cancelled/No-Show)
+  - [x] Filter by date and status
+  - [x] Upcoming reservations alert
+  - [x] Statistics dashboard
+  - _Commit:_ `feat: implement table reservation system with overlap detection`
+  - _Points:_ +1.5 (Advanced feature bonus)
+
+---
+
 ## **Estimated Points Summary**
 
 ### Current Implementation
 
 - ✅ Modules 1-6: ~68-70 points
+- ✅ Module 7: ~10-12 points (Essential Missing Features)
+- ✅ Module 8: ~5.0 points bonus (Advanced Business Features)
 
 ### After Critical Tasks (7.1-7.2)
 
-- Target: ~74-75 points
+- Target: ~79-80 points
 
 ### After High Priority (7.3-7.8)
 
-- Target: ~77-78 points
+- Target: ~82-83 points
 
 ### Full Completion
 
-- Maximum Possible: ~85+ points (with advanced features bonus)
+- Maximum Possible: **~90-95 points** (with advanced features bonus: Loyalty +2.0, Inventory +1.5, Reservation +1.5)

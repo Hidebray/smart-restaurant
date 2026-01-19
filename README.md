@@ -1,6 +1,6 @@
 # 🍽️ Smart Restaurant Management System
 
-A comprehensive full-stack restaurant management system with real-time order tracking, QR code table ordering, role-based access control, and online payments.
+A comprehensive full-stack restaurant management system with real-time order tracking, QR code table ordering, role-based access control, online payments, loyalty points system, inventory management, and table reservations.
 
 ## 📋 Table of Contents
 - [Features](#-features)
@@ -31,15 +31,19 @@ A comprehensive full-stack restaurant management system with real-time order tra
 - **Product Management**: Create, edit, delete menu items with categories
 - **Modifier Management**: Create, edit, delete modifier groups and options (e.g., Size, Toppings)
 - **Table Management**: Manage tables with QR code generation
-- **Staff Management**: Create/delete staff accounts (Waiter, Kitchen, Admin)
+- **Staff Management**: Create/delete/edit staff accounts (Waiter, Kitchen, Admin)
 - **Analytics & Reporting**: View key metrics, including total revenue, total orders, and top-selling products
+- **Loyalty Management**: Create and manage vouchers, view loyalty statistics
+- **Inventory Management**: Track product stock levels, low stock alerts, restock management
+- **Reservation Management**: Manage table reservations, view upcoming bookings, handle cancellations
 - **Smart Delete**: Tables with order history are set to INACTIVE instead of deleted
 
 #### 🤵 Waiter Dashboard
 - **Order Approval**: Accept or reject incoming orders
 - **Order Tracking**: Monitor orders across all stages (Pending → Ready → Served)
 - **Table Service**: Mark orders as served and complete payments
-- **Bill Management**: View bill summaries and QR codes for tables
+- **Bill Management**: View bill summaries, apply discounts, and generate QR codes for tables
+- **Assigned Tables**: View and manage tables assigned to the waiter
 - **Real-time Notifications**: Instant alerts for new orders and payment requests (Bell Ring)
 
 #### 👨‍🍳 Kitchen Dashboard
@@ -49,14 +53,16 @@ A comprehensive full-stack restaurant management system with real-time order tra
 
 #### 🍴 Customer Experience
 - **Digital Menu**: Browse products by category with images
+- **Product Detail Pages**: View full product details, allergens, availability status
 - **Smart Search**: Fuzzy search for menu items with typo tolerance (e.g., "spageti" → "Spaghetti")
-- **Cart Management**: Add items with modifiers (toppings, sizes)
+- **Cart Management**: Add items with modifiers (toppings, sizes), add order notes
 - **Order Placement**: Submit orders directly from table
 - **Order History**: View current and past orders
 - **Online Payment**: Pay via Stripe (Credit Card) or simulate payment in Mock Mode
 - **Call Waiter**: Request assistance or cash payment with one tap ("Bell Ring")
 - **Customer Registration**: Create personal accounts to save order history
 - **Item Reviews**: Rate and review products after ordering (1-5 stars + comments)
+- **Loyalty Points**: Earn points on orders, redeem vouchers, view points history
 - **Multi-language Support**: Switch between English and Vietnamese (EN/VI)
 
 ---
@@ -311,6 +317,19 @@ After seeding, use these accounts (Password: `password@123`):
 - ✅ **Chef Recommendations**: Highlight special dishes with "Chef's Choice" badge and toggle in Admin (Task 7.14)
 - ✅ **Related Items**: Suggests similar dishes from the same category in the product detail modal (Task 7.15)
 - ✅ **Sorting & Statistics**: Track product popularity and allow guests to sort menu by price or popularity (Task 7.19)
+- ✅ **Discount System**: Apply percentage or fixed amount discounts to orders (Task 7.17)
+- ✅ **Menu Item Detail Page**: Dedicated product detail page with allergens and availability (Task 7.18)
+- ✅ **Input Order Details**: Clear UI for adding order notes during checkout (Task 2.16)
+- ✅ **Create Admin Accounts**: Admin can create Admin accounts via Staff Management UI (Task 5.1)
+- ✅ **Manage Admin Accounts**: View, edit, and deactivate Admin accounts (Task 5.2)
+- ✅ **View Assigned Tables**: Waiter can view and manage tables assigned to them (Task 7.4)
+
+### Module 8: Advanced Business Features
+- ✅ **Loyalty Points System**: Automatic points earning on orders, tier system (Bronze/Silver/Gold/Platinum), points redemption
+- ✅ **Voucher Management**: Create and manage discount vouchers with validation (min order, expiry, max uses)
+- ✅ **Inventory Management**: Track product stock levels, low stock alerts, automatic inventory deduction on order completion
+- ✅ **Table Reservation System**: Book tables in advance, overlap detection, status management (Pending/Confirmed/Cancelled/Completed/No-Show)
+- ✅ **Reservation Analytics**: View reservation statistics, upcoming bookings, no-show tracking
 
 ---
 

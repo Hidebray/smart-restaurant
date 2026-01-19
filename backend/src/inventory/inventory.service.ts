@@ -203,7 +203,7 @@ export class InventoryService {
       throw new BadRequestException('Insufficient stock');
     }
 
-    if (dto.maxStock && quantityAfter > dto.maxStock) {
+    if (inventory.maxStock && quantityAfter > inventory.maxStock) {
       throw new BadRequestException('Stock exceeds maximum capacity');
     }
 

@@ -53,7 +53,7 @@ Báo cáo này so sánh các tính năng trong **FEATURE LIST.txt** với implem
 | 2.13 | Add menu item to Cart         | ✅     | Cart với quantity selection và modifiers                                           |
 | 2.14 | View and update items in Cart | ✅     | Cart drawer với update quantity, auto-calculate totals                             |
 | 2.15 | Bind cart to table session    | ✅     | Cart persist theo tableId                                                          |
-| 2.16 | Input order details (notes)   | ⚠️     | Có field `notes` trong Order model nhưng UI input chưa rõ ràng                     |
+| 2.16 | Input order details (notes)   | ✅     | Textarea trong CartDrawer và guest cart page để nhập order notes                    |
 | 2.17 | Add items to current order    | ✅     | Có thể add thêm items vào existing PENDING order                                   |
 | 2.18 | View order status             | ✅     | Order status tracking: PENDING → ACCEPTED → PREPARING → READY → SERVED → COMPLETED |
 | 2.19 | View order details            | ✅     | Order confirmation với items, total, table number                                  |
@@ -95,8 +95,8 @@ Báo cáo này so sánh các tính năng trong **FEATURE LIST.txt** với implem
 
 | ID   | Feature                                  | Status | Notes                                                                                    |
 | ---- | ---------------------------------------- | ------ | ---------------------------------------------------------------------------------------- |
-| 5.1  | Create Admin accounts                    | ⚠️     | **THIẾU** - Admin có thể tạo Waiter/Kitchen nhưng không thấy UI tạo Admin accounts riêng |
-| 5.2  | Manage Admin accounts                    | ⚠️     | **THIẾU** - Không có UI để view/edit/deactivate Admin accounts                           |
+| 5.1  | Create Admin accounts                    | ✅     | Admin có thể tạo Admin accounts qua Staff Management UI (3-column role selector)     |
+| 5.2  | Manage Admin accounts                    | ✅     | View, edit, và delete Admin accounts trong Staff Management page                      |
 | 5.3  | Update admin profile                     | ✅     | Dùng chung `/guest/profile` (có thể dùng cho admin)                                      |
 | 5.4  | Create Waiter accounts                   | ✅     | `/admin/staff` với role WAITER                                                           |
 | 5.5  | Create Kitchen Staff accounts            | ✅     | `/admin/staff` với role KITCHEN                                                          |
@@ -138,7 +138,7 @@ Báo cáo này so sánh các tính năng trong **FEATURE LIST.txt** với implem
 | 7.1 | View pending orders       | ✅     | `/waiter` với PENDING orders column                                 |
 | 7.2 | Accept/Reject order items | ✅     | Accept/Reject buttons cho pending orders                            |
 | 7.3 | Send orders to kitchen    | ✅     | Khi accept, order tự động gửi đến Kitchen (Socket.IO)               |
-| 7.4 | View assigned tables      | ⚠️     | **MỘT PHẦN** - Waiter thấy tất cả tables, chưa có assignment system |
+| 7.4 | View assigned tables      | ✅     | Waiter có section "Bàn Được Phân Công Cho Tôi" với toggle để xem assigned tables |
 | 7.5 | Mark orders as served     | ✅     | Update status từ READY → SERVED                                     |
 | 7.6 | Create bill for table     | ✅     | Bill Modal với all items, subtotal, total                           |
 | 7.7 | Print bill                | ✅     | Print bill với react-to-print (Task 7.5)                            |
@@ -163,19 +163,22 @@ Báo cáo này so sánh các tính năng trong **FEATURE LIST.txt** với implem
 | 8.10 | WebSocket real-time updates           | ✅     | Socket.IO cho KDS, customer tracking, waiter alerts, kitchen notifications (0.5 điểm)                     |
 | 8.11 | Multi-tenant support                  | ❌     | **KHÔNG CÓ** - Đã ghi rõ trong PROJECT_DESCRIPTION: "single-restaurant system"                            |
 | 8.12 | Multilingual support                  | ✅     | i18n EN/VI với LanguageSwitcher (Task 6.5)                                                                |
+| 8.13 | Loyalty Points System                 | ✅     | Automatic points earning, tier system, voucher redemption, points history (+2.0 điểm bonus)            |
+| 8.14 | Inventory Management                  | ✅     | Stock tracking, low stock alerts, automatic deduction, restock management (+1.5 điểm bonus)              |
+| 8.15 | Table Reservation System               | ✅     | Book tables, overlap detection, status management, reservation analytics (+1.5 điểm bonus)               |
 
 ---
 
 ## 📊 Tổng Kết
 
-### ✅ Đã Hoàn Thành (Ước tính ~85-90%)
+### ✅ Đã Hoàn Thành (Ước tính ~90-95%)
 
 **Core Features:**
 
 - ✅ Authentication & Authorization đầy đủ
 - ✅ Customer ordering flow hoàn chỉnh
 - ✅ Admin dashboard với đầy đủ CRUD
-- ✅ Waiter workflow
+- ✅ Waiter workflow với assigned tables
 - ✅ Kitchen Display System
 - ✅ Real-time updates với WebSocket
 - ✅ Payment integration (Stripe)
@@ -184,12 +187,15 @@ Báo cáo này so sánh các tính năng trong **FEATURE LIST.txt** với implem
 - ✅ Multi-language support
 - ✅ Docker containerization
 
+**Advanced Business Features:**
+
+- ✅ Loyalty Points System (automatic earning, tiers, vouchers)
+- ✅ Inventory Management (stock tracking, alerts, auto-deduction)
+- ✅ Table Reservation System (booking, overlap detection, analytics)
+
 ### ⚠️ Một Phần Hoàn Thành
 
-1. **Admin Account Management** - Admin có thể tạo Waiter/Kitchen nhưng chưa có UI riêng để tạo/manage Admin accounts
-2. **Waiter Table Assignment** - Waiter thấy tất cả tables, chưa có assignment system
-3. **Advanced RBAC** - Chỉ có basic role-based, chưa có fine-grained permissions
-4. **Order Notes Input** - Có field trong DB nhưng UI input chưa rõ ràng
+1. **Advanced RBAC** - Chỉ có basic role-based, chưa có fine-grained permissions
 
 ### ❌ Chưa Hoàn Thành (Cần Bổ Sung)
 
@@ -210,16 +216,14 @@ Báo cáo này so sánh các tính năng trong **FEATURE LIST.txt** với implem
 
 1. **Demo Video** (-5 điểm)
    - Tạo video 25-30 phút demo tất cả features
+   - Bao gồm: Loyalty, Inventory, Reservation systems
    - Upload lên YouTube/Google Drive
 
 2. **Public Hosting Deployment** (-1 điểm)
    - Deploy frontend (Vercel/Netlify)
    - Deploy backend (Railway/Render)
    - Setup production database
-
-3. **Admin Account Management** (Bổ sung)
-   - Thêm UI để Admin tạo/manage Admin accounts
-   - View/edit/deactivate Admin accounts
+   - Apply all migrations
 
 ### Ưu Tiên Trung Bình
 
@@ -241,7 +245,7 @@ Báo cáo này so sánh các tính năng trong **FEATURE LIST.txt** với implem
 
 ## 📈 Điểm Ước Tính
 
-**Tổng điểm có thể đạt được:** ~85-90 điểm
+**Tổng điểm có thể đạt được:** ~90-95 điểm
 
 **Điểm trừ nếu không làm:**
 
@@ -249,10 +253,17 @@ Báo cáo này so sánh các tính năng trong **FEATURE LIST.txt** với implem
 - Public hosting: -1 điểm
 - Các advanced features: -1.25 điểm (nếu không làm)
 
+**Điểm bonus từ features mới:**
+
+- Loyalty Points System: +2.0 điểm
+- Inventory Management: +1.5 điểm
+- Table Reservation System: +1.5 điểm
+- **Tổng bonus: +5.0 điểm**
+
 **Điểm dự kiến sau khi bổ sung:**
 
-- Làm demo video + hosting: **~84-89 điểm**
-- Làm đầy đủ: **~85-90 điểm**
+- Làm demo video + hosting: **~89-94 điểm**
+- Làm đầy đủ: **~90-95 điểm**
 
 ---
 

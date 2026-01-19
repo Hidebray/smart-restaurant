@@ -295,11 +295,12 @@ export class ReservationsService {
    * Cancel reservation
    */
   async cancel(id: string, reason?: string) {
+    const reservation = await this.findOne(id);
     return this.update(id, {
       status: ReservationStatus.CANCELLED,
       notes: reason
         ? `${reservation.notes || ''}\nCancelled: ${reason}`.trim()
-        : reservation.notes,
+        : reservation.notes || undefined,
     });
   }
 
