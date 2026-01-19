@@ -43,7 +43,8 @@
     "createCategory": "Tạo Danh Mục",
     "add": "Thêm",
     "name": "Tên",
-    "displayOrder": "Thứ tự hiển thị"
+    "displayOrder": "Thứ tự hiển thị",
+    "actions": "Hành động"
   },
   "productModal": {
     "maxSelectionError": "Chỉ được chọn tối đa {max} tùy chọn",

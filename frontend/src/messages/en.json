@@ -43,7 +43,8 @@
         "createCategory": "Create Category",
         "add": "Add",
         "name": "Name",
-        "displayOrder": "Display Order"
+        "displayOrder": "Display Order",
+        "actions": "Actions"
     },
     "productModal": {
         "maxSelectionError": "Choose at most {max} options",

@@ -23,6 +23,7 @@ import {
 } from "@/components/ui/Dialog";
 import Button from "@/components/ui/Button";
 import Input from "@/components/ui/Input";
+import * as Icons from "lucide-react";
 
 type FormValues = {
   name: string;
@@ -385,8 +386,9 @@ export default function ProductFormModal({
                 {...register("isChefRecommended")}
                 className="h-5 w-5 rounded border-gray-300 text-orange-600 focus:ring-orange-500"
               />
-              <label htmlFor="isChefRecommended" className="text-sm font-semibold select-none cursor-pointer">
-                👨‍🍳 {t('menu.chefsChoice') || "Chef Recommended"}
+              <label htmlFor="isChefRecommended" className="flex items-center gap-2 text-sm font-semibold select-none cursor-pointer">
+                <Icons.ChefHat className="w-4 h-4 text-orange-600" />
+                {t('menu.chefsChoice') || "Chef Recommended"}
               </label>
             </div>
           </div>
