@@ -10,6 +10,7 @@ import CategoryTabs from "@/components/mobile/CategoryTabs";
 import { useI18n } from "@/contexts/I18nContext";
 import { Search, Star } from "lucide-react";
 import { useMenuStore } from "@/store/useMenuStore";
+import Fuse from "fuse.js";
 
 const formatPrice = (price: number | string) => {
   return new Intl.NumberFormat("vi-VN", {
@@ -121,13 +122,22 @@ function GuestMenuContent() {
     // Create a copy to sort
     let filtered = [...products];
 
-    // Filter by Search Query
+    // Fuzzy Search with Fuse.js (supports typo tolerance)
     if (searchQuery.trim()) {
-      const lowerQuery = searchQuery.toLowerCase();
-      filtered = filtered.filter(p =>
-        p.name.toLowerCase().includes(lowerQuery) ||
-        (p.description && p.description.toLowerCase().includes(lowerQuery))
-      );
+      const fuse = new Fuse(filtered, {
+        keys: [
+          { name: 'name', weight: 0.7 },
+          { name: 'description', weight: 0.3 }
+        ],
+        threshold: 0.4, // 0 = exact match, 1 = match anything
+        distance: 100, // How far to search for a match
+        ignoreLocation: true, // Search anywhere in the string
+        includeScore: true,
+        minMatchCharLength: 2,
+      });
+
+      const results = fuse.search(searchQuery);
+      filtered = results.map(result => result.item);
     }
 
     // Filter by Category

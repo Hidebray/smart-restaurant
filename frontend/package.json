@@ -19,6 +19,7 @@
     "cookies-next": "^6.1.1",
     "date-fns": "^4.1.0",
     "file-saver": "^2.0.5",
+    "fuse.js": "^7.1.0",
     "js-cookie": "^3.0.5",
     "jsonwebtoken": "^9.0.3",
     "jszip": "^3.10.1",
