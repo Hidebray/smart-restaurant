@@ -138,7 +138,6 @@ model Product {
   modifierGroups ProductModifierGroup[]
   orderItems     OrderItem[]
   reviews        Review[]
-
   createdAt      DateTime      @default(now()) @map("created_at")
   updatedAt      DateTime      @updatedAt @map("updated_at")
 
@@ -152,7 +151,7 @@ model ProductImage {
   
   productId String   @map("product_id")
   product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
-
+  createdAt DateTime @default(now())
   @@map("product_images")
 }
 

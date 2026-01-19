@@ -37,4 +37,30 @@ export const productsApi = {
   remove: async (id: string): Promise<void> => {
     await api.delete(`/products/${id}`);
   },
+
+  uploadImages: (
+    productId: string,
+    files: File[],
+    opts?: { setPrimaryFirst?: boolean; replaceAll?: boolean },
+  ) => {
+    const fd = new FormData();
+    files.forEach((f) => fd.append("files", f));
+    return api
+      .post(`/products/${productId}/images`, fd, {
+        params: {
+          setPrimaryFirst: opts?.setPrimaryFirst ? "true" : "false",
+          replaceAll: opts?.replaceAll ? "true" : "false",
+        },
+        headers: { "Content-Type": "multipart/form-data" },
+      })
+      .then((r) => r.data);
+  },
+
+  setPrimaryImage: (productId: string, imageId: string) =>
+    api
+      .patch(`/products/${productId}/images/${imageId}/primary`)
+      .then((r) => r.data),
+
+  deleteImage: (productId: string, imageId: string) =>
+    api.delete(`/products/${productId}/images/${imageId}`).then((r) => r.data),
 };

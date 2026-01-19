@@ -43,14 +43,13 @@ export default function ProductFormModal({
 }) {
   const { data: modifierGroups } = useSWR<ModifierGroupWithWithOptions[]>(
     "modifiers",
-    modifiersApi.getAllGroups
+    modifiersApi.getAllGroups,
   );
 
   const {
     register,
     handleSubmit,
     reset,
-    control,
     watch,
     formState: { isSubmitting, errors },
   } = useForm<FormValues>({
@@ -65,10 +64,23 @@ export default function ProductFormModal({
     },
   });
 
-  const selectedModifierGroupIds = watch("modifierGroupIds");
+  /* ================= Image helpers ================= */
+  const API_BASE =
+    process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:5000";
 
+  const imgUrl = (u?: string | null) => {
+    if (!u) return "";
+    return u.startsWith("http") ? u : `${API_BASE}${u}`;
+  };
+
+  const [pendingFiles, setPendingFiles] = useState<File[]>([]);
+
+  /* ================= Reset form when open ================= */
   useEffect(() => {
     if (!open) return;
+
+    setPendingFiles([]);
+
     if (!product) {
       reset({
         name: "",
@@ -96,6 +108,7 @@ export default function ProductFormModal({
     });
   }, [open, product, reset]);
 
+  /* ================= Submit ================= */
   const onSubmit = async (values: FormValues) => {
     const payload: AdminProductUpsertPayload = {
       name: values.name,
@@ -107,16 +120,25 @@ export default function ProductFormModal({
     };
 
     try {
-      let updatedProduct: Product;
+      let savedProduct: Product;
+
       if (product) {
-        updatedProduct = await productsApi.update(product.id, payload);
+        savedProduct = await productsApi.update(product.id, payload);
       } else {
-        updatedProduct = await productsApi.create(payload);
+        savedProduct = await productsApi.create(payload);
       }
+
       await modifiersApi.updateProductModifierGroups(
-        updatedProduct.id,
-        values.modifierGroupIds
+        savedProduct.id,
+        values.modifierGroupIds,
       );
+
+      /* ✅ Upload multiple images */
+      if (pendingFiles.length > 0) {
+        await productsApi.uploadImages(savedProduct.id, pendingFiles);
+        setPendingFiles([]);
+      }
+
       onClose(true);
     } catch (error: any) {
       console.error("Product form error:", error);
@@ -125,26 +147,24 @@ export default function ProductFormModal({
           error.response?.data?.message ||
           error.message ||
           "Failed to save product"
-        }`
+        }`,
       );
     }
   };
 
   return (
-    <Dialog open={open} onOpenChange={(v) => (v ? null : onClose(false))}>
+    <Dialog open={open} onOpenChange={(v) => (!v ? onClose(false) : null)}>
       <DialogContent className="max-w-xl">
         <DialogHeader>
           <DialogTitle>{product ? "Edit Product" : "Add Product"}</DialogTitle>
         </DialogHeader>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+          {/* ================= Basic info ================= */}
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <div className="space-y-1">
               <label className="text-sm font-semibold">Name</label>
-              <Input
-                {...register("name", { required: "Name is required" })}
-                placeholder="Spicy Chicken Wings"
-              />
+              <Input {...register("name", { required: "Name is required" })} />
               {errors.name && (
                 <div className="text-xs text-red-600">
                   {errors.name.message}
@@ -159,7 +179,6 @@ export default function ProductFormModal({
                   required: "Price is required",
                   validate: (v) => (Number(v) > 0 ? true : "Price must be > 0"),
                 })}
-                placeholder="45000"
               />
               {errors.price && (
                 <div className="text-xs text-red-600">
@@ -169,12 +188,110 @@ export default function ProductFormModal({
             </div>
           </div>
 
+          {/* ================= Images ================= */}
+          <div className="mt-4">
+            <div className="flex items-center justify-between">
+              <h3 className="font-semibold">Images</h3>
+
+              <label className="text-sm px-3 py-2 rounded border bg-white cursor-pointer">
+                Upload images
+                <input
+                  type="file"
+                  accept="image/png,image/jpeg,image/webp"
+                  multiple
+                  className="hidden"
+                  onChange={(e) => {
+                    const files = Array.from(e.target.files || []);
+                    setPendingFiles((prev) => [...prev, ...files]);
+                    e.currentTarget.value = "";
+                  }}
+                />
+              </label>
+            </div>
+
+            {/* Pending upload */}
+            {pendingFiles.length > 0 && (
+              <div className="mt-3 rounded border p-3 bg-gray-50">
+                <div className="text-sm font-medium mb-2">
+                  Pending upload ({pendingFiles.length})
+                </div>
+                <div className="flex gap-2 flex-wrap">
+                  {pendingFiles.map((f, idx) => (
+                    <div
+                      key={idx}
+                      className="text-xs border rounded px-2 py-1 bg-white"
+                    >
+                      {f.name}
+                      <button
+                        type="button"
+                        className="ml-2 text-red-600"
+                        onClick={() =>
+                          setPendingFiles((p) => p.filter((_, i) => i !== idx))
+                        }
+                      >
+                        ✕
+                      </button>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Gallery */}
+            {product?.images?.length ? (
+              <div className="mt-3 grid grid-cols-2 sm:grid-cols-4 gap-3">
+                {product.images.map((img: any) => (
+                  <div
+                    key={img.id}
+                    className="border rounded-lg overflow-hidden bg-white"
+                  >
+                    <div className="aspect-square bg-gray-100">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={imgUrl(img.url)}
+                        alt="product"
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                    <div className="p-2 flex gap-2">
+                      <button
+                        type="button"
+                        className={`text-xs px-2 py-1 rounded border ${
+                          img.isPrimary ? "bg-black text-white" : "bg-white"
+                        }`}
+                        onClick={async () => {
+                          if (!product?.id) return;
+                          await productsApi.setPrimaryImage(product.id, img.id);
+                          onClose(true);
+                        }}
+                      >
+                        {img.isPrimary ? "Primary" : "Set primary"}
+                      </button>
+
+                      <button
+                        type="button"
+                        className="text-xs px-2 py-1 rounded border text-red-600"
+                        onClick={async () => {
+                          if (!product?.id) return;
+                          await productsApi.deleteImage(product.id, img.id);
+                          onClose(true);
+                        }}
+                      >
+                        Delete
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="mt-3 text-sm text-gray-500">No images yet.</div>
+            )}
+          </div>
+
+          {/* ================= Other fields ================= */}
           <div className="space-y-1">
             <label className="text-sm font-semibold">Description</label>
-            <Input
-              {...register("description")}
-              placeholder="Optional description..."
-            />
+            <Input {...register("description")} />
           </div>
 
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
@@ -184,20 +301,14 @@ export default function ProductFormModal({
                 {...register("categoryName", {
                   required: "Category name is required",
                 })}
-                placeholder="Drinks / Food / Dessert"
               />
-              {errors.categoryName && (
-                <div className="text-xs text-red-600">
-                  {errors.categoryName.message}
-                </div>
-              )}
             </div>
 
             <div className="space-y-1">
               <label className="text-sm font-semibold">Status</label>
               <select
                 {...register("status")}
-                className="h-10 w-full rounded-md border border-gray-300 bg-transparent px-3 text-sm focus:outline-none focus:ring-2 focus:ring-brand-primary focus:ring-offset-2"
+                className="h-10 w-full rounded-md border border-gray-300 px-3 text-sm"
               >
                 <option value="AVAILABLE">AVAILABLE</option>
                 <option value="UNAVAILABLE">UNAVAILABLE</option>
@@ -207,11 +318,10 @@ export default function ProductFormModal({
           </div>
 
           <div className="space-y-1">
-            <label className="text-sm font-semibold">Primary Image URL</label>
-            <Input {...register("imageUrl")} placeholder="https://..." />
-            <div className="text-xs text-gray-600">
-              Nếu bỏ trống, hệ thống sẽ dùng hình mặc định trên menu.
-            </div>
+            <label className="text-sm font-semibold">
+              Primary Image URL (optional)
+            </label>
+            <Input {...register("imageUrl")} />
           </div>
 
           <div className="space-y-1">
