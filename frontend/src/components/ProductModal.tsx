@@ -5,6 +5,7 @@ import Image from "next/image";
 import { Product, ModifierOption, ProductModifierGroup, Review } from "@/types"
 import { useCartStore } from "@/store/useCartStore";
 import { useMenuStore } from "@/store/useMenuStore";
+import { useI18n } from "@/contexts/I18nContext";
 import toast from "react-hot-toast";
 
 interface ProductModalProps {
@@ -14,6 +15,7 @@ interface ProductModalProps {
 }
 
 export default function ProductModal({ product, isOpen, onClose }: ProductModalProps) {
+    const { t } = useI18n();
     const [quantity, setQuantity] = useState(1);
     const [selectedModifiers, setSelelctedModifiers] = useState<Record<string, ModifierOption[]>>({});
     const [reviews, setReviews] = useState<Review[]>([]);
@@ -52,7 +54,7 @@ export default function ProductModal({ product, isOpen, onClose }: ProductModalP
                 newSelected = currentSelected.filter((item) => item.id !== option.id);
             } else {
                 if (group.maxSelections && currentSelected.length >= group.maxSelections) {
-                    toast(`Just choose at most ${group.maxSelections} option`)
+                    toast(t('productModal.maxSelectionError', { max: group.maxSelections }));
                     return;
                 }
                 newSelected = [...currentSelected, option];
@@ -82,7 +84,7 @@ export default function ProductModal({ product, isOpen, onClose }: ProductModalP
         );
 
         if (missingRequired) {
-            toast("Please select all required options");
+            toast(t('productModal.requiredError'));
             return;
         }
 
@@ -95,7 +97,7 @@ export default function ProductModal({ product, isOpen, onClose }: ProductModalP
         addToCart(product, quantity, allModifiers);
         onClose();
 
-        toast.success("Added to cart!");
+        toast.success(t('productModal.addedToCart'));
     };
 
     const formatPrice = (price: number | string) => {
@@ -104,7 +106,7 @@ export default function ProductModal({ product, isOpen, onClose }: ProductModalP
 
     return (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
-            <div className="bg-white rounded-2xl w-full max-w-lg max-h-[80vh] overflow-hidden flex flex-col shadow-2xl">
+            <div className="bg-white rounded-2xl w-full max-w-lg max-h-[90vh] overflow-hidden flex flex-col shadow-2xl">
 
                 {/* Header: Ảnh món */}
                 <div className="relative h-64 w-full shrink-0">
@@ -136,10 +138,10 @@ export default function ProductModal({ product, isOpen, onClose }: ProductModalP
                                     <div className="flex justify-between items-center mb-4">
                                         <h3 className="font-bold text-lg text-gray-800">
                                             {group.name}
-                                            {group.isRequired && <span className="ml-2 text-red-500 text-xs font-normal bg-red-50 px-2 py-0.5 rounded-full">Bắt buộc</span>}
+                                            {group.isRequired && <span className="ml-2 text-red-500 text-xs font-normal bg-red-50 px-2 py-0.5 rounded-full">{t('productModal.required')}</span>}
                                         </h3>
                                         <span className="text-xs font-medium text-gray-500 bg-gray-100 px-2 py-1 rounded">
-                                            {group.selectionType === 'SINGLE' ? 'Chọn 1' : `Tối đa ${group.maxSelections}`}
+                                            {group.selectionType === 'SINGLE' ? t('productModal.chooseOne') : t('productModal.maxSelection', { max: group.maxSelections })}
                                         </span>
                                     </div>
 
@@ -182,8 +184,7 @@ export default function ProductModal({ product, isOpen, onClose }: ProductModalP
                     {product.category && (
                         <div className="mt-10 border-t border-dashed pt-8 mb-4">
                             <div className="flex items-center gap-2 mb-4">
-                                <span className="text-xl">✨</span>
-                                <h3 className="font-bold text-lg text-gray-800">Món ăn gợi ý (Related Items)</h3>
+                                <h3 className="font-bold text-lg text-gray-800">{t('productModal.relatedItems')}</h3>
                             </div>
                             <RelatedItems
                                 currentProductId={product.id}
@@ -196,13 +197,13 @@ export default function ProductModal({ product, isOpen, onClose }: ProductModalP
                     {/* Reviews Section */}
                     <div className="mt-10 border-t border-dashed pt-8 mb-4">
                         <div className="flex items-center gap-2 mb-6">
-                            <h3 className="font-bold text-lg text-gray-800">Đánh giá từ khách hàng</h3>
+                            <h3 className="font-bold text-lg text-gray-800">{t('productModal.customerReviews')}</h3>
                             <span className="text-xs bg-gray-100 text-gray-700 px-2 py-0.5 rounded-full border border-gray-300">{reviews.length}</span>
                         </div>
 
                         {reviews.length === 0 ? (
                             <div className="text-center py-8 bg-gray-50 rounded-2xl border border-dashed border-gray-200">
-                                <p className="text-gray-400">Chưa có đánh giá nào cho món này</p>
+                                <p className="text-gray-400">{t('productModal.noReviews')}</p>
                             </div>
                         ) : (
                             <div className="space-y-4">
@@ -257,7 +258,7 @@ export default function ProductModal({ product, isOpen, onClose }: ProductModalP
                             onClick={handleAddToCart}
                             className="flex-1 bg-orange-600 text-white h-12 rounded-xl hover:bg-orange-700 active:scale-95 transition-all shadow-lg shadow-orange-200 flex items-center justify-between px-6"
                         >
-                            <span className="font-bold">Thêm vào đơn</span>
+                            <span className="font-bold">{t('productModal.addToOrder')}</span>
                             <span className="font-medium bg-orange-700/50 px-2 py-0.5 rounded text-sm">
                                 {formatPrice(calculateTotal())}
                             </span>
@@ -272,13 +273,14 @@ export default function ProductModal({ product, isOpen, onClose }: ProductModalP
 
 function RelatedItems({ currentProductId, categoryId, onClose }: { currentProductId: string, categoryId: string, onClose: () => void }) {
     const { products } = useMenuStore();
+    const { t } = useI18n();
 
     // Filter related items: same category, exclude current, limit to 3
     const related = products
         .filter(p => p.categoryId === categoryId && p.id !== currentProductId)
         .slice(0, 3);
 
-    if (related.length === 0) return <p className="text-gray-400 text-sm">Không có món gợi ý nào.</p>;
+    if (related.length === 0) return <p className="text-gray-400 text-sm">{t('productModal.noRelatedItems')}</p>;
 
     // Note: Simple display for now. Switching product logic would require parent control update.
     return (
@@ -293,7 +295,7 @@ function RelatedItems({ currentProductId, categoryId, onClose }: { currentProduc
                             className="object-cover"
                         />
                     </div>
-                    <span className="text-xs font-bold line-clamp-2 h-8">{item.name}</span>
+                    <span className="text-xs font-bold line-clamp-2 h-8 text-gray-900">{item.name}</span>
                     <span className="text-xs text-orange-600 font-bold mt-1">
                         {new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(Number(item.price))}
                     </span>

@@ -13,6 +13,19 @@
     "filter": "Lọc",
     "logout": "Đăng xuất"
   },
+  "productModal": {
+    "maxSelectionError": "Chỉ được chọn tối đa {max} tùy chọn",
+    "requiredError": "Vui lòng chọn tất cả các tùy chọn bắt buộc",
+    "addedToCart": "Đã thêm vào giỏ!",
+    "required": "Bắt buộc",
+    "chooseOne": "Chọn 1",
+    "maxSelection": "Tối đa {max}",
+    "relatedItems": "Món ăn gợi ý",
+    "customerReviews": "Đánh giá từ khách hàng",
+    "noReviews": "Chưa có đánh giá nào cho món này",
+    "addToOrder": "Thêm vào đơn",
+    "noRelatedItems": "Không có món gợi ý nào."
+  },
   "menu": {
     "title": "Thực Đơn",
     "searchPlaceholder": "Tìm món ăn...",

@@ -13,6 +13,19 @@
         "filter": "Filter",
         "logout": "Logout"
     },
+    "productModal": {
+        "maxSelectionError": "Choose at most {max} options",
+        "requiredError": "Please select all required options",
+        "addedToCart": "Added to cart!",
+        "required": "Required",
+        "chooseOne": "Choose 1",
+        "maxSelection": "Max {max}",
+        "relatedItems": "Related Items",
+        "customerReviews": "Customer Reviews",
+        "noReviews": "No reviews for this item yet",
+        "addToOrder": "Add to Order",
+        "noRelatedItems": "No related items found."
+    },
     "menu": {
         "title": "Menu",
         "searchPlaceholder": "Search menu items...",
