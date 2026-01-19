@@ -22,6 +22,7 @@ export default function AdminLayout({
     { label: t('admin.modifiers'), href: "/admin/modifiers" },
     { label: t('admin.staff'), href: "/admin/staff" },
     { label: "Loyalty", href: "/admin/loyalty" },
+    { label: "Inventory", href: "/admin/inventory" },
     { label: t('admin.reports'), href: "/admin/reports" },
   ];
 

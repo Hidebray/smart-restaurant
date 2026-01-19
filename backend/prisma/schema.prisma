@@ -67,6 +67,13 @@ enum PointsTransactionType {
   ADJUSTMENT
 }
 
+enum InventoryTransactionType {
+  IN
+  OUT
+  ADJUSTMENT
+  RETURN
+}
+
 // =========================================================
 // 2. USER MANAGEMENT
 // =========================================================
@@ -167,6 +174,7 @@ model Product {
   modifierGroups ProductModifierGroup[]
   orderItems     OrderItem[]
   reviews        Review[]
+  inventory      Inventory?
   createdAt      DateTime               @default(now()) @map("created_at")
   updatedAt      DateTime               @updatedAt @map("updated_at")
 
@@ -257,9 +265,10 @@ model Order {
   customerId String? @map("customer_id")
   customer   User?   @relation(fields: [customerId], references: [id])
 
-  items              OrderItem[]
-  pointsTransactions PointsTransaction[]
-  voucherRedemptions VoucherRedemption[]
+  items                 OrderItem[]
+  pointsTransactions    PointsTransaction[]
+  voucherRedemptions    VoucherRedemption[]
+  inventoryTransactions InventoryTransaction[] @relation("OrderInventoryTransactions")
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
@@ -408,4 +417,54 @@ model VoucherRedemption {
   @@map("voucher_redemptions")
 }
 
-// Add relation to Order model for voucher redemptions
+// =========================================================
+// 9. INVENTORY MANAGEMENT
+// =========================================================
+
+model Inventory {
+  id        String  @id @default(uuid())
+  productId String  @unique @map("product_id")
+  product   Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  quantity Int    @default(0) // Current stock quantity
+  minStock Int    @default(0) @map("min_stock") // Alert when below this
+  maxStock Int    @default(1000) @map("max_stock") // Maximum stock capacity
+  unit     String @default("pcs") // Unit: pcs, kg, liters, etc.
+
+  lastRestocked DateTime? @map("last_restocked")
+  lastUpdated   DateTime  @updatedAt @map("last_updated")
+  createdAt     DateTime  @default(now()) @map("created_at")
+
+  // Relations
+  transactions InventoryTransaction[]
+
+  @@index([productId])
+  @@index([quantity])
+  @@map("inventory")
+}
+
+model InventoryTransaction {
+  id          String    @id @default(uuid())
+  inventoryId String    @map("inventory_id")
+  inventory   Inventory @relation(fields: [inventoryId], references: [id], onDelete: Cascade)
+
+  quantity Int // Positive for IN, negative for OUT
+  type     InventoryTransactionType
+  reason   String? // e.g., "Order #123", "Restock", "Adjustment"
+
+  orderId String? @map("order_id")
+  order   Order?  @relation("OrderInventoryTransactions", fields: [orderId], references: [id], onDelete: SetNull)
+
+  quantityBefore Int @map("quantity_before")
+  quantityAfter  Int @map("quantity_after")
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([inventoryId])
+  @@index([orderId])
+  @@index([createdAt])
+  @@index([type])
+  @@map("inventory_transactions")
+}
+
+// Add relation to Order model for inventory transactions

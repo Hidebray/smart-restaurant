@@ -5,9 +5,10 @@ import { PrismaModule } from 'src/prisma/prisma.module';
 import { OrdersGateway } from 'src/events/orders.gateway';
 import { AuthModule } from 'src/auth/auth.module';
 import { LoyaltyModule } from '../loyalty/loyalty.module';
+import { InventoryModule } from '../inventory/inventory.module';
 
 @Module({
-  imports: [PrismaModule, AuthModule, forwardRef(() => LoyaltyModule)],
+  imports: [PrismaModule, AuthModule, forwardRef(() => LoyaltyModule), forwardRef(() => InventoryModule)],
   controllers: [OrdersController],
   providers: [OrdersService, OrdersGateway],
   exports: [OrdersGateway],

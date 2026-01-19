@@ -13,6 +13,7 @@ import { ReportsModule } from './reports/reports.module';
 import { PaymentsModule } from './payments/payments.module';
 import { ReviewsModule } from './reviews/reviews.module';
 import { LoyaltyModule } from './loyalty/loyalty.module';
+import { InventoryModule } from './inventory/inventory.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { LoyaltyModule } from './loyalty/loyalty.module';
     PaymentsModule,
     ReviewsModule,
     LoyaltyModule,
+    InventoryModule,
   ],
   controllers: [AppController],
   providers: [AppService],

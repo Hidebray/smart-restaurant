@@ -5,6 +5,7 @@ import { PrismaService } from 'src/prisma/prisma.service';
 import { OrdersGateway } from 'src/events/orders.gateway';
 import { UpdateDiscountDto } from './dto/update-discount.dto';
 import { LoyaltyService } from '../loyalty/loyalty.service';
+import { InventoryService } from '../inventory/inventory.service';
 import { Prisma } from '@prisma/client';
 
 @Injectable()
@@ -14,6 +15,8 @@ export class OrdersService {
     private ordersGateway: OrdersGateway,
     @Inject(forwardRef(() => LoyaltyService))
     private loyaltyService?: LoyaltyService,
+    @Inject(forwardRef(() => InventoryService))
+    private inventoryService?: InventoryService,
   ) { }
 
   async create(createOrderDto: CreateOrderDto) {
@@ -195,6 +198,16 @@ export class OrdersService {
         } catch (error) {
           // Log error but don't fail the order completion
           console.error('Failed to add loyalty points:', error);
+        }
+      }
+
+      // 4. Update inventory when order is completed
+      if (this.inventoryService) {
+        try {
+          await this.inventoryService.updateInventoryForOrder(updated.id, true);
+        } catch (error) {
+          // Log error but don't fail the order completion
+          console.error('Failed to update inventory:', error);
         }
       }
     }
