@@ -32,6 +32,7 @@ type FormValues = {
   imageUrl: string;
   modifierGroupIds: string[];
   isChefRecommended: boolean;
+  prepTimeMinutes: string;
 };
 
 export default function ProductFormModal({
@@ -65,6 +66,7 @@ export default function ProductFormModal({
       imageUrl: "",
       modifierGroupIds: [],
       isChefRecommended: false,
+      prepTimeMinutes: "",
     },
   });
 
@@ -95,6 +97,8 @@ export default function ProductFormModal({
         categoryName: "",
         imageUrl: "",
         modifierGroupIds: [],
+        isChefRecommended: false,
+        prepTimeMinutes: "",
       });
       return;
     }
@@ -112,6 +116,7 @@ export default function ProductFormModal({
       modifierGroupIds:
         product.modifierGroups?.map((pmg) => pmg.modifierGroupId) || [],
       isChefRecommended: product.isChefRecommended || false,
+      prepTimeMinutes: product.prepTimeMinutes ? String(product.prepTimeMinutes) : "",
     });
   }, [open, product, reset]);
 
@@ -126,6 +131,7 @@ export default function ProductFormModal({
       categoryName: values.categoryName,
       imageUrl: values.imageUrl || null,
       isChefRecommended: values.isChefRecommended,
+      prepTimeMinutes: values.prepTimeMinutes ? Number(values.prepTimeMinutes) : null,
     };
 
     try {
@@ -194,6 +200,24 @@ export default function ProductFormModal({
                 </div>
               )}
             </div>
+          </div>
+
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+            <div className="space-y-1">
+              <label className="text-sm font-semibold">Prep Time (minutes)</label>
+              <Input
+                type="number"
+                {...register("prepTimeMinutes", {
+                  min: { value: 0, message: "Must be >= 0" }
+                })}
+              />
+              {errors.prepTimeMinutes && (
+                <div className="text-xs text-red-600">
+                  {errors.prepTimeMinutes.message}
+                </div>
+              )}
+            </div>
+            <div className="space-y-1"></div>
           </div>
 
           <div className="space-y-1">

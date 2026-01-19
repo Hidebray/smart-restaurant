@@ -29,7 +29,7 @@ export const DialogContent: React.FC<{
 }> = ({ children, className = "" }) => {
   return (
     <div
-      className={`relative z-50 grid w-full max-w-lg gap-4 border bg-white text-gray-900 p-6 shadow-lg duration-200 sm:rounded-lg md:w-full ${className}`}
+      className={`relative z-50 grid w-full max-w-lg gap-4 border bg-white text-gray-900 p-6 shadow-lg duration-200 sm:rounded-lg md:w-full max-h-[90vh] overflow-y-auto ${className}`}
       onClick={(e) => e.stopPropagation()} // Ngăn sự kiện click lan ra overlay
     >
       {children}

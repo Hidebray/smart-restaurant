@@ -89,15 +89,15 @@ Students must input minus points to every uncompleted feature in the SE column.
 |  | View menu item list | \-0.5 | 0 |  | List all menu items with filters and pagination |
 |  | Filter menu items by name, category | \-0.25 | 0 |  | Search and filter menu items |
 |  | Sort menu items by creation time, price, popularity | \-0.25 | 0 |  | Sortable menu item list |
-|  | Create a new menu item | \-0.25 | !BUG không tạo hay sửa được (Error: property isChefRecommended should not exist) |  | Add item with name, price, description, category, prep time |
-|  | Upload multiple menu item photos | \-0.5 | !BUG như trên |  | Multi-image upload for menu items |
-|  | Add menu item to category with modifiers | \-0.25 | !BUG như trên |  | Assign categories and create modifier groups (Size, Extras) |
+|  | Create a new menu item | \-0.25 | 0 |  | Add item with name, price, description, category, prep time |
+|  | Upload multiple menu item photos | \-0.5 | 0 |  | Multi-image upload for menu items |
+|  | Add menu item to category with modifiers | \-0.25 | 0 |  | Assign categories and create modifier groups (Size, Extras) |
 |  | Menu Item Modifiers | 0.5 | 0 |  | Modifier groups (Size, Extras) with price adjustments |
 |  | Specify menu item status | \-0.25 | chưa làm |  | Available, Unavailable, Sold out |
-|  | Verify user input | \-0.25 | !BUG như trên |  | Input validation for menu items |
-|  | Update a menu item | \-0.25 | !BUG như trên |  | Edit existing menu items |
-|  | Add, remove menu item photos | \-0.25 | !BUG như trên |  | Manage item images |
-|  | Change menu item category, modifiers | \-0.25 | !BUG như trên |  | Update item categorization |
+|  | Verify user input | \-0.25 | 0 |  | Input validation for menu items |
+|  | Update a menu item | \-0.25 | 0 |  | Edit existing menu items |
+|  | Add, remove menu item photos | \-0.25 | chưa làm |  | Manage item images |
+|  | Change menu item category, modifiers | \-0.25 | 0 |  | Update item categorization |
 |  | Update menu item status | \-0.25 | chưa làm |  | Toggle availability |
 |  | Verify user input | \-0.25 | chưa làm |  | Validation on updates |
 |  | Customer orders (Order Management) |  |  |  |  |

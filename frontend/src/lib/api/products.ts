@@ -10,6 +10,7 @@ export type AdminProductUpsertPayload = {
   categoryName: string;
   imageUrl?: string | null;
   isChefRecommended?: boolean;
+  prepTimeMinutes?: number | null;
 };
 
 export const productsApi = {

@@ -55,6 +55,7 @@ export interface Product {
   images: ProductImage[];
   modifierGroups: ProductModifierGroup[]; // Important: Topping/Size
   isChefRecommended?: boolean;
+  prepTimeMinutes?: number | null;
   orderCount?: number;
 }
 

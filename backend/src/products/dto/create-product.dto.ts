@@ -1,11 +1,15 @@
 import {
   IsEnum,
+  IsInt,
   IsNotEmpty,
   IsNumberString,
   IsOptional,
+  IsPositive,
   IsString,
   IsUrl,
+  IsBoolean,
 } from 'class-validator';
+import { Type } from 'class-transformer';
 
 export class CreateProductDto {
   @IsString()
@@ -36,4 +40,14 @@ export class CreateProductDto {
   @IsOptional()
   @IsUrl({ require_tld: false })
   imageUrl?: string | null;
+
+  @IsOptional()
+  @IsBoolean()
+  isChefRecommended?: boolean;
+
+  @IsOptional()
+  @IsInt()
+  @IsPositive()
+  @Type(() => Number)
+  prepTimeMinutes?: number;
 }

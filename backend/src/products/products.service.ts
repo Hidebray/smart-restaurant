@@ -14,7 +14,7 @@ import * as path from 'path';
 
 @Injectable()
 export class ProductsService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService) { }
 
   async addProductImages(
     productId: string,
@@ -137,7 +137,7 @@ export class ProductsService {
   }
 
   async create(createProductDto: CreateProductDto) {
-    const { name, description, price, status, categoryName, imageUrl, allergens } =
+    const { name, description, price, status, categoryName, imageUrl, allergens, isChefRecommended, prepTimeMinutes } =
       createProductDto;
 
     const category = await this.prisma.category.upsert({
@@ -154,10 +154,12 @@ export class ProductsService {
         price: new Prisma.Decimal(price),
         status: (status ?? 'AVAILABLE') as any,
         categoryId: category.id,
+        isChefRecommended: isChefRecommended ?? false,
+        prepTimeMinutes: prepTimeMinutes ?? null,
         images: imageUrl
           ? {
-              create: [{ url: imageUrl, isPrimary: true }],
-            }
+            create: [{ url: imageUrl, isPrimary: true }],
+          }
           : undefined,
       },
       include: {
@@ -212,7 +214,8 @@ export class ProductsService {
 
       const products = await this.prisma.product.findMany({
         include: {
-          images: true, // giữ tương thích admin UI của bạn
+          images: true,
+          category: true,
         },
       });
 
@@ -238,6 +241,7 @@ export class ProductsService {
       orderBy: orderBy as any,
       include: {
         images: true,
+        category: true,
       },
     });
   }
@@ -308,7 +312,7 @@ export class ProductsService {
     });
     if (!existing) throw new NotFoundException('Product not found');
 
-    const { name, description, price, status, categoryName, imageUrl, allergens } =
+    const { name, description, price, status, categoryName, imageUrl, allergens, isChefRecommended, prepTimeMinutes } =
       updateProductDto;
 
     let categoryId: string | undefined;
@@ -337,13 +341,15 @@ export class ProductsService {
           price === undefined ? undefined : new Prisma.Decimal(String(price)),
         status: status ?? undefined,
         categoryId: categoryId ?? undefined,
+        isChefRecommended: isChefRecommended ?? undefined,
+        prepTimeMinutes: prepTimeMinutes === undefined ? undefined : prepTimeMinutes,
         images: shouldReplaceImage
           ? {
-              deleteMany: currentPrimary
-                ? { id: currentPrimary.id }
-                : undefined,
-              create: [{ url: imageUrl!, isPrimary: true }],
-            }
+            deleteMany: currentPrimary
+              ? { id: currentPrimary.id }
+              : undefined,
+            create: [{ url: imageUrl!, isPrimary: true }],
+          }
           : shouldClearImage && currentPrimary
             ? { deleteMany: { id: currentPrimary.id } }
             : undefined,
