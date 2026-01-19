@@ -13,9 +13,9 @@ function formatPrice(price: string | number) {
 }
 
 const statusBadge: Record<string, string> = {
-  AVAILABLE: "bg-green-100 text-green-800",
-  UNAVAILABLE: "bg-gray-200 text-gray-800",
-  SOLD_OUT: "bg-red-100 text-red-800",
+  AVAILABLE: "bg-green-100 text-green-900 border border-green-300",
+  UNAVAILABLE: "bg-gray-200 text-gray-900 border border-gray-400",
+  SOLD_OUT: "bg-red-100 text-red-900 border border-red-300",
 };
 
 export default function ProductList({
@@ -37,7 +37,7 @@ export default function ProductList({
 
   return (
     <div className="overflow-hidden rounded-xl border bg-white">
-      <div className="grid grid-cols-12 gap-3 border-b bg-gray-50 px-4 py-3 text-xs font-bold uppercase tracking-wide text-gray-600">
+      <div className="grid grid-cols-12 gap-3 border-b bg-gray-100 px-4 py-3 text-xs font-bold uppercase tracking-wide text-gray-800">
         <div className="col-span-5">Product</div>
         <div className="col-span-3">Category</div>
         <div className="col-span-2">Price</div>
@@ -83,7 +83,7 @@ export default function ProductList({
 
             <div className="col-span-1">
               <span
-                className={`inline-flex rounded-full px-2 py-1 text-xs font-bold ${statusBadge[p.status] || "bg-gray-100 text-gray-700"
+                className={`inline-flex rounded-full px-2 py-1 text-xs font-bold ${statusBadge[p.status] || "bg-gray-100 text-gray-900 border border-gray-300"
                   }`}
               >
                 {p.status}

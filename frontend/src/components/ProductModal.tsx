@@ -197,7 +197,7 @@ export default function ProductModal({ product, isOpen, onClose }: ProductModalP
                     <div className="mt-10 border-t border-dashed pt-8 mb-4">
                         <div className="flex items-center gap-2 mb-6">
                             <h3 className="font-bold text-lg text-gray-800">Đánh giá từ khách hàng</h3>
-                            <span className="text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded-full">{reviews.length}</span>
+                            <span className="text-xs bg-gray-100 text-gray-700 px-2 py-0.5 rounded-full border border-gray-300">{reviews.length}</span>
                         </div>
 
                         {reviews.length === 0 ? (

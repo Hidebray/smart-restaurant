@@ -121,10 +121,10 @@ export default function ProductDetailPage() {
                   </p>
                 </div>
                 <div
-                  className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-sm font-semibold ${
+                  className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-sm font-semibold border ${
                     isAvailable
-                      ? "bg-green-100 text-green-700"
-                      : "bg-red-100 text-red-700"
+                      ? "bg-green-100 text-green-900 border-green-300"
+                      : "bg-red-100 text-red-900 border-red-300"
                   }`}
                 >
                   {isAvailable ? (
@@ -163,7 +163,7 @@ export default function ProductDetailPage() {
                     {allergens.map((a, idx) => (
                       <span
                         key={idx}
-                        className="px-3 py-1 rounded-full bg-amber-50 text-amber-800 text-sm border border-amber-200"
+                        className="px-3 py-1 rounded-full bg-amber-100 text-amber-900 text-sm border border-amber-300 font-medium"
                       >
                         {a}
                       </span>

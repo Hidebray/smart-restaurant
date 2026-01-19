@@ -97,7 +97,7 @@ export default function StaffPage() {
                 {/* Waiters Section */}
                 <section>
                     <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
-                        🤵 Waiters <span className="bg-gray-200 text-sm px-2 py-1 rounded-full">{waiters.length}</span>
+                        🤵 Waiters <span className="bg-gray-200 text-gray-900 text-sm px-2 py-1 rounded-full border border-gray-300">{waiters.length}</span>
                     </h2>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                         {waiters.map(user => (
@@ -110,7 +110,7 @@ export default function StaffPage() {
                 {/* Kitchen Section */}
                 <section>
                     <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
-                        👨‍🍳 Kitchen Staff <span className="bg-gray-200 text-sm px-2 py-1 rounded-full">{kitchenStaff.length}</span>
+                        👨‍🍳 Kitchen Staff <span className="bg-gray-200 text-gray-900 text-sm px-2 py-1 rounded-full border border-gray-300">{kitchenStaff.length}</span>
                     </h2>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                         {kitchenStaff.map(user => (
@@ -123,7 +123,7 @@ export default function StaffPage() {
                 {/* Admins Section */}
                 <section>
                     <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
-                        🛡️ Admins <span className="bg-gray-200 text-sm px-2 py-1 rounded-full">{admins.length}</span>
+                        🛡️ Admins <span className="bg-gray-200 text-gray-900 text-sm px-2 py-1 rounded-full border border-gray-300">{admins.length}</span>
                     </h2>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                         {admins.map(user => (
@@ -145,22 +145,22 @@ function StaffCard({ user, icon, onEdit, onDelete }: {
     onDelete: (userId: string, userName: string) => void;
 }) {
     return (
-        <div className="bg-white p-4 rounded-lg shadow border border-gray-100 flex items-start justify-between">
-            <div className="flex-1">
-                <div className="font-bold text-lg flex items-center gap-2">
+        <div className="bg-white p-4 rounded-lg shadow border border-gray-200 flex items-start justify-between hover:shadow-md transition-shadow">
+            <div className="flex-1 min-w-0">
+                <div className="font-bold text-lg flex items-center gap-2 text-gray-900">
                     {icon} {user.name}
                 </div>
-                <div className="text-gray-600 text-sm">{user.email}</div>
-                {user.phone && <div className="text-gray-500 text-xs mt-1">📞 {user.phone}</div>}
+                <div className="text-gray-700 text-sm mt-1">{user.email}</div>
+                {user.phone && <div className="text-gray-600 text-xs mt-1">📞 {user.phone}</div>}
             </div>
-            <div className="flex flex-col items-end gap-2">
-                <div className="text-xs font-bold text-gray-400 uppercase tracking-wider">
+            <div className="flex flex-col items-end gap-2 ml-4">
+                <div className="text-xs font-bold text-gray-600 bg-gray-100 px-2 py-1 rounded uppercase tracking-wider">
                     {user.role}
                 </div>
                 <div className="flex gap-2">
                     <button
                         onClick={() => onEdit(user)}
-                        className="text-blue-500 hover:text-blue-700 text-xs font-medium flex items-center gap-1 transition-colors"
+                        className="text-blue-600 hover:text-blue-800 hover:bg-blue-50 text-xs font-medium flex items-center gap-1 transition-colors px-2 py-1 rounded"
                         title="Edit staff"
                     >
                         <Icons.Edit className="h-3 w-3" />
@@ -168,7 +168,7 @@ function StaffCard({ user, icon, onEdit, onDelete }: {
                     </button>
                     <button
                         onClick={() => onDelete(user.id, user.name)}
-                        className="text-red-500 hover:text-red-700 text-xs font-medium flex items-center gap-1 transition-colors"
+                        className="text-red-600 hover:text-red-800 hover:bg-red-50 text-xs font-medium flex items-center gap-1 transition-colors px-2 py-1 rounded"
                         title="Delete staff"
                     >
                         <Icons.Trash2 className="h-3 w-3" />

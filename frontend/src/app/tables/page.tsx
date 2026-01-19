@@ -94,8 +94,8 @@ function TablesContent() {
                 href={`/guest?tableId=${table.id}`}
                 className="bg-white p-4 rounded-2xl shadow-sm border border-slate-100 active:scale-[0.98] transition-all hover:shadow-md flex flex-col items-center text-center group relative overflow-hidden"
               >
-                <div className={`absolute top-0 right-0 px-3 py-1 rounded-bl-xl text-xs font-bold ${table.status === 'AVAILABLE' ? 'bg-green-100 text-green-700' :
-                  table.status === 'OCCUPIED' ? 'bg-red-100 text-red-700' : 'bg-gray-100 text-gray-700'
+                <div className={`absolute top-0 right-0 px-3 py-1 rounded-bl-xl text-xs font-bold border ${table.status === 'AVAILABLE' ? 'bg-green-100 text-green-900 border-green-300' :
+                  table.status === 'OCCUPIED' ? 'bg-red-100 text-red-900 border-red-300' : 'bg-gray-200 text-gray-900 border-gray-400'
                   }`}>
                   {table.status === 'AVAILABLE' ? t('tables.available') : table.status === 'OCCUPIED' ? t('tables.occupied') : table.status}
                 </div>
@@ -109,7 +109,7 @@ function TablesContent() {
                   <span>{t('tables.capacity', { capacity: table.capacity })}</span>
                 </div>
 
-                <button className="w-full py-2 px-3 bg-gray-50 text-gray-600 rounded-lg text-sm font-bold group-hover:bg-orange-600 group-hover:text-white transition-colors">
+                <button className="w-full py-2 px-3 bg-gray-100 text-gray-800 rounded-lg text-sm font-bold group-hover:bg-orange-600 group-hover:text-white transition-colors">
                   {t('tables.selectTable')}
                 </button>
               </Link>

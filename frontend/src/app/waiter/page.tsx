@@ -185,13 +185,13 @@ export default function WaiterPage() {
         <h1 className="text-3xl font-bold text-gray-800">🤵 {t('waiter.title')}</h1>
         <div className="flex items-center gap-4">
           <div className="flex gap-2 text-sm font-bold">
-            <span className="bg-green-100 text-green-800 px-3 py-1 rounded-full">
+            <span className="bg-green-100 text-green-900 border border-green-300 px-3 py-1 rounded-full">
               {t('waiter.readyToServe')}: {readyOrders.length}
             </span>
-            <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full">
+            <span className="bg-blue-100 text-blue-900 border border-blue-300 px-3 py-1 rounded-full">
               {t('waiter.currentlyServing')}: {servedOrders.length}
             </span>
-            <span className="bg-purple-100 text-purple-800 px-3 py-1 rounded-full">
+            <span className="bg-purple-100 text-purple-900 border border-purple-300 px-3 py-1 rounded-full">
               Bàn của tôi: {assignedTables.length}
             </span>
           </div>
@@ -277,16 +277,16 @@ export default function WaiterPage() {
 
         {/* CỘT 1: ĐƠN MỚI - CHỜ PHÊ DUYỆT */}
         <div className="bg-white p-4 rounded-xl shadow-sm border-t-4 border-yellow-500 min-h-[500px]">
-          <h2 className="text-xl font-bold mb-4 flex items-center gap-2 text-yellow-700">
+          <h2 className="text-xl font-bold mb-4 flex items-center gap-2 text-yellow-800">
             🕒 Đơn Mới (Pending)
           </h2>
           <div className="space-y-4">
             {pendingOrders.length === 0 && <p className="text-gray-500 italic text-center">Không có đơn chờ.</p>}
 
             {pendingOrders.map((order) => (
-              <div key={order.id} className="border border-yellow-200 p-4 rounded-lg shadow-sm">
+              <div key={order.id} className="border border-yellow-200 bg-yellow-50/30 p-4 rounded-lg shadow-sm">
                 <div className="flex justify-between items-center mb-2">
-                  <span className="text-2xl font-bold text-yellow-800">Bàn {order.table?.tableNumber ?? "?"}</span>
+                  <span className="text-2xl font-bold text-yellow-900">Bàn {order.table?.tableNumber ?? "?"}</span>
                   <div className="flex flex-col items-end">
                     <span className="text-xs text-gray-600">{new Date(order.createdAt).toLocaleTimeString('vi-VN')}</span>
                     <OrderTimer startTime={order.createdAt} />
@@ -326,16 +326,16 @@ export default function WaiterPage() {
 
         {/* CỘT 2: MÓN ĐÃ XONG - CẦN BƯNG NGAY */}
         <div className="bg-white p-4 rounded-xl shadow-sm border-t-4 border-green-500 min-h-[500px]">
-          <h2 className="text-xl font-bold mb-4 flex items-center gap-2 text-green-700">
+          <h2 className="text-xl font-bold mb-4 flex items-center gap-2 text-green-800">
             🔔 Món Chờ Bưng (Ready)
           </h2>
           <div className="space-y-4">
             {readyOrders.length === 0 && <p className="text-gray-500 italic text-center">Không có món nào chờ.</p>}
 
             {readyOrders.map((order) => (
-              <div key={order.id} className="border border-green-200 bg-green-50 p-4 rounded-lg shadow-sm animate-pulse">
+              <div key={order.id} className="border border-green-300 bg-green-50 p-4 rounded-lg shadow-sm animate-pulse">
                 <div className="flex justify-between items-center mb-2">
-                  <span className="text-2xl font-bold text-green-800">Bàn {order.table?.tableNumber ?? "?"}</span>
+                  <span className="text-2xl font-bold text-green-900">Bàn {order.table?.tableNumber ?? "?"}</span>
                   <div className="flex flex-col items-end">
                     <span className="text-xs text-gray-600">
                       {new Date(order.createdAt).toLocaleTimeString('vi-VN')}
