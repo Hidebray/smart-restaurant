@@ -49,7 +49,7 @@ Students must input minus points to every uncompleted feature in the SE column.
 |  | View menu item status | \-0.25 | chưa làm (làm ở trang đặt món) |  | Display item availability status (Available, Unavailable, Sold out) |
 |  | Show related menu items | \-0.25 | chưa bấm được |  | Suggest items from same category or popular pairings |
 |  | View list of item reviews | \-0.5 | 0 |  | Customer reviews for menu items with pagination |
-|  | Add a new item review | \-0.25 | chưa hoàn thiện (đánh giá nhiều lần được) |  | Logged-in customers can review items they ordered |
+|  | Add a new item review | \-0.25 | 0 |  | Logged-in customers can review items they ordered |
 |  | Shopping cart (Order Cart) |  |  |  |  |
 |  | › Add a menu item to the Cart | \-0.25 | 0 |  | Add items with quantity selection |
 |  | › View and update items in the Cart | \-0.5 | 0 |  | Cart summary with items, quantities, modifiers, prices. Update quantity with auto-update totals |

@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { CreateReviewDto } from './dto/create-review.dto';
 import { UpdateReviewDto } from './dto/update-review.dto';
 import { PrismaService } from '../prisma/prisma.service';
@@ -10,8 +10,17 @@ export class ReviewsService {
   async create(userId: string, createReviewDto: CreateReviewDto) {
     const { productId, rating, comment } = createReviewDto;
 
-    // Optional: Check if user actually ordered this product?
-    // For now, let's allow any registered user to review.
+    // Check if user has already reviewed this product
+    const existingReview = await this.prisma.review.findFirst({
+      where: {
+        userId,
+        productId,
+      },
+    });
+
+    if (existingReview) {
+      throw new BadRequestException('You have already reviewed this product');
+    }
 
     return this.prisma.review.create({
       data: {
@@ -19,6 +28,9 @@ export class ReviewsService {
         comment,
         userId,
         productId,
+      },
+      include: {
+        user: { select: { name: true, avatar: true } },
       },
     });
   }

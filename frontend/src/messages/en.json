@@ -132,7 +132,10 @@
         "submit": "Submit Review",
         "success": "Thank you for your review! ⭐",
         "loginRequired": "Please login to submit a review!",
-        "sessionExpired": "Session expired. Please login again!"
+        "sessionExpired": "Session expired. Please login again!",
+        "reviewButton": "Review",
+        "error": "Error submitting review",
+        "alreadyReviewed": "You have already reviewed this product"
     },
     "status": {
         "PENDING": "Pending",

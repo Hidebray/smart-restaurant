@@ -196,9 +196,9 @@ function OrdersContent() {
                                                                 });
                                                                 setIsReviewModalOpen(true);
                                                             }}
-                                                            className="text-yellow-500 hover:text-yellow-600 transition-colors"
+                                                            className="text-xs font-semibold text-orange-600 bg-orange-50 px-2 py-1 rounded hover:bg-orange-100 transition-colors"
                                                         >
-                                                            <Star className="w-4 h-4 fill-current" />
+                                                            {t('review.reviewButton') || "Review"}
                                                         </button>
                                                     </div>
                                                     {item.modifiers && item.modifiers.length > 0 && (

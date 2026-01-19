@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Dialog, DialogPanel, DialogTitle } from "@headlessui/react";
 import toast from "react-hot-toast";
+import { useI18n } from "@/contexts/I18nContext";
 
 interface ReviewModalProps {
     isOpen: boolean;
@@ -12,6 +13,7 @@ interface ReviewModalProps {
 }
 
 export default function ReviewModal({ isOpen, onClose, productName, productId }: ReviewModalProps) {
+    const { t } = useI18n();
     const [rating, setRating] = useState(5);
     const [comment, setComment] = useState("");
     const [loading, setLoading] = useState(false);
@@ -23,7 +25,7 @@ export default function ReviewModal({ isOpen, onClose, productName, productId }:
         try {
             const token = localStorage.getItem("accessToken");
             if (!token) {
-                toast.error("Vui lòng đăng nhập để đánh giá!");
+                toast.error(t('review.loginRequired') || "Vui lòng đăng nhập để đánh giá!");
                 return;
             }
 
@@ -37,20 +39,27 @@ export default function ReviewModal({ isOpen, onClose, productName, productId }:
             });
 
             if (res.status === 401) {
-                toast.error("Phiên đăng nhập hết hạn. Vui lòng đăng nhập lại!");
+                toast.error(t('review.sessionExpired') || "Phiên đăng nhập hết hạn. Vui lòng đăng nhập lại!");
                 // Optional: Trigger logout or redirect
                 window.location.href = "/login";
                 return;
             }
 
-            if (!res.ok) throw new Error("Gửi đánh giá thất bại");
+            if (!res.ok) {
+                const data = await res.json().catch(() => ({}));
+                throw new Error(data.message || t('review.error') || "Gửi đánh giá thất bại");
+            }
 
-            toast.success("Cảm ơn bạn đã đánh giá! ⭐");
+            toast.success(t('review.success') || "Cảm ơn bạn đã đánh giá! ⭐");
             onClose();
             setComment("");
             setRating(5);
-        } catch (error) {
-            toast.error("Lỗi khi gửi đánh giá");
+        } catch (error: any) {
+            let msg = error.message;
+            if (msg === "You have already reviewed this product") {
+                msg = t('review.alreadyReviewed') || msg;
+            }
+            toast.error(msg || t('review.error') || "Lỗi khi gửi đánh giá");
         } finally {
             setLoading(false);
         }
@@ -61,18 +70,18 @@ export default function ReviewModal({ isOpen, onClose, productName, productId }:
             <div className="fixed inset-0 bg-black/30" aria-hidden="true" />
             <div className="fixed inset-0 flex items-center justify-center p-4">
                 <DialogPanel className="w-full max-w-sm rounded bg-white p-6 shadow-xl">
-                    <DialogTitle className="text-lg font-bold mb-4">Đánh giá món: {productName}</DialogTitle>
+                    <DialogTitle className="text-lg font-bold mb-4 text-slate-900">{t('review.title') || "Review Item"}: {productName}</DialogTitle>
 
                     <form onSubmit={handleSubmit} className="space-y-4">
                         <div>
-                            <label className="block text-sm font-medium text-gray-700">Chất lượng (Sao)</label>
-                            <div className="flex gap-2 mt-2">
+                            <label className="block text-sm font-medium text-gray-700">{t('review.rating') || "Quality (Stars)"}</label>
+                            <div className="flex justify-center gap-3 mt-4">
                                 {[1, 2, 3, 4, 5].map((star) => (
                                     <button
                                         key={star}
                                         type="button"
                                         onClick={() => setRating(star)}
-                                        className={`text-2xl ${rating >= star ? 'text-yellow-400' : 'text-gray-300'}`}
+                                        className={`text-4xl p-1 transition-transform active:scale-95 ${rating >= star ? 'text-yellow-400' : 'text-gray-300'}`}
                                     >
                                         ★
                                     </button>
@@ -81,13 +90,13 @@ export default function ReviewModal({ isOpen, onClose, productName, productId }:
                         </div>
 
                         <div>
-                            <label className="block text-sm font-medium text-gray-700">Nhận xét (Tùy chọn)</label>
+                            <label className="block text-sm font-medium text-gray-700">{t('review.comment') || "Comment (Optional)"}</label>
                             <textarea
                                 value={comment}
                                 onChange={(e) => setComment(e.target.value)}
-                                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm border p-2"
+                                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm border p-2 text-slate-900 placeholder:text-gray-400"
                                 rows={3}
-                                placeholder="Món ăn ngon tuyệt..."
+                                placeholder={t('review.placeholder') || "The food was amazing..."}
                             />
                         </div>
 
@@ -97,14 +106,14 @@ export default function ReviewModal({ isOpen, onClose, productName, productId }:
                                 onClick={onClose}
                                 className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-md hover:bg-gray-50 from-gray-50 to-gray-100"
                             >
-                                Hủy
+                                {t('common.cancel') || "Cancel"}
                             </button>
                             <button
                                 type="submit"
                                 disabled={loading}
                                 className="px-4 py-2 text-sm font-medium text-white bg-blue-600 border border-transparent rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                             >
-                                {loading ? "Đang gửi..." : "Gửi Đánh Giá"}
+                                {loading ? (t('common.loading') || "Loading...") : (t('review.submit') || "Submit Review")}
                             </button>
                         </div>
                     </form>

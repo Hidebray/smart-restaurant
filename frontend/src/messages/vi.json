@@ -132,7 +132,10 @@
     "submit": "Gửi Đánh Giá",
     "success": "Cảm ơn bạn đã đánh giá! ⭐",
     "loginRequired": "Vui lòng đăng nhập để đánh giá!",
-    "sessionExpired": "Phiên đăng nhập hết hạn. Vui lòng đăng nhập lại!"
+    "sessionExpired": "Phiên đăng nhập hết hạn. Vui lòng đăng nhập lại!",
+    "reviewButton": "Đánh giá",
+    "error": "Lỗi khi gửi đánh giá",
+    "alreadyReviewed": "Bạn đã đánh giá món này rồi"
   },
   "status": {
     "PENDING": "Chờ xử lý",
