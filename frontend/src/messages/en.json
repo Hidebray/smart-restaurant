@@ -246,6 +246,15 @@
         "pwChanged": "Password changed successfully",
         "nameRequired": "Name is required",
         "emailInvalid": "Invalid email format",
-        "phoneInvalid": "Invalid phone format (10-11 digits)"
+        "phoneInvalid": "Invalid phone format (10-11 digits)",
+        "orders": {
+            "title": "Order History",
+            "empty": "No orders yet",
+            "emptyDesc": "Start ordering some delicious food!",
+            "browseMenu": "Browse Menu",
+            "orderNumber": "Order #{id}",
+            "total": "Total",
+            "moreItems": "+ {count} more items"
+        }
     }
 }

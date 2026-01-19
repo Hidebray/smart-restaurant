@@ -120,7 +120,7 @@ function OrderHistoryContent() {
                             <div key={order.id} className="bg-white rounded-xl p-4 shadow-sm border border-gray-100">
                                 <div className="flex justify-between items-start mb-3">
                                     <div>
-                                        <div className="font-bold text-gray-800">Order #{order.id.slice(-6).toUpperCase()}</div>
+                                        <div className="font-bold text-gray-800">{t('profile.orders.orderNumber', { id: order.id.slice(-6).toUpperCase() })}</div>
                                         <div className="text-xs text-gray-400">{new Date(order.createdAt).toLocaleString()}</div>
                                     </div>
                                     <span className={`px-2 py-1 rounded text-xs font-bold ${getStatusColor(order.status)}`}>
@@ -139,13 +139,13 @@ function OrderHistoryContent() {
                                     ))}
                                     {order.items.length > 3 && (
                                         <div className="text-xs text-gray-400 italic">
-                                            + {order.items.length - 3} more items
+                                            {t('profile.orders.moreItems', { count: order.items.length - 3 })}
                                         </div>
                                     )}
                                 </div>
 
                                 <div className="border-t border-dashed pt-3 flex justify-between items-center">
-                                    <span className="font-semibold text-gray-700">Total</span>
+                                    <span className="font-semibold text-gray-700">{t('profile.orders.total')}</span>
                                     <span className="font-bold text-orange-600 text-lg">
                                         {new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(Number(order.totalAmount))}
                                     </span>

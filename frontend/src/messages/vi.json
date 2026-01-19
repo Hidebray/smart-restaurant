@@ -246,6 +246,15 @@
     "pwChanged": "Đổi mật khẩu thành công",
     "nameRequired": "Vui lòng nhập tên",
     "emailInvalid": "Email không hợp lệ",
-    "phoneInvalid": "Số điện thoại không hợp lệ (10-11 số)"
+    "phoneInvalid": "Số điện thoại không hợp lệ (10-11 số)",
+    "orders": {
+      "title": "Lịch Sử Đơn Hàng",
+      "empty": "Chưa có đơn hàng nào",
+      "emptyDesc": "Hãy bắt đầu đặt những món ăn ngon!",
+      "browseMenu": "Xem Thực Đơn",
+      "orderNumber": "Đơn #{id}",
+      "total": "Tổng tiền",
+      "moreItems": "+ thêm {count} món"
+    }
   }
 }
