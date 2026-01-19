@@ -17,6 +17,7 @@ export default function AdminLayout({
   const navItems = [
     { label: t('admin.dashboard'), href: "/admin/dashboard" },
     { label: t('admin.products'), href: "/admin/products" },
+    { label: t('admin.categories'), href: "/admin/categories" },
     { label: t('admin.tables'), href: "/admin/tables" },
     { label: t('admin.orders'), href: "/admin/orders" },
     { label: t('admin.modifiers'), href: "/admin/modifiers" },

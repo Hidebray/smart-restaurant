@@ -84,7 +84,7 @@ Students must input minus points to every uncompleted feature in the SE column.
 |  | Update admin profile | \-0.25 | 0 |  | Restaurant admin profile management |
 |  | Create Waiter accounts | \-0.25 | 0 |  | Admin creates accounts for waiters |
 |  | Create Kitchen Staff accounts | \-0.25 | 0 |  | Admin creates accounts for kitchen staff |
-|  | Manage menu categories | \-0.25 | chưa làm |  | Create, edit, delete food categories |
+|  | Manage menu categories | \-0.25 | 0 |  | Create, edit, delete food categories |
 |  | View menu item list | \-0.5 | 0 |  | List all menu items with filters and pagination |
 |  | Filter menu items by name, category | \-0.25 | 0 |  | Search and filter menu items |
 |  | Sort menu items by creation time, price, popularity | \-0.25 | 0 |  | Sortable menu item list |

@@ -17,6 +17,8 @@ import { InventoryModule } from './inventory/inventory.module';
 import { ReservationsModule } from './reservations/reservations.module';
 import { CloudinaryModule } from './cloudinary/cloudinary.module';
 
+import { CategoriesModule } from './categories/categories.module';
+
 @Module({
   imports: [
     TablesModule,
@@ -33,6 +35,7 @@ import { CloudinaryModule } from './cloudinary/cloudinary.module';
     InventoryModule,
     ReservationsModule,
     CloudinaryModule,
+    CategoriesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

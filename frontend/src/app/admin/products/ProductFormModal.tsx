@@ -12,6 +12,8 @@ import {
   modifiersApi,
   ModifierGroupWithWithOptions,
 } from "@/lib/api/modifiers";
+import { categoriesApi, Category } from "@/lib/api/categories";
+import { useI18n } from "@/contexts/I18nContext";
 import {
   Dialog,
   DialogContent,
@@ -44,9 +46,15 @@ export default function ProductFormModal({
   product: Product | null;
   onClose: (shouldRefresh?: boolean) => void;
 }) {
+  const { t } = useI18n();
   const { data: modifierGroups } = useSWR<ModifierGroupWithWithOptions[]>(
     "modifiers",
     modifiersApi.getAllGroups,
+  );
+
+  const { data: categories } = useSWR<Category[]>(
+    "categories",
+    categoriesApi.getAll
   );
 
   const {
@@ -160,7 +168,7 @@ export default function ProductFormModal({
       alert(
         `Error: ${error.response?.data?.message ||
         error.message ||
-        "Failed to save product"
+        t('common.error') || "Failed to save product"
         }`,
       );
     }
@@ -170,15 +178,15 @@ export default function ProductFormModal({
     <Dialog open={open} onOpenChange={(v) => (!v ? onClose(false) : null)}>
       <DialogContent className="max-w-xl">
         <DialogHeader>
-          <DialogTitle>{product ? "Edit Product" : "Add Product"}</DialogTitle>
+          <DialogTitle>{product ? (t('admin.products') + " - " + t('common.edit')) : (t('admin.products') + " - " + t('common.add'))}</DialogTitle>
         </DialogHeader>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           {/* ================= Basic info ================= */}
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <div className="space-y-1">
-              <label className="text-sm font-semibold">Name</label>
-              <Input {...register("name", { required: "Name is required" })} />
+              <label className="text-sm font-semibold">{t('common.name')}</label>
+              <Input {...register("name", { required: t('common.requiredField') || "Name is required" })} />
               {errors.name && (
                 <div className="text-xs text-red-600">
                   {errors.name.message}
@@ -187,10 +195,10 @@ export default function ProductFormModal({
             </div>
 
             <div className="space-y-1">
-              <label className="text-sm font-semibold">Price (VND)</label>
+              <label className="text-sm font-semibold">{t('common.price')} (VND)</label>
               <Input
                 {...register("price", {
-                  required: "Price is required",
+                  required: t('common.requiredField') || "Price is required",
                   validate: (v) => (Number(v) > 0 ? true : "Price must be > 0"),
                 })}
               />
@@ -204,7 +212,7 @@ export default function ProductFormModal({
 
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <div className="space-y-1">
-              <label className="text-sm font-semibold">Prep Time (minutes)</label>
+              <label className="text-sm font-semibold">{t('common.prepTime') || "Prep Time"} (minutes)</label>
               <Input
                 type="number"
                 {...register("prepTimeMinutes", {
@@ -221,7 +229,7 @@ export default function ProductFormModal({
           </div>
 
           <div className="space-y-1">
-            <label className="text-sm font-semibold">Allergens (comma separated)</label>
+            <label className="text-sm font-semibold">{t('common.allergens')} (comma separated)</label>
             <Input
               {...register("allergens")}
               placeholder="e.g., Milk, Eggs, Nuts"
@@ -231,10 +239,10 @@ export default function ProductFormModal({
           {/* ================= Images ================= */}
           <div className="mt-4">
             <div className="flex items-center justify-between">
-              <h3 className="font-semibold">Images</h3>
+              <h3 className="font-semibold">{t('common.images') || "Images"}</h3>
 
               <label className="text-sm px-3 py-2 rounded border bg-white cursor-pointer">
-                Upload images
+                {t('common.uploadImages') || "Upload images"}
                 <input
                   type="file"
                   accept="image/png,image/jpeg,image/webp"
@@ -253,7 +261,7 @@ export default function ProductFormModal({
             {pendingFiles.length > 0 && (
               <div className="mt-3 rounded border p-3 bg-gray-50">
                 <div className="text-sm font-medium mb-2">
-                  Pending upload ({pendingFiles.length})
+                  {t('common.pendingUpload') || "Pending upload"} ({pendingFiles.length})
                 </div>
                 <div className="flex gap-2 flex-wrap">
                   {pendingFiles.map((f, idx) => (
@@ -304,7 +312,7 @@ export default function ProductFormModal({
                           onClose(true);
                         }}
                       >
-                        {img.isPrimary ? "Primary" : "Set primary"}
+                        {img.isPrimary ? (t('common.primary') || "Primary") : (t('common.setPrimary') || "Set primary")}
                       </button>
 
                       <button
@@ -316,42 +324,55 @@ export default function ProductFormModal({
                           onClose(true);
                         }}
                       >
-                        Delete
+                        {t('common.delete')}
                       </button>
                     </div>
                   </div>
                 ))}
               </div>
             ) : (
-              <div className="mt-3 text-sm text-gray-500">No images yet.</div>
+              <div className="mt-3 text-sm text-gray-500">{t('common.noImages') || "No images yet."}</div>
             )}
           </div>
 
           {/* ================= Other fields ================= */}
           <div className="space-y-1">
-            <label className="text-sm font-semibold">Description</label>
+            <label className="text-sm font-semibold">{t('common.description')}</label>
             <Input {...register("description")} />
           </div>
 
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <div className="space-y-1">
-              <label className="text-sm font-semibold">Category Name</label>
-              <Input
+              <label className="text-sm font-semibold">{t('admin.categories') || "Category"}</label>
+              <select
                 {...register("categoryName", {
-                  required: "Category name is required",
+                  required: t('common.requiredField') || "Category is required",
                 })}
-              />
+                className="h-10 w-full rounded-md border border-gray-300 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-orange-200"
+              >
+                <option value="">{t('common.selectCategory') || "Select a category"}</option>
+                {categories?.map((cat) => (
+                  <option key={cat.id} value={cat.name}>
+                    {cat.name}
+                  </option>
+                ))}
+              </select>
+              {errors.categoryName && (
+                <div className="text-xs text-red-600">
+                  {errors.categoryName.message}
+                </div>
+              )}
             </div>
 
             <div className="space-y-1">
-              <label className="text-sm font-semibold">Status</label>
+              <label className="text-sm font-semibold">{t('common.status')}</label>
               <select
                 {...register("status")}
-                className="h-10 w-full rounded-md border border-gray-300 px-3 text-sm"
+                className="h-10 w-full rounded-md border border-gray-300 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-orange-200"
               >
-                <option value="AVAILABLE">AVAILABLE</option>
-                <option value="UNAVAILABLE">UNAVAILABLE</option>
-                <option value="SOLD_OUT">SOLD_OUT</option>
+                <option value="AVAILABLE">{t('menu.statusAvailable') || "AVAILABLE"}</option>
+                <option value="UNAVAILABLE">{t('menu.statusUnavailable') || "UNAVAILABLE"}</option>
+                <option value="SOLD_OUT">{t('menu.statusSoldOut') || "SOLD_OUT"}</option>
               </select>
             </div>
           </div>
@@ -365,7 +386,7 @@ export default function ProductFormModal({
                 className="h-5 w-5 rounded border-gray-300 text-orange-600 focus:ring-orange-500"
               />
               <label htmlFor="isChefRecommended" className="text-sm font-semibold select-none cursor-pointer">
-                👨‍🍳 Chef Recommended
+                👨‍🍳 {t('menu.chefsChoice') || "Chef Recommended"}
               </label>
             </div>
           </div>
@@ -373,27 +394,33 @@ export default function ProductFormModal({
 
           <div className="space-y-1">
             <label className="text-sm font-semibold">
-              Primary Image URL (optional)
+              {t('common.primaryImageUrl') || "Primary Image URL (optional)"}
             </label>
             <Input {...register("imageUrl")} />
           </div>
 
           <div className="space-y-1">
-            <label className="text-sm font-semibold">Modifier Groups</label>
+            <label className="text-sm font-semibold">{t('admin.modifiers') || "Modifier Groups"}</label>
             <div className="grid grid-cols-2 gap-2">
               {modifierGroups?.map((group) => (
                 <label
                   key={group.id}
-                  className="flex items-center gap-2 rounded-md border p-2"
+                  className="flex items-center gap-2 rounded-md border p-2 cursor-pointer hover:bg-gray-50"
                 >
                   <input
                     type="checkbox"
                     value={group.id}
                     {...register("modifierGroupIds")}
+                    className="rounded border-gray-300 text-orange-600 focus:ring-orange-500"
                   />
                   <span>{group.name}</span>
                 </label>
               ))}
+              {(!modifierGroups || modifierGroups.length === 0) && (
+                <span className="text-sm text-gray-500 col-span-2 italic">
+                  {t('common.noModifiers') || "No modifier groups available."}
+                </span>
+              )}
             </div>
           </div>
 
@@ -404,10 +431,10 @@ export default function ProductFormModal({
               onClick={() => onClose(false)}
               disabled={isSubmitting}
             >
-              Cancel
+              {t('common.cancel')}
             </Button>
             <Button type="submit" disabled={isSubmitting}>
-              {isSubmitting ? "Saving..." : "Save"}
+              {isSubmitting ? (t('common.saving') || "Saving...") : (t('common.save') || "Save")}
             </Button>
           </DialogFooter>
         </form>
