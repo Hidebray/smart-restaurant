@@ -15,6 +15,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { Card } from "@/components/ui/Card";
+import Link from "next/link";
 
 const currencyFormatter = new Intl.NumberFormat("en-US", {
   style: "currency",
@@ -44,14 +45,15 @@ export default function ReportsPage() {
 
   const { data: summary, error: summaryError } = useSWR(
     [`/reports/summary`, fromDate, toDate],
-    () => getSummary(fromDate, toDate)
+    () => getSummary(fromDate, toDate),
   );
   const { data: topProducts, error: topProductsError } = useSWR(
     "/reports/top-products",
-    () => getTopProducts(5)
+    () => getTopProducts(5),
   );
 
-  const isLoading = !summary && !summaryError && !topProducts && !topProductsError;
+  const isLoading =
+    !summary && !summaryError && !topProducts && !topProductsError;
 
   if (isLoading) {
     return (
@@ -73,6 +75,12 @@ export default function ReportsPage() {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold text-gray-800">Reports</h1>
+        <Link
+          href="/admin/reports/revenue"
+          className="px-4 py-2 rounded bg-orange-600 text-white text-sm font-semibold hover:bg-orange-700"
+        >
+          Revenue Reports →
+        </Link>
         <div className="flex gap-4">
           <div>
             <label className="block text-xs text-gray-500 mb-1">From</label>
@@ -101,14 +109,17 @@ export default function ReportsPage() {
           value={summary?.totalRevenue ?? 0}
           isCurrency
         />
-        <SummaryCard
-          title="Total Orders"
-          value={summary?.totalOrders ?? 0}
-        />
+        <SummaryCard title="Total Orders" value={summary?.totalOrders ?? 0} />
         <Card className="p-6 col-span-1 md:col-span-2">
           <h3 className="text-lg font-medium text-gray-500">Period</h3>
           <p className="text-xl font-bold text-gray-800">
-            {summary?.firstOrderDate ? new Date(summary.firstOrderDate).toLocaleDateString() : 'N/A'} - {summary?.lastOrderDate ? new Date(summary.lastOrderDate).toLocaleDateString() : 'N/A'}
+            {summary?.firstOrderDate
+              ? new Date(summary.firstOrderDate).toLocaleDateString()
+              : "N/A"}{" "}
+            -{" "}
+            {summary?.lastOrderDate
+              ? new Date(summary.lastOrderDate).toLocaleDateString()
+              : "N/A"}
           </p>
         </Card>
       </div>

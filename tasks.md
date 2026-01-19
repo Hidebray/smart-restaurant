@@ -250,12 +250,12 @@ The working order rotates daily following this sequence:
   - [x] Upload avatar image
   - _Points:_ -1.0
 
-- [ ] **Task 7.10: Revenue Reports & Charts**
-  - [ ] Install Chart.js or Recharts
-  - [ ] Create daily/weekly/monthly revenue charts
-  - [ ] Top products pie chart
-  - [ ] Order trends line chart
-  - [ ] Time range filter
+- [x] **Task 7.10: Revenue Reports & Charts**
+  - [x] Install Chart.js or Recharts
+  - [x] Create daily/weekly/monthly revenue charts
+  - [x] Top products pie chart
+  - [x] Order trends line chart
+  - [x] Time range filter
   - _Points:_ -0.75
 
 - [ ] **Task 7.11: Sort Menu Items (Admin)**
