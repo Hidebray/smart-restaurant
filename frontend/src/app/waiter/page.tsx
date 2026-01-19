@@ -428,36 +428,52 @@ export default function WaiterPage() {
             🍽️ Đang Ăn (Served)
           </h2>
           <div className="space-y-4">
-            {servedOrders.map((order) => (
-              <div key={order.id} className="border border-gray-200 p-4 rounded-lg hover:shadow-md transition-shadow">
-                <div className="flex justify-between items-center mb-2">
-                  <span className="text-xl font-bold text-gray-900">Bàn {order.table.tableNumber}</span>
-                  <span className="text-blue-600 font-bold">
-                    {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(Number(order.totalAmount))}
-                  </span>
+            {servedOrders.map((order) => {
+              const rawTotal = Number(order.totalAmount);
+              let finalTotal = rawTotal;
+              const dVal = Number(order.discountValue || 0);
+              if (order.discountType === 'PERCENT') finalTotal = rawTotal - (rawTotal * dVal / 100);
+              else if (order.discountType === 'FIXED') finalTotal = rawTotal - dVal;
+              finalTotal = Math.max(0, finalTotal);
+
+              return (
+                <div key={order.id} className="border border-gray-200 p-4 rounded-lg hover:shadow-md transition-shadow">
+                  <div className="flex justify-between items-center mb-2">
+                    <span className="text-xl font-bold text-gray-900">Bàn {order.table.tableNumber}</span>
+                    <div className="text-right">
+                      {finalTotal < rawTotal && (
+                        <div className="text-xs text-gray-400 line-through">
+                          {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(rawTotal)}
+                        </div>
+                      )}
+                      <span className="text-blue-600 font-bold">
+                        {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(finalTotal)}
+                      </span>
+                    </div>
+                  </div>
+                  <div className="text-sm text-gray-600 mb-3 line-clamp-1">
+                    {order.items.map(i => {
+                      const mods = i.modifiers?.map((m: any) => m.modifierOption?.name ?? m.name).filter(Boolean) ?? [];
+                      return mods.length ? `${i.product?.name ?? 'Unknown'} (${mods.join(', ')})` : (i.product?.name ?? 'Unknown');
+                    }).join(", ")}
+                  </div>
+                  <div className="flex flex-col gap-2">
+                    <button
+                      onClick={() => handleOpenBill(order)}
+                      className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 rounded text-sm"
+                    >
+                      🧾 Xem Hóa Đơn Tạm
+                    </button>
+                    <button
+                      onClick={() => updateStatus(order.id, 'COMPLETED')}
+                      className="w-full bg-gray-800 hover:bg-gray-900 text-white font-bold py-2 rounded text-sm"
+                    >
+                      💰 Thanh Toán & Dọn Bàn
+                    </button>
+                  </div>
                 </div>
-                <div className="text-sm text-gray-600 mb-3 line-clamp-1">
-                  {order.items.map(i => {
-                    const mods = i.modifiers?.map((m: any) => m.modifierOption?.name ?? m.name).filter(Boolean) ?? [];
-                    return mods.length ? `${i.product?.name ?? 'Unknown'} (${mods.join(', ')})` : (i.product?.name ?? 'Unknown');
-                  }).join(", ")}
-                </div>
-                <div className="flex flex-col gap-2">
-                  <button
-                    onClick={() => handleOpenBill(order)}
-                    className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 rounded text-sm"
-                  >
-                    🧾 Xem Hóa Đơn Tạm
-                  </button>
-                  <button
-                    onClick={() => updateStatus(order.id, 'COMPLETED')}
-                    className="w-full bg-gray-800 hover:bg-gray-900 text-white font-bold py-2 rounded text-sm"
-                  >
-                    💰 Thanh Toán & Dọn Bàn
-                  </button>
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </div>

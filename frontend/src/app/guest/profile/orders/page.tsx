@@ -161,9 +161,28 @@ function OrderHistoryContent() {
 
                                 <div className="border-t border-dashed pt-3 flex justify-between items-center">
                                     <span className="font-semibold text-gray-700">{t('profile.orders.total')}</span>
-                                    <span className="font-bold text-orange-600 text-lg">
-                                        {new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(Number(order.totalAmount))}
-                                    </span>
+                                    <div className="text-right">
+                                        {(() => {
+                                            const rawTotal = Number(order.totalAmount);
+                                            let finalTotal = rawTotal;
+                                            if (order.discountType === 'PERCENT') finalTotal = rawTotal - (rawTotal * Number(order.discountValue || 0) / 100);
+                                            else if (order.discountType === 'FIXED') finalTotal = rawTotal - Number(order.discountValue || 0);
+                                            finalTotal = Math.max(0, finalTotal);
+
+                                            return (
+                                                <>
+                                                    {finalTotal < rawTotal && (
+                                                        <div className="text-xs text-gray-400 line-through decoration-gray-400">
+                                                            {new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(rawTotal)}
+                                                        </div>
+                                                    )}
+                                                    <div className="font-bold text-orange-600 text-lg">
+                                                        {new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(finalTotal)}
+                                                    </div>
+                                                </>
+                                            );
+                                        })()}
+                                    </div>
                                 </div>
                             </div>
                         ))}

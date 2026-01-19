@@ -20,27 +20,35 @@ export class ReportsService {
       if (to) whereClause.createdAt.lte = new Date(to);
     }
 
-    const aggregates = await this.prisma.order.aggregate({
+    // Use findMany to calculate correct revenue with discounts
+    const orders = await this.prisma.order.findMany({
       where: whereClause,
-      _sum: { totalAmount: true },
-      _count: { id: true },
-    });
-
-    const firstOrder = await this.prisma.order.findFirst({
-      where: whereClause,
+      select: {
+        totalAmount: true,
+        discountType: true,
+        discountValue: true,
+        createdAt: true,
+      },
       orderBy: { createdAt: 'asc' },
     });
 
-    const lastOrder = await this.prisma.order.findFirst({
-      where: whereClause,
-      orderBy: { createdAt: 'desc' },
-    });
+    let totalRevenue = 0;
+    for (const order of orders) {
+      let amount = Number(order.totalAmount ?? 0);
+      const dValue = Number(order.discountValue ?? 0);
+      if (order.discountType === 'PERCENT') {
+        amount -= (amount * dValue) / 100;
+      } else if (order.discountType === 'FIXED') {
+        amount -= dValue;
+      }
+      totalRevenue += Math.max(0, amount);
+    }
 
     return {
-      totalRevenue: aggregates._sum.totalAmount ?? 0,
-      totalOrders: aggregates._count.id ?? 0,
-      firstOrderDate: firstOrder?.createdAt ?? null,
-      lastOrderDate: lastOrder?.createdAt ?? null,
+      totalRevenue,
+      totalOrders: orders.length,
+      firstOrderDate: orders.length > 0 ? orders[0].createdAt : null,
+      lastOrderDate: orders.length > 0 ? orders[orders.length - 1].createdAt : null,
     };
   }
 
@@ -101,7 +109,9 @@ export class ReportsService {
       where,
       select: {
         createdAt: true,
-        totalAmount: true, // ✅ đúng field theo schema bạn
+        totalAmount: true,
+        discountType: true,
+        discountValue: true,
       },
     });
 
@@ -112,7 +122,15 @@ export class ReportsService {
       const key = this.makeBucketKey(d, groupBy);
 
       // Prisma Decimal -> number
-      const amount = Number((o as any).totalAmount ?? 0);
+      let amount = Number((o as any).totalAmount ?? 0);
+      const dValue = Number((o as any).discountValue ?? 0);
+
+      if (o.discountType === 'PERCENT') {
+        amount -= (amount * dValue) / 100;
+      } else if (o.discountType === 'FIXED') {
+        amount -= dValue;
+      }
+      amount = Math.max(0, amount);
 
       map.set(key, (map.get(key) || 0) + amount);
     }
@@ -172,39 +190,56 @@ export class ReportsService {
     to?: string;
     take?: string;
   }) {
-    const where: any = {
-      order: { status: OrderStatus.COMPLETED },
-    };
-
-    if (from || to) {
-      where.order = {
-        ...where.order,
+    // Use findMany to calculate net revenue per product (proportional discount)
+    const orders = await this.prisma.order.findMany({
+      where: {
+        status: OrderStatus.COMPLETED,
         createdAt: {
           ...(from && { gte: new Date(from) }),
           ...(to && { lte: new Date(to) }),
         },
-      };
-    }
-
-    // ✅ OrderItem sum fields hợp lệ theo lỗi bạn gửi: quantity/unitPrice/totalPrice
-    const grouped = await this.prisma.orderItem.groupBy({
-      by: ['productId'],
-      where,
-      _sum: { totalPrice: true, quantity: true }, // ✅ Added quantity
+      },
+      include: { items: true },
     });
 
+    const productStats = new Map<string, { revenue: number; quantity: number }>();
+
+    for (const order of orders) {
+      const rawTotal = Number(order.totalAmount);
+      let orderDiscount = 0;
+      if (order.discountType === 'PERCENT') {
+        orderDiscount = (rawTotal * Number(order.discountValue)) / 100;
+      } else if (order.discountType === 'FIXED') {
+        orderDiscount = Number(order.discountValue);
+      }
+      const netTotal = Math.max(0, rawTotal - orderDiscount);
+
+      // Calculate ratio to distribute revenue
+      const ratio = rawTotal > 0 ? netTotal / rawTotal : 1;
+
+      for (const item of order.items) {
+        const itemRevenue = Number(item.totalPrice) * ratio;
+
+        const current = productStats.get(item.productId) || { revenue: 0, quantity: 0 };
+        current.revenue += itemRevenue;
+        current.quantity += item.quantity;
+        productStats.set(item.productId, current);
+      }
+    }
+
     const products = await this.prisma.product.findMany({
+      where: { id: { in: Array.from(productStats.keys()) } },
       select: { id: true, name: true },
     });
     const productMap = new Map(products.map((p) => [p.id, p.name]));
 
     const topN = take ? Math.max(1, parseInt(take, 10) || 10) : 10;
 
-    return grouped
-      .map((g) => ({
-        name: productMap.get(g.productId) || 'Unknown',
-        value: Number(g._sum?.totalPrice ?? 0),
-        quantity: Number(g._sum?.quantity ?? 0),
+    return Array.from(productStats.entries())
+      .map(([productId, stats]) => ({
+        name: productMap.get(productId) || 'Unknown',
+        value: stats.revenue,
+        quantity: stats.quantity,
       }))
       .sort((a, b) => b.value - a.value)
       .slice(0, topN);

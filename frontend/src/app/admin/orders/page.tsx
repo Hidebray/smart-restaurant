@@ -151,7 +151,21 @@ export default function OrderListPage() {
                                             </div>
                                         </td>
                                         <td className="p-4 font-bold text-gray-900">
-                                            {formatPrice(Number(order.totalAmount))}
+                                            {(() => {
+                                                const rawTotal = Number(order.totalAmount);
+                                                let finalTotal = rawTotal;
+                                                const dVal = Number(order.discountValue || 0);
+                                                if (order.discountType === 'PERCENT') finalTotal = rawTotal - (rawTotal * dVal / 100);
+                                                else if (order.discountType === 'FIXED') finalTotal = rawTotal - dVal;
+                                                finalTotal = Math.max(0, finalTotal);
+
+                                                return (
+                                                    <div className="flex flex-col">
+                                                        {finalTotal < rawTotal && <span className="text-xs text-gray-400 line-through font-normal">{formatPrice(rawTotal)}</span>}
+                                                        <span>{formatPrice(finalTotal)}</span>
+                                                    </div>
+                                                );
+                                            })()}
                                         </td>
                                         <td className="p-4">
                                             <span className={`px-2 py-1 rounded-full text-xs font-bold ${getStatusColor(order.status)}`}>

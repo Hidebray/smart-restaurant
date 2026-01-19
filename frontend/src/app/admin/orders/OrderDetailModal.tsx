@@ -119,7 +119,27 @@ export default function OrderDetailModal({
                     <div className="border-t pt-4">
                         <div className="flex justify-between items-center text-lg font-bold text-gray-900">
                             <span>{t('cart.total')}</span>
-                            <span>{formatPrice(Number(order.totalAmount))}</span>
+                            <div className="text-right">
+                                {(() => {
+                                    const rawTotal = Number(order.totalAmount);
+                                    let finalTotal = rawTotal;
+                                    const dVal = Number(order.discountValue || 0);
+                                    if (order.discountType === 'PERCENT') finalTotal = rawTotal - (rawTotal * dVal / 100);
+                                    else if (order.discountType === 'FIXED') finalTotal = rawTotal - dVal;
+                                    finalTotal = Math.max(0, finalTotal);
+
+                                    return (
+                                        <>
+                                            {finalTotal < rawTotal && (
+                                                <div className="text-sm text-gray-500 line-through font-normal">
+                                                    {formatPrice(rawTotal)}
+                                                </div>
+                                            )}
+                                            <div>{formatPrice(finalTotal)}</div>
+                                        </>
+                                    );
+                                })()}
+                            </div>
                         </div>
                     </div>
 
