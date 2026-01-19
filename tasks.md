@@ -287,11 +287,11 @@ The working order rotates daily following this sequence:
   - [x] Filter by recommendations (Badge implemented, full filter optional but badge is key)
   - _Points:_ -0.25 ✅
 
-- [ ] **Task 7.15: Related Items Suggestions**
-  - [ ] Suggest items from same category
-  - [ ] Show in product detail modal
-  - [ ] Based on popularity
-  - _Points:_ -0.25
+- [x] **Task 7.15: Related Items Suggestions**
+  - [x] Suggest items from same category
+  - [x] Show in product detail modal
+  - [ ] Based on popularity (Optional enhancement)
+  - _Points:_ -0.25 ✅
 
 - [x] **Task 7.16: Multi-Image Upload**
   - [x] Update Product model for multiple images

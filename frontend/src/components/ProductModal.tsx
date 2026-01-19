@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import { Product, ModifierOption, ProductModifierGroup, Review } from "@/types"
 import { useCartStore } from "@/store/useCartStore";
+import { useMenuStore } from "@/store/useMenuStore";
 import toast from "react-hot-toast";
 
 interface ProductModalProps {
@@ -177,6 +178,21 @@ export default function ProductModal({ product, isOpen, onClose }: ProductModalP
                         })}
                     </div>
 
+                    {/* Related Items Section */}
+                    {product.category && (
+                        <div className="mt-10 border-t border-dashed pt-8 mb-4">
+                            <div className="flex items-center gap-2 mb-4">
+                                <span className="text-xl">✨</span>
+                                <h3 className="font-bold text-lg text-gray-800">Món ăn gợi ý (Related Items)</h3>
+                            </div>
+                            <RelatedItems
+                                currentProductId={product.id}
+                                categoryId={product.categoryId}
+                                onClose={onClose}
+                            />
+                        </div>
+                    )}
+
                     {/* Reviews Section */}
                     <div className="mt-10 border-t border-dashed pt-8 mb-4">
                         <div className="flex items-center gap-2 mb-6">
@@ -250,6 +266,39 @@ export default function ProductModal({ product, isOpen, onClose }: ProductModalP
                 </div>
 
             </div>
+        </div>
+    );
+}
+
+function RelatedItems({ currentProductId, categoryId, onClose }: { currentProductId: string, categoryId: string, onClose: () => void }) {
+    const { products } = useMenuStore();
+
+    // Filter related items: same category, exclude current, limit to 3
+    const related = products
+        .filter(p => p.categoryId === categoryId && p.id !== currentProductId)
+        .slice(0, 3);
+
+    if (related.length === 0) return <p className="text-gray-400 text-sm">Không có món gợi ý nào.</p>;
+
+    // Note: Simple display for now. Switching product logic would require parent control update.
+    return (
+        <div className="grid grid-cols-3 gap-2">
+            {related.map(item => (
+                <div key={item.id} className="border rounded-lg p-2 flex flex-col items-center text-center bg-gray-50">
+                    <div className="relative w-16 h-16 mb-2 rounded-md overflow-hidden bg-white">
+                        <Image
+                            src={item.images?.find(i => i.isPrimary)?.url || "https://images.unsplash.com/photo-1546069901-ba9599a7e63c"}
+                            alt={item.name}
+                            fill
+                            className="object-cover"
+                        />
+                    </div>
+                    <span className="text-xs font-bold line-clamp-2 h-8">{item.name}</span>
+                    <span className="text-xs text-orange-600 font-bold mt-1">
+                        {new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(Number(item.price))}
+                    </span>
+                </div>
+            ))}
         </div>
     );
 }
