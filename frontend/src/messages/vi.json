@@ -48,7 +48,9 @@
     "maxLength": "Tối đa {max} ký tự",
     "invalidUrl": "Định dạng URL không hợp lệ",
     "invalidPrice": "Giá phải lớn hơn 0",
-    "received": "Tiếp nhận"
+    "received": "Tiếp nhận",
+    "close": "Đóng",
+    "view": "Xem"
   },
   "productModal": {
     "maxSelectionError": "Chỉ được chọn tối đa {max} tùy chọn",

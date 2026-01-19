@@ -6,6 +6,7 @@ import { ordersApi } from "@/lib/api/orders";
 import { Order } from "@/types";
 import { Card } from "@/components/ui/Card";
 import { useI18n } from "@/contexts/I18nContext";
+import OrderDetailModal from "./OrderDetailModal";
 
 const getStatusColor = (status: string) => {
     switch (status) {
@@ -42,6 +43,7 @@ export default function OrderListPage() {
     const { t } = useI18n();
     const { data: orders, error } = useSWR<Order[]>("admin-orders", ordersApi.getAll);
     const [filterStatus, setFilterStatus] = useState<FilterGroup>("ALL");
+    const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
 
     if (error) return <div>{t('common.error')}</div>;
     if (!orders) return <div>{t('common.loading')}</div>;
@@ -113,22 +115,27 @@ export default function OrderListPage() {
                             <tr className="bg-gray-100 border-b border-gray-200 text-xs uppercase text-gray-800 font-semibold tracking-wider">
                                 <th className="p-4">{t('orders.orderNumber')}</th>
                                 <th className="p-4">{t('kitchen.table')}</th>
-                                <th className="p-4">{t('menu.sortDate')}</th>
+                                <th className="p-4">{t('common.sortDate')}</th>
                                 <th className="p-4">{t('cart.items')}</th>
                                 <th className="p-4">{t('common.price')}</th>
                                 <th className="p-4">{t('common.status')}</th>
+                                <th className="p-4">{t('common.actions')}</th>
                             </tr>
                         </thead>
                         <tbody className="text-sm divide-y divide-gray-100">
                             {filteredOrders.length === 0 ? (
                                 <tr>
-                                    <td colSpan={6} className="p-8 text-center text-gray-500">
+                                    <td colSpan={7} className="p-8 text-center text-gray-500">
                                         {t('menu.noItems') || "No orders found."}
                                     </td>
                                 </tr>
                             ) : (
                                 filteredOrders.map((order) => (
-                                    <tr key={order.id} className="hover:bg-gray-50 transition-colors">
+                                    <tr
+                                        key={order.id}
+                                        className="hover:bg-gray-50 transition-colors cursor-pointer"
+                                        onClick={() => setSelectedOrder(order)}
+                                    >
                                         <td className="p-4 font-mono text-gray-600">
                                             #{order.id.slice(0, 8)}
                                         </td>
@@ -151,6 +158,17 @@ export default function OrderListPage() {
                                                 {t(`status.${order.status}`) || order.status}
                                             </span>
                                         </td>
+                                        <td className="p-4">
+                                            <button
+                                                className="text-blue-600 hover:underline font-medium"
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    setSelectedOrder(order);
+                                                }}
+                                            >
+                                                {t('common.view') || "View"}
+                                            </button>
+                                        </td>
                                     </tr>
                                 ))
                             )}
@@ -158,6 +176,12 @@ export default function OrderListPage() {
                     </table>
                 </div>
             </Card>
+
+            <OrderDetailModal
+                open={!!selectedOrder}
+                order={selectedOrder}
+                onClose={() => setSelectedOrder(null)}
+            />
         </div>
     );
 }
