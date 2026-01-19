@@ -58,7 +58,7 @@ A comprehensive full-stack restaurant management system with real-time order tra
 - **Cart Management**: Add items with modifiers (toppings, sizes), add order notes
 - **Order Placement**: Submit orders directly from table
 - **Order History**: View current and past orders
-- **Online Payment**: Pay via Stripe (Credit Card) or simulate payment in Mock Mode
+- **Online Payment**: Pay via Stripe (Credit Card) with secure payment processing
 - **Call Waiter**: Request assistance or cash payment with one tap ("Bell Ring")
 - **Customer Registration**: Create personal accounts to save order history
 - **Item Reviews**: Rate and review products after ordering (1-5 stars + comments)
@@ -164,8 +164,9 @@ GOOGLE_CLIENT_ID="your-google-client-id"
 GOOGLE_CLIENT_SECRET="your-google-client-secret"
 GOOGLE_CALLBACK_URL="http://localhost:5000/auth/google/callback"
 
-# Stripe (Backend) - Use "placeholder" to enable Mock Mode
-STRIPE_SECRET_KEY="sk_test_placeholder"
+# Stripe (Backend) - Payment Processing
+# Get your keys from: https://dashboard.stripe.com/test/apikeys
+STRIPE_SECRET_KEY="sk_test_your_secret_key_here"
 
 # Cloudinary Configuration
 CLOUDINARY_CLOUD_NAME="derqnwozh"
@@ -202,7 +203,8 @@ cp .env.example .env
 NEXT_PUBLIC_API_BASE_URL=http://localhost:5000
 NEXT_PUBLIC_SOCKET_URL=http://localhost:5000
 JWT_SECRET=your-super-secret-jwt-key  # Must match backend JWT_SECRET
-NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_placeholder # Use placeholder for Mock Mode
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_your_publishable_key_here
+# Get from Stripe Dashboard
 NODE_ENV=development
 
 # Start development server
@@ -252,7 +254,11 @@ After seeding, use these accounts (Password: `password@123`):
 ### Scenario 3: Payment & Completion
 1. **Guest**: Go to "Your Orders" -> Click "🔔" to call waiter OR Click "💳 Pay All".
 2. **Waiter (Manual)**: Click "💰 Thanh Toán & Dọn Bàn".
-3. **Guest (Stripe)**: Enter card details (or use Mock Button) -> Success.
+3. **Guest (Stripe)**: Enter test card details:
+   - **Card Number**: `4242 4242 4242 4242`
+   - **Expiry**: Any future date (e.g., `12/34`)
+   - **CVC**: Any 3 digits (e.g., `123`)
+   - **ZIP**: Any (e.g., `12345`)
 4. **Verify**: Order marked COMPLETED, Table becomes AVAILABLE.
 
 ### Scenario 4: Customer Registration & Reviews
@@ -293,8 +299,8 @@ After seeding, use these accounts (Password: `password@123`):
 
 ### Module 4: Payment System
 - ✅ **Bill Modal**: Implemented Bill View for Waiters.
-- ✅ **Stripe Integration**: Added backend/frontend support for Stripe Payments.
-- ✅ **Mock Mode**: Added "Simulate Payment" for easy testing without keys.
+- ✅ **Stripe Integration**: Full real Stripe payment processing with PaymentIntent API.
+- ✅ **Payment Validation**: Minimum amount validation (12,000 VND) and proper error handling.
 - ✅ **Call Assistance**: Added "Ring Bell" feature for guests to notify waiters (Cash/Help).
 - ✅ **Real-time Notifications**: Waiters receive toast alerts when guests request payment.
 
@@ -367,9 +373,13 @@ taskkill /PID <PID> /F
 npm run start:dev
 ```
 
-### Stripe Error: "Invalid API Key"
-- Ensure you have set `STRIPE_SECRET_KEY` in `backend/.env`.
-- For testing, use `sk_test_placeholder` to trigger Mock Mode.
+### Stripe Payment Issues
+- Ensure you have set real Stripe keys in both `.env` files:
+  - Backend: `STRIPE_SECRET_KEY=sk_test_...`
+  - Frontend: `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY=pk_test_...`
+- Get keys from: https://dashboard.stripe.com/test/apikeys
+- Minimum payment amount for VND is **12,000 VND**
+- For testing, use card number: `4242 4242 4242 4242`
 
 ---
 

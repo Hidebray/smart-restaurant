@@ -1,15 +1,23 @@
-import { Body, Controller, Post, Headers, UnauthorizedException } from '@nestjs/common';
+import { Body, Controller, Post, Get, Param, HttpCode, HttpStatus } from '@nestjs/common';
 import { PaymentsService } from './payments.service';
+
+interface CreatePaymentIntentDto {
+    amount: number;
+    orderId?: string;
+}
 
 @Controller('payments')
 export class PaymentsController {
     constructor(private readonly paymentsService: PaymentsService) { }
 
     @Post('create-intent')
-    async createPaymentIntent(@Body() body: { amount: number }) {
-        // In a real app, you should validate the amount from the database based on the Order ID
-        // sent in the body, rather than trusting the client-side amount.
-        // For this MVP, we'll trust the input but it's important to note.
-        return this.paymentsService.createPaymentIntent(body.amount);
+    @HttpCode(HttpStatus.OK)
+    async createPaymentIntent(@Body() body: CreatePaymentIntentDto) {
+        return this.paymentsService.createPaymentIntent(body.amount, 'vnd', body.orderId);
+    }
+
+    @Get('status/:paymentIntentId')
+    async getPaymentStatus(@Param('paymentIntentId') paymentIntentId: string) {
+        return this.paymentsService.retrievePaymentIntent(paymentIntentId);
     }
 }

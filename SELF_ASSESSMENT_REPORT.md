@@ -59,7 +59,7 @@ Students must input minus points to every uncompleted feature in the SE column.
 |  | › View order status | \-0.25 | 0 |  | Guest can track order status (Received → Preparing → Ready) |
 |  | › View order details | \-0.25 | 0 |  | Order confirmation with items, total, table number |
 |  | › Request bill | \-0.25 | 0 |  | Customer requests bill when ready to pay |
-|  | › Process payment after meal | \-0.25 | chưa hoàn hiện |  | Stripe payment processing after dining |
+|  | › Process payment after meal | \-0.25 | 0 |  | Stripe payment processing after dining |
 | **3** | **Authentication and authorization** |  |  |  |  |
 |  | Use a popular authentication library | \-1 | 0 |  | Passport.js with JWT strategy |
 |  | Registration (Customer Signup) | \-0.5 | 0 |  | Customer registration with email/password. Real-time email availability check |
@@ -127,18 +127,18 @@ Students must input minus points to every uncompleted feature in the SE column.
 |  | › Apply discounts | \-0.25 | 0 |  | Apply percentage or fixed amount discounts to bill |
 |  | › Process payment | \-0.25 | 0 |  | Mark bill as paid (cash, card, or e-wallet) |
 | **8** | **Advanced features** |  |  |  |  |
-|  | Payment system integration | 0.5 |  |  | Payment gateway integration (ZaloPay, MoMo, VNPay, Stripe, etc.) - at least 1 required |
-|  | Fuzzy search | 0.25 |  |  | Fuzzy matching for menu item search with typo tolerance |
+|  | Payment system integration | 0.5 | 0.5 |  | Payment gateway integration (ZaloPay, MoMo, VNPay, Stripe, etc.) - at least 1 required |
+|  | Fuzzy search | 0.25 | 0.25 |  | Fuzzy matching for menu item search with typo tolerance |
 |  | Use memory cache to boost performance | 0.25 |  |  | Redis for menu caching and session management |
 |  | Analyze and track user actions | 0.25 |  |  | Google Analytics for QR scan tracking, order conversion metrics |
-|  | Dockerize your project | 0.25 |  |  | Docker containers for backend, frontend, database |
+|  | Dockerize your project | 0.25 | 0.25 |  | Docker containers for backend, frontend, database |
 |  | CI/CD | 0.25 |  |  | GitHub Actions for automated testing and deployment |
 |  | Monitoring and logging | 0.25 |  |  | Centralized application logs, metrics, dashboards, and alerting (e.g., ELK/EFK, Prometheus/Grafana) |
 |  | BI integration | 0.25 |  |  | Connect operational data to BI tools for reporting and dashboards (e.g., Power BI, Tableau, Metabase) |
 |  | Advanced authorization (RBAC) | 0.25 |  |  | Fine-grained role/permission management for Admin/Chef/Waiter and other staff roles |
-|  | WebSocket real-time updates | 0.5 |  |  | Socket.IO for real-time features: KDS order notifications, customer order status tracking, waiter new order alerts, kitchen ready notifications, table status updates |
+|  | WebSocket real-time updates | 0.5 | 0.5 |  | Socket.IO for real-time features: KDS order notifications, customer order status tracking, waiter new order alerts, kitchen ready notifications, table status updates |
 |  | Multi-tenant support | 0.5 |  |  | Multiple restaurants (tenants) with strict data isolation; tenant-scoped RBAC and configuration |
-|  | Multilingual support | 0.25 |  |  | i18n for English/Vietnamese language selection |
+|  | Multilingual support | 0.25 | 0.25 |  | i18n for English/Vietnamese language selection |
 
 # **GIT HISTORY**
 
