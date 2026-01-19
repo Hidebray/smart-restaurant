@@ -114,7 +114,7 @@ Students must input minus points to every uncompleted feature in the SE column.
 |  | Reports |  |  |  |  |
 |  | › View revenue report in time range | \-0.25 | 0 |  | Daily, weekly, monthly revenue reports |
 |  | › View top revenue by menu item in time range | \-0.25 | 0 |  | Best-selling items report |
-|  | › Show interactive chart in reports | \-0.25 | chưa hoàn thiện |  | Chart.js/Recharts for analytics dashboard (orders/day, peak hours, popular items) |
+|  | › Show interactive chart in reports | \-0.25 | 0 |  | Chart.js/Recharts for analytics dashboard (orders/day, peak hours, popular items) |
 | **7** | **Waiter features** |  |  |  |  |
 |  | View pending orders | \-0.25 | 0 |  | List of new orders waiting for waiter acceptance |
 |  | Accept/Reject order items | \-0.25 | 0 |  | Waiter can accept or reject individual order items |

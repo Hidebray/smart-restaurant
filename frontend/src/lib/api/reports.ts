@@ -19,4 +19,7 @@ export const reportsApi = {
 
   topProducts: (params: any) =>
     api.get("/reports/top-products", { params }).then((r) => r.data),
+
+  ordersTrend: (params: any) =>
+    api.get("/reports/orders-trend", { params }).then((r) => r.data),
 };

@@ -5,15 +5,18 @@ import { useEffect, useState } from "react";
 import { reportsApi } from "@/lib/api/reports";
 import RevenueLineChart from "@/components/charts/RevenueLineChart";
 import TopProductsPieChart from "@/components/charts/TopProductsPieChart";
+import OrdersTrendChart from "@/components/charts/OrdersTrendChart";
 
 export default function RevenueReportPage() {
   const [range, setRange] = useState({ from: "", to: "", groupBy: "day" });
   const [revenue, setRevenue] = useState([]);
   const [topProducts, setTopProducts] = useState([]);
+  const [ordersTrend, setOrdersTrend] = useState([]);
 
   const load = async () => {
     setRevenue(await reportsApi.revenue(range));
     setTopProducts(await reportsApi.topProducts(range));
+    setOrdersTrend(await reportsApi.ordersTrend(range));
   };
 
   useEffect(() => {
@@ -74,9 +77,9 @@ export default function RevenueReportPage() {
       </div>
 
       {/* Charts Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Main Revenue Chart */}
-        <div className="lg:col-span-2 bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+        <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
           <div className="flex justify-between items-center mb-6">
             <h2 className="text-xl font-bold text-gray-800">Income Analysis</h2>
             <span className="text-xs font-bold text-green-600 bg-green-50 px-3 py-1 rounded-full border border-green-200">
@@ -88,8 +91,21 @@ export default function RevenueReportPage() {
           </div>
         </div>
 
+        {/* Orders Trend Chart */}
+        <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="text-xl font-bold text-gray-800">Orders Trend</h2>
+            <span className="text-xs font-bold text-blue-600 bg-blue-50 px-3 py-1 rounded-full border border-blue-200">
+              Order Volume
+            </span>
+          </div>
+          <div className="bg-slate-50/50 rounded-xl p-4 border border-slate-100/50">
+            <OrdersTrendChart data={ordersTrend} />
+          </div>
+        </div>
+
         {/* Top Products Pie Chart */}
-        <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col">
+        <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col lg:col-span-1">
           <h2 className="text-xl font-bold text-gray-800 mb-6 border-b border-gray-100 pb-4">Top Categories</h2>
           <div className="flex-1 flex items-center justify-center">
             <div className="w-full">
@@ -99,33 +115,33 @@ export default function RevenueReportPage() {
         </div>
 
         {/* Detailed Analysis Table */}
-        <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 col-span-full">
-          <h2 className="text-xl font-bold text-gray-800 mb-6">Detailed Product Performance</h2>
+        <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 lg:col-span-1">
+          <h2 className="text-xl font-bold text-gray-800 mb-6">Top Products (Detail)</h2>
 
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm text-gray-600">
               <thead className="bg-gray-50 text-gray-900 uppercase font-bold text-xs">
                 <tr>
-                  <th className="px-6 py-3 rounded-l-lg">Rank</th>
-                  <th className="px-6 py-3">Product Name</th>
-                  <th className="px-6 py-3 text-right">Quantity Sold</th>
-                  <th className="px-6 py-3 text-right rounded-r-lg">Total Revenue</th>
+                  <th className="px-4 py-3 rounded-l-lg">Rank</th>
+                  <th className="px-4 py-3">Product</th>
+                  <th className="px-4 py-3 text-right">Sold</th>
+                  <th className="px-4 py-3 text-right rounded-r-lg">Revenue</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-100">
                 {topProducts.length > 0 ? topProducts.map((product: any, index: number) => (
                   <tr key={index} className="hover:bg-gray-50 transition-colors">
-                    <td className="px-6 py-4 font-bold text-gray-400">#{index + 1}</td>
-                    <td className="px-6 py-4 font-medium text-gray-900">{product.name}</td>
-                    <td className="px-6 py-4 text-right font-medium">{product.quantity}</td>
-                    <td className="px-6 py-4 text-right font-bold text-green-600">
-                      {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(product.value)}
+                    <td className="px-4 py-3 font-bold text-gray-400">#{index + 1}</td>
+                    <td className="px-4 py-3 font-medium text-gray-900">{product.name}</td>
+                    <td className="px-4 py-3 text-right font-medium">{product.quantity}</td>
+                    <td className="px-4 py-3 text-right font-bold text-green-600">
+                      {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND', compactDisplay: "short", notation: "compact" }).format(product.value)}
                     </td>
                   </tr>
                 )) : (
                   <tr>
                     <td colSpan={4} className="px-6 py-8 text-center text-gray-400">
-                      No data available for this selection
+                      No data available
                     </td>
                   </tr>
                 )}
