@@ -22,7 +22,12 @@
     "showingItems": "Hiển thị {start}-{end} trên {total} món",
     "add": "Thêm",
     "prev": "Trước",
-    "next": "Sau"
+    "next": "Sau",
+    "sortDefault": "Mặc định",
+    "sortPopular": "Phổ biến",
+    "sortPriceAsc": "Giá: Thấp đến Cao",
+    "sortPriceDesc": "Giá: Cao đến Thấp",
+    "chefsChoice": "Bếp Trưởng Khuyên Dùng"
   },
   "cart": {
     "title": "Giỏ Hàng",

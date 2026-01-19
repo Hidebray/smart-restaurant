@@ -8,7 +8,7 @@ import ProductModal from "@/components/ProductModal";
 import Header from "@/components/mobile/Header";
 import CategoryTabs from "@/components/mobile/CategoryTabs";
 import { useI18n } from "@/contexts/I18nContext";
-import { Search } from "lucide-react";
+import { Search, Star } from "lucide-react";
 import { useMenuStore } from "@/store/useMenuStore";
 
 const formatPrice = (price: number | string) => {
@@ -229,10 +229,9 @@ function GuestMenuContent() {
               onChange={(e) => setSortBy(e.target.value as any)}
               className="bg-[#f5f6fa] border border-gray-200 rounded-xl px-3 text-sm font-medium text-slate-700 outline-none focus:border-orange-500"
             >
-              <option value="default">{t('menu.sortDefault') || 'Default'}</option>
-              <option value="popularity">🔥 Popular</option>
-              <option value="price_asc">Price: Low to High</option>
-              <option value="price_desc">Price: High to Low</option>
+              <option value="popularity">{t('menu.sortPopular') || 'Popular'}</option>
+              <option value="price_asc">{t('menu.sortPriceAsc') || 'Price: Low to High'}</option>
+              <option value="price_desc">{t('menu.sortPriceDesc') || 'Price: High to Low'}</option>
             </select>
           </div>
         </div>
@@ -277,9 +276,21 @@ function GuestMenuContent() {
                   </h3>
                   {product.isChefRecommended && (
                     <span className="shrink-0 ml-2 bg-orange-100 text-orange-600 text-[10px] font-bold px-2 py-0.5 rounded-full border border-orange-200">
-                      👨‍🍳 Chef's Choice
+                      {t('menu.chefsChoice')}
                     </span>
                   )}
+                </div>
+                {/* Rating Display */}
+                <div className="flex items-center gap-1 mt-1">
+                  <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
+                  <span className="text-xs font-medium text-slate-600">
+                    {product.reviews && product.reviews.length > 0
+                      ? (product.reviews.reduce((a, b) => a + b.rating, 0) / product.reviews.length).toFixed(1)
+                      : "New"}
+                  </span>
+                  <span className="text-[10px] text-slate-400">
+                    ({product.reviews?.length || 0})
+                  </span>
                 </div>
                 {product.description && (
                   <p className="text-gray-500 text-xs mt-1 line-clamp-2">

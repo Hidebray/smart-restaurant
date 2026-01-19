@@ -192,6 +192,7 @@ export class ProductsService {
             },
           },
         },
+        reviews: true,
       },
     });
   }
@@ -283,6 +284,7 @@ export class ProductsService {
             },
           },
         },
+        reviews: true,
       },
     });
   }

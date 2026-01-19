@@ -57,6 +57,7 @@ export interface Product {
   isChefRecommended?: boolean;
   prepTimeMinutes?: number | null;
   orderCount?: number;
+  reviews?: Review[];
 }
 
 export interface CartItem {

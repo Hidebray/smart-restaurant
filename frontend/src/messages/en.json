@@ -22,7 +22,12 @@
         "showingItems": "Showing {start}-{end} of {total} items",
         "add": "Add",
         "prev": "Prev",
-        "next": "Next"
+        "next": "Next",
+        "sortDefault": "Default",
+        "sortPopular": "Popular",
+        "sortPriceAsc": "Price: Low to High",
+        "sortPriceDesc": "Price: High to Low",
+        "chefsChoice": "Chef's Choice"
     },
     "cart": {
         "title": "Your Cart",
