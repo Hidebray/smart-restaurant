@@ -103,7 +103,7 @@
     "name": "Họ và Tên",
     "phone": "Số điện thoại",
     "loginSuccess": "Đăng nhập thành công!",
-    "registerSuccess": "Đăng ký thành công! Vui lòng đăng nhập.",
+    "registerSuccess": "Đăng ký thành công! Vui lòng kiểm tra email để xác thực tài khoản trước khi đăng nhập.",
     "alreadyHaveAccount": "Đã có tài khoản?",
     "noAccount": "Chưa có tài khoản?",
     "registerCustomer": "Đăng ký tài khoản Customer",
@@ -138,6 +138,9 @@
     "passwordRequired": "Vui lòng nhập mật khẩu",
     "emailInvalid": "Email không đúng định dạng",
     "passwordMinLength": "Mật khẩu phải dài ít nhất 8 ký tự",
+    "loginFailed": "Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin.",
+    "invalidCredentials": "Email hoặc mật khẩu không chính xác",
+    "emailVerifyRequired": "Vui lòng xác thực email trước khi đăng nhập",
     "registrationFailed": "Đăng ký thất bại. Vui lòng thử lại.",
     "or": "Hoặc"
   },

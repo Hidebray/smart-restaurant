@@ -98,7 +98,7 @@ export default function RegisterPage() {
                 throw new Error(data.message || t('auth.registrationFailed'));
             }
 
-            toast.success(t('auth.registerSuccess'));
+            toast.success(t('auth.registerSuccess'), { duration: 5000 });
             router.push("/login");
 
         } catch (error: any) {

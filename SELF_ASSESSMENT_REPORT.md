@@ -62,8 +62,8 @@ Students must input minus points to every uncompleted feature in the SE column.
 |  | › Process payment after meal | \-0.25 | chưa hoàn hiện |  | Stripe payment processing after dining |
 | **3** | **Authentication and authorization** |  |  |  |  |
 |  | Use a popular authentication library | \-1 | 0 |  | Passport.js with JWT strategy |
-|  | Registration (Customer Signup) | \-0.5 | chưa hoàn thiện |  | Customer registration with email/password. Real-time email availability check |
-|  | Verify user input: password complexity, full name | \-0.25 | chưa hoàn thiện |  | Password rules, required fields validation |
+|  | Registration (Customer Signup) | \-0.5 | 0 |  | Customer registration with email/password. Real-time email availability check |
+|  | Verify user input: password complexity, full name | \-0.25 | 0 |  | Password rules, required fields validation |
 |  | Account activation by email | \-0.25 | 0 |  | Email verification link sent on signup |
 |  | Social Sign-up/Sign-In | \-0.25 | 0 |  | Google OAuth integration |
 |  | Login to the website | \-0.25 | 0 |  | JWT-based authentication for admin/staff |

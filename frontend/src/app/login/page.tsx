@@ -8,7 +8,7 @@ import toast from "react-hot-toast";
 import Cookies from "js-cookie";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 import { useI18n } from "@/contexts/I18nContext";
-import { ArrowLeft, Mail, Lock, LogIn, Info } from "lucide-react";
+import { ArrowLeft, Mail, Lock, LogIn, Info, Eye, EyeOff } from "lucide-react";
 
 function LoginForm() {
   const { t } = useI18n();
@@ -21,9 +21,26 @@ function LoginForm() {
     email: "",
     password: "",
   });
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Custom Validation
+    if (!formData.email.trim()) {
+      toast.error(t('auth.emailRequired'));
+      return;
+    }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email)) {
+      toast.error(t('auth.emailInvalid'));
+      return;
+    }
+    if (!formData.password.trim()) {
+      toast.error(t('auth.passwordRequired'));
+      return;
+    }
+
     setLoading(true);
 
     try {
@@ -36,7 +53,7 @@ function LoginForm() {
       const data = await res.json();
 
       if (!res.ok) {
-        throw new Error(data.message || "Login failed");
+        throw new Error(data.message || t('auth.loginFailed'));
       }
 
       toast.success(t('auth.loginSuccess'));
@@ -62,7 +79,13 @@ function LoginForm() {
           router.push("/tables");
       }
     } catch (error: any) {
-      toast.error(error.message);
+      let message = error.message;
+      if (message === 'Invalid credentials') {
+        message = t('auth.invalidCredentials');
+      } else if (message === 'Please verify your email first') {
+        message = t('auth.emailVerifyRequired');
+      }
+      toast.error(message);
     } finally {
       setLoading(false);
     }
@@ -144,7 +167,7 @@ function LoginForm() {
         </p>
       </div>
 
-      <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+      <form className="mt-8 space-y-6" onSubmit={handleSubmit} noValidate>
         <div className="space-y-4">
           <div>
             <label htmlFor="email" className="block text-sm font-medium text-gray-700">
@@ -159,7 +182,6 @@ function LoginForm() {
                 name="email"
                 type="email"
                 autoComplete="email"
-                required
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                 className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-orange-500 focus:border-orange-500 sm:text-sm text-gray-900 placeholder-gray-400"
@@ -179,14 +201,20 @@ function LoginForm() {
               <input
                 id="password"
                 name="password"
-                type="password"
+                type={showPassword ? "text" : "password"}
                 autoComplete="current-password"
-                required
                 value={formData.password}
                 onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-orange-500 focus:border-orange-500 sm:text-sm text-gray-900 placeholder-gray-400"
+                className="block w-full pl-10 pr-12 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-orange-500 focus:border-orange-500 sm:text-sm text-gray-900 placeholder-gray-400"
                 placeholder="••••••••"
               />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 focus:outline-none"
+              >
+                {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+              </button>
             </div>
           </div>
         </div>
@@ -212,7 +240,7 @@ function LoginForm() {
               </svg>
             ) : (
               <span className="absolute left-0 inset-y-0 flex items-center pl-3">
-                <LogIn className="h-5 w-5 text-orange-500 group-hover:text-orange-400" aria-hidden="true" />
+                <LogIn className="h-5 w-5 text-white" aria-hidden="true" />
               </span>
             )}
             {loading ? t('common.loading') : t('auth.login')}

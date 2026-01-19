@@ -103,7 +103,7 @@
         "name": "Full Name",
         "phone": "Phone Number",
         "loginSuccess": "Login successful!",
-        "registerSuccess": "Registration successful! Please login.",
+        "registerSuccess": "Registration successful! Please check your email to verify your account before logging in.",
         "alreadyHaveAccount": "Already have an account?",
         "noAccount": "Don't have an account?",
         "registerCustomer": "Register Customer Account",
@@ -138,6 +138,9 @@
         "passwordRequired": "Please enter your password",
         "emailInvalid": "Email must be a valid email address",
         "passwordMinLength": "Password must be at least 8 characters long",
+        "loginFailed": "Login failed. Please check your credentials.",
+        "invalidCredentials": "Invalid email or password",
+        "emailVerifyRequired": "Please verify your email address before logging in",
         "registrationFailed": "Registration failed. Please try again.",
         "or": "Or"
     },
