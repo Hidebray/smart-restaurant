@@ -15,6 +15,7 @@ import { ReviewsModule } from './reviews/reviews.module';
 import { LoyaltyModule } from './loyalty/loyalty.module';
 import { InventoryModule } from './inventory/inventory.module';
 import { ReservationsModule } from './reservations/reservations.module';
+import { AnalyticsModule } from './analytics/analytics.module';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { ReservationsModule } from './reservations/reservations.module';
     LoyaltyModule,
     InventoryModule,
     ReservationsModule,
+    AnalyticsModule,
   ],
   controllers: [AppController],
   providers: [AppService],

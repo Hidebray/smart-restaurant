@@ -24,6 +24,7 @@ export default function AdminLayout({
     { label: "Loyalty", href: "/admin/loyalty" },
     { label: "Inventory", href: "/admin/inventory" },
     { label: "Reservations", href: "/admin/reservations" },
+    { label: "Analytics", href: "/admin/analytics" },
     { label: t('admin.reports'), href: "/admin/reports" },
   ];
 

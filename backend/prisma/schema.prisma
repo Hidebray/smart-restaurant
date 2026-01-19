@@ -516,3 +516,40 @@ model Reservation {
   @@index([reservationTime])
   @@map("reservations")
 }
+
+// =========================================================
+// 11. ANALYTICS & REPORTING
+// =========================================================
+
+model AnalyticsSnapshot {
+  id            String   @id @default(uuid())
+  date          DateTime  @unique @db.Date
+  
+  // Revenue metrics
+  totalRevenue  Decimal  @default(0) @map("total_revenue") @db.Decimal(10, 2)
+  orderCount    Int      @default(0) @map("order_count")
+  averageOrderValue Decimal @default(0) @map("average_order_value") @db.Decimal(10, 2)
+  
+  // Customer metrics
+  customerCount Int      @default(0) @map("customer_count")
+  newCustomers  Int      @default(0) @map("new_customers")
+  returningCustomers Int @default(0) @map("returning_customers")
+  
+  // Product metrics
+  topProductId  String?  @map("top_product_id")
+  topProductSales Int   @default(0) @map("top_product_sales")
+  
+  // Table metrics
+  tableUtilization Decimal @default(0) @map("table_utilization") @db.Decimal(5, 2) // Percentage
+  averageTableTime Int    @default(0) @map("average_table_time") // Minutes
+  
+  // Reservation metrics
+  reservationCount Int    @default(0) @map("reservation_count")
+  reservationNoShowRate Decimal @default(0) @map("reservation_no_show_rate") @db.Decimal(5, 2)
+  
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+
+  @@index([date])
+  @@map("analytics_snapshots")
+}
