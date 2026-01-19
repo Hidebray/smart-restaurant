@@ -47,7 +47,8 @@
         "actions": "Actions",
         "maxLength": "Max length is {max} characters",
         "invalidUrl": "Invalid URL format",
-        "invalidPrice": "Price must be greater than 0"
+        "invalidPrice": "Price must be greater than 0",
+        "received": "Received"
     },
     "productModal": {
         "maxSelectionError": "Choose at most {max} options",
