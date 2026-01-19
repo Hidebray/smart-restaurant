@@ -88,13 +88,49 @@ export default function RevenueReportPage() {
           </div>
         </div>
 
-        {/* Top Products */}
+        {/* Top Products Pie Chart */}
         <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col">
           <h2 className="text-xl font-bold text-gray-800 mb-6 border-b border-gray-100 pb-4">Top Categories</h2>
           <div className="flex-1 flex items-center justify-center">
             <div className="w-full">
               <TopProductsPieChart data={topProducts} />
             </div>
+          </div>
+        </div>
+
+        {/* Detailed Analysis Table */}
+        <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 col-span-full">
+          <h2 className="text-xl font-bold text-gray-800 mb-6">Detailed Product Performance</h2>
+
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-sm text-gray-600">
+              <thead className="bg-gray-50 text-gray-900 uppercase font-bold text-xs">
+                <tr>
+                  <th className="px-6 py-3 rounded-l-lg">Rank</th>
+                  <th className="px-6 py-3">Product Name</th>
+                  <th className="px-6 py-3 text-right">Quantity Sold</th>
+                  <th className="px-6 py-3 text-right rounded-r-lg">Total Revenue</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-100">
+                {topProducts.length > 0 ? topProducts.map((product: any, index: number) => (
+                  <tr key={index} className="hover:bg-gray-50 transition-colors">
+                    <td className="px-6 py-4 font-bold text-gray-400">#{index + 1}</td>
+                    <td className="px-6 py-4 font-medium text-gray-900">{product.name}</td>
+                    <td className="px-6 py-4 text-right font-medium">{product.quantity}</td>
+                    <td className="px-6 py-4 text-right font-bold text-green-600">
+                      {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(product.value)}
+                    </td>
+                  </tr>
+                )) : (
+                  <tr>
+                    <td colSpan={4} className="px-6 py-8 text-center text-gray-400">
+                      No data available for this selection
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
           </div>
         </div>
       </div>

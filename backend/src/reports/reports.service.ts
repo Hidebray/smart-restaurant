@@ -6,7 +6,7 @@ type GroupBy = 'day' | 'week' | 'month';
 
 @Injectable()
 export class ReportsService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService) { }
 
   // ----------------------------
   // Existing summary (giữ nguyên)
@@ -190,7 +190,7 @@ export class ReportsService {
     const grouped = await this.prisma.orderItem.groupBy({
       by: ['productId'],
       where,
-      _sum: { totalPrice: true }, // ✅ đúng field (không có price)
+      _sum: { totalPrice: true, quantity: true }, // ✅ Added quantity
     });
 
     const products = await this.prisma.product.findMany({
@@ -204,6 +204,7 @@ export class ReportsService {
       .map((g) => ({
         name: productMap.get(g.productId) || 'Unknown',
         value: Number(g._sum?.totalPrice ?? 0),
+        quantity: Number(g._sum?.quantity ?? 0),
       }))
       .sort((a, b) => b.value - a.value)
       .slice(0, topN);
