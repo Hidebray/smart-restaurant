@@ -1,6 +1,7 @@
-import { Controller, Get, Post, Body, UseGuards, Query, Delete, Param } from '@nestjs/common';
+import { Controller, Get, Post, Body, UseGuards, Query, Delete, Param, Patch } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateUserDto } from './dto/update-user.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
@@ -31,6 +32,13 @@ export class UserController {
             ...createUserDto,
             password: hashedPassword,
         });
+        return result;
+    }
+
+    @Patch(':id')
+    @Roles(UserRole.ADMIN)
+    async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
+        const { password, ...result } = await this.userService.updateUser(id, updateUserDto);
         return result;
     }
 

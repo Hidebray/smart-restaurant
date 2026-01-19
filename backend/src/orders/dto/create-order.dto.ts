@@ -32,6 +32,10 @@ export class CreateOrderDto {
     @IsUUID(4)
     customerId?: string;
 
+    @IsOptional()
+    @IsString()
+    notes?: string;
+
     @IsArray()
     @ValidateNested({ each: true })
     @Type(() => OrderItemDto)

@@ -20,8 +20,8 @@ export class TablesController {
   }
 
   @Get()
-  findAll() {
-    return this.tablesService.findAll();
+  findAll(@Query('waiterId') waiterId?: string) {
+    return this.tablesService.findAll(waiterId);
   }
 
   @Get(':id')
@@ -75,5 +75,15 @@ export class TablesController {
     @Body('type') type: 'PAYMENT_CASH' | 'PAYMENT_QR' | 'ASSISTANCE'
   ) {
     return this.tablesService.requestAssistance(id, type);
+  }
+
+  @Patch(':id/assign-waiter')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.ADMIN, UserRole.WAITER)
+  async assignWaiter(
+    @Param('id') id: string,
+    @Body('waiterId') waiterId: string | null
+  ) {
+    return this.tablesService.assignWaiter(id, waiterId);
   }
 }

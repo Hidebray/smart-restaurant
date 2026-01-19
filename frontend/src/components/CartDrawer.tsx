@@ -17,6 +17,7 @@ import { ShoppingCart, X, Trash2, Rocket, ScanLine, Info } from "lucide-react";
 export default function CartDrawer({ isOpen, onClose, tableId }: CartDrawerProps) {
   const { items, totalAmount, removeFromCart, clearCart } = useCartStore();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [notes, setNotes] = useState("");
 
   // Format tiền
   const formatPrice = (price: number) =>
@@ -37,6 +38,7 @@ export default function CartDrawer({ isOpen, onClose, tableId }: CartDrawerProps
       // 1. Chuẩn bị dữ liệu gửi lên Backend
       const orderData = {
         tableId: tableId,
+        notes: notes.trim() || undefined,
         items: items.map(item => ({
           productId: item.productId,
           quantity: item.quantity,
@@ -52,6 +54,7 @@ export default function CartDrawer({ isOpen, onClose, tableId }: CartDrawerProps
       // 3. Thành công
       toast.success("🎉 Đặt món thành công! Bếp đang chuẩn bị.");
       clearCart(); // Xóa giỏ
+      setNotes(""); // Reset notes
       onClose();   // Đóng Drawer
 
     } catch (error: any) {
@@ -145,6 +148,24 @@ export default function CartDrawer({ isOpen, onClose, tableId }: CartDrawerProps
             <div className="flex justify-between items-center mb-4">
               <span className="text-slate-600">Tổng cộng:</span>
               <span className="text-2xl font-bold text-orange-600">{formatPrice(totalAmount)}</span>
+            </div>
+
+            {/* Order Notes Input */}
+            <div className="mb-3">
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                Ghi chú đặc biệt (tùy chọn)
+              </label>
+              <textarea
+                value={notes}
+                onChange={(e) => setNotes(e.target.value)}
+                placeholder="Ví dụ: Ít cay, không hành, giao nhanh..."
+                rows={2}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent resize-none"
+                maxLength={500}
+              />
+              <div className="text-xs text-gray-500 mt-1 text-right">
+                {notes.length}/500
+              </div>
             </div>
 
             {!tableId && (

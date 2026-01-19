@@ -8,6 +8,8 @@ import OrderTimer from "@/components/OrderTimer";
 import { Order } from "@/types";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 import { useI18n } from "@/contexts/I18nContext";
+import { tablesApi, Table } from "@/lib/api/tables";
+import { api } from "@/lib/api/api";
 
 // Extended Order type to include table info if not fully covered in @/types for this specific view
 // Assuming @/types Order does not have `table` object populated fully in the frontend types yet based on previous file view
@@ -28,6 +30,9 @@ export default function WaiterPage() {
   const [orders, setOrders] = useState<OrderWithRelations[]>([]);
   const [selectedOrder, setSelectedOrder] = useState<OrderWithRelations | null>(null);
   const [isBillModalOpen, setIsBillModalOpen] = useState(false);
+  const [assignedTables, setAssignedTables] = useState<Table[]>([]);
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+  const [showTables, setShowTables] = useState(false);
 
   // Tải đơn hàng (Chỉ lấy đơn nào có món đã xong hoặc đang ăn)
   const fetchOrders = async () => {
@@ -46,6 +51,33 @@ export default function WaiterPage() {
     const interval = setInterval(fetchOrders, 5000);
     return () => clearInterval(interval);
   }, []);
+
+  useEffect(() => {
+    // Fetch current user profile to get user ID
+    const fetchUserProfile = async () => {
+      try {
+        const res = await api.get('/auth/profile');
+        setCurrentUserId(res.data.id);
+      } catch (error) {
+        console.error('Failed to fetch user profile:', error);
+      }
+    };
+    fetchUserProfile();
+  }, []);
+
+  useEffect(() => {
+    if (currentUserId && showTables) {
+      const fetchAssignedTables = async () => {
+        try {
+          const tables = await tablesApi.getAssignedTables(currentUserId);
+          setAssignedTables(tables);
+        } catch (error) {
+          console.error('Failed to fetch assigned tables:', error);
+        }
+      };
+      fetchAssignedTables();
+    }
+  }, [currentUserId, showTables]);
 
   useEffect(() => {
     // Socket.IO: Listen for order updates from Kitchen
@@ -159,7 +191,20 @@ export default function WaiterPage() {
             <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full">
               {t('waiter.currentlyServing')}: {servedOrders.length}
             </span>
+            <span className="bg-purple-100 text-purple-800 px-3 py-1 rounded-full">
+              Bàn của tôi: {assignedTables.length}
+            </span>
           </div>
+          <button
+            onClick={() => setShowTables(!showTables)}
+            className={`px-4 py-2 rounded-lg font-semibold text-sm transition-colors ${
+              showTables
+                ? 'bg-purple-600 text-white'
+                : 'bg-purple-100 text-purple-700 hover:bg-purple-200'
+            }`}
+          >
+            {showTables ? 'Ẩn Bàn' : 'Xem Bàn Của Tôi'}
+          </button>
           <LanguageSwitcher />
           <button
             onClick={async () => {
@@ -173,6 +218,60 @@ export default function WaiterPage() {
           </button>
         </div>
       </header>
+
+      {/* Assigned Tables Section */}
+      {showTables && (
+        <div className="bg-white p-6 rounded-xl shadow-sm border-t-4 border-purple-500 mb-8">
+          <h2 className="text-xl font-bold mb-4 flex items-center gap-2 text-purple-700">
+            🪑 Bàn Được Phân Công Cho Tôi
+          </h2>
+          {assignedTables.length === 0 ? (
+            <p className="text-gray-500 italic text-center py-4">
+              Bạn chưa được phân công bàn nào. Vui lòng liên hệ Admin để được phân công.
+            </p>
+          ) : (
+            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+              {assignedTables.map((table) => (
+                <div
+                  key={table.id}
+                  className={`p-4 rounded-lg border-2 ${
+                    table.status === 'OCCUPIED'
+                      ? 'border-red-300 bg-red-50'
+                      : table.status === 'RESERVED'
+                      ? 'border-yellow-300 bg-yellow-50'
+                      : 'border-green-300 bg-green-50'
+                  }`}
+                >
+                  <div className="text-center">
+                    <div className="text-2xl font-bold text-gray-800">Bàn {table.tableNumber}</div>
+                    <div className="text-xs text-gray-600 mt-1">
+                      {table.capacity} chỗ
+                      {table.location && ` • ${table.location}`}
+                    </div>
+                    <div className="text-xs font-semibold mt-2">
+                      <span
+                        className={`px-2 py-1 rounded ${
+                          table.status === 'OCCUPIED'
+                            ? 'bg-red-200 text-red-800'
+                            : table.status === 'RESERVED'
+                            ? 'bg-yellow-200 text-yellow-800'
+                            : 'bg-green-200 text-green-800'
+                        }`}
+                      >
+                        {table.status === 'OCCUPIED'
+                          ? 'Đang dùng'
+                          : table.status === 'RESERVED'
+                          ? 'Đã đặt'
+                          : 'Trống'}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
 

@@ -18,8 +18,20 @@ export class TablesService {
     });
   }
 
-  findAll() {
-    return this.prisma.table.findMany();
+  findAll(waiterId?: string) {
+    const where = waiterId ? { assignedWaiterId: waiterId } : {};
+    return this.prisma.table.findMany({
+      where,
+      include: {
+        assignedWaiter: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          },
+        },
+      },
+    });
   }
 
   findOne(id: string) {
@@ -115,5 +127,34 @@ export class TablesService {
 
     this.ordersGateway.emitTableNotification(payload);
     return { success: true };
+  }
+
+  async assignWaiter(tableId: string, waiterId: string | null) {
+    const table = await this.prisma.table.findUnique({ where: { id: tableId } });
+    if (!table) throw new NotFoundException('Table not found');
+
+    if (waiterId) {
+      // Verify waiter exists and has WAITER role
+      const waiter = await this.prisma.user.findUnique({
+        where: { id: waiterId },
+      });
+      if (!waiter || waiter.role !== 'WAITER') {
+        throw new BadRequestException('Invalid waiter ID or user is not a waiter');
+      }
+    }
+
+    return this.prisma.table.update({
+      where: { id: tableId },
+      data: { assignedWaiterId: waiterId },
+      include: {
+        assignedWaiter: {
+          select: {
+            id: true,
+            name: true,
+            email: true,
+          },
+        },
+      },
+    });
   }
 }

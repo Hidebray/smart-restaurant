@@ -11,7 +11,7 @@ export class OrdersService {
   constructor(private prisma: PrismaService, private ordersGateway: OrdersGateway) { }
 
   async create(createOrderDto: CreateOrderDto) {
-    const { tableId, items } = createOrderDto;
+    const { tableId, items, notes } = createOrderDto;
 
     if (!items?.length) {
       throw new BadRequestException("The order must have at least one item.");
@@ -83,6 +83,7 @@ export class OrdersService {
           data: {
             totalAmount: updatedTotal,
             ...(createOrderDto.customerId ? { customerId: createOrderDto.customerId } : {}),
+            ...(notes !== undefined ? { notes: notes || null } : {}),
             items: {
               create: orderItemsData,
             },
@@ -103,6 +104,7 @@ export class OrdersService {
           totalAmount,
           status: 'PENDING',
           customerId: createOrderDto.customerId,
+          notes: notes || null,
           items: {
             create: orderItemsData,
           },

@@ -85,26 +85,34 @@ export default function StaffForm({ onClose }: StaffFormProps) {
                     {/* Role Selection */}
                     <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">Role</label>
-                        <div className="grid grid-cols-2 gap-2">
+                        <div className="grid grid-cols-3 gap-2">
                             <button
                                 type="button"
-                                className={`py-2 px-4 rounded border text-center ${formData.role === 'WAITER' ? 'bg-blue-50 border-blue-500 text-blue-700 font-bold' : 'border-gray-300 hover:bg-gray-50'}`}
+                                className={`py-2 px-4 rounded border text-center transition-colors ${formData.role === 'WAITER' ? 'bg-blue-50 border-blue-500 text-blue-700 font-bold' : 'border-gray-300 hover:bg-gray-50'}`}
                                 onClick={() => setFormData({ ...formData, role: 'WAITER' })}
                             >
                                 🤵 Waiter
                             </button>
                             <button
                                 type="button"
-                                className={`py-2 px-4 rounded border text-center ${formData.role === 'KITCHEN' ? 'bg-blue-50 border-blue-500 text-blue-700 font-bold' : 'border-gray-300 hover:bg-gray-50'}`}
+                                className={`py-2 px-4 rounded border text-center transition-colors ${formData.role === 'KITCHEN' ? 'bg-blue-50 border-blue-500 text-blue-700 font-bold' : 'border-gray-300 hover:bg-gray-50'}`}
                                 onClick={() => setFormData({ ...formData, role: 'KITCHEN' })}
                             >
                                 👨‍🍳 Kitchen
                             </button>
+                            <button
+                                type="button"
+                                className={`py-2 px-4 rounded border text-center transition-colors ${formData.role === 'ADMIN' ? 'bg-red-50 border-red-500 text-red-700 font-bold' : 'border-gray-300 hover:bg-gray-50'}`}
+                                onClick={() => setFormData({ ...formData, role: 'ADMIN' })}
+                            >
+                                🛡️ Admin
+                            </button>
                         </div>
-                        <div className="mt-2 text-xs text-gray-500">
-                            Also available: <span className="underline cursor-pointer" onClick={() => setFormData({ ...formData, role: 'ADMIN' })}>Admin</span> (careful!)
-                            {formData.role === 'ADMIN' && <span className="text-red-500 font-bold ml-2">⚠️ Admin selected</span>}
-                        </div>
+                        {formData.role === 'ADMIN' && (
+                            <div className="mt-2 text-xs text-red-600 bg-red-50 p-2 rounded border border-red-200">
+                                ⚠️ <strong>Warning:</strong> Admin accounts have full system access. Only create for trusted staff.
+                            </div>
+                        )}
                     </div>
 
                     {/* Phone (Optional) */}

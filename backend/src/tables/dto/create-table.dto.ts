@@ -1,5 +1,5 @@
 
-import { IsInt, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { IsInt, IsNotEmpty, IsOptional, IsString, IsUUID } from 'class-validator';
 
 export class CreateTableDto {
   @IsString()
@@ -13,4 +13,8 @@ export class CreateTableDto {
   @IsString()
   @IsOptional()
   location?: string;
+
+  @IsOptional()
+  @IsUUID()
+  assignedWaiterId?: string;
 }

@@ -6,6 +6,7 @@ import { usersApi, User } from "@/lib/api/users";
 import Button from "@/components/ui/Button";
 import * as Icons from "lucide-react";
 import StaffForm from "./StaffForm";
+import EditStaffModal from "./EditStaffModal";
 import toast from "react-hot-toast";
 
 const fetcher = () => usersApi.getAll();
@@ -13,6 +14,8 @@ const fetcher = () => usersApi.getAll();
 export default function StaffPage() {
     const { data: users, error, mutate } = useSWR<User[]>("users", fetcher);
     const [isFormOpen, setIsFormOpen] = useState(false);
+    const [editingUser, setEditingUser] = useState<User | null>(null);
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
     // Filter out ADMINs if you want, or show all. The requirement says "create Waiter and Kitchen Staff".
     // Usually admins can see other admins too.
@@ -28,6 +31,20 @@ export default function StaffPage() {
 
     const handleFormClose = () => {
         setIsFormOpen(false);
+        mutate();
+    };
+
+    const handleEdit = (user: User) => {
+        setEditingUser(user);
+        setIsEditModalOpen(true);
+    };
+
+    const handleEditClose = () => {
+        setIsEditModalOpen(false);
+        setEditingUser(null);
+    };
+
+    const handleEditSuccess = () => {
         mutate();
     };
 
@@ -66,6 +83,15 @@ export default function StaffPage() {
                 <StaffForm onClose={handleFormClose} />
             )}
 
+            {editingUser && (
+                <EditStaffModal
+                    user={editingUser}
+                    isOpen={isEditModalOpen}
+                    onClose={handleEditClose}
+                    onSuccess={handleEditSuccess}
+                />
+            )}
+
             <div className="space-y-8">
 
                 {/* Waiters Section */}
@@ -75,7 +101,7 @@ export default function StaffPage() {
                     </h2>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                         {waiters.map(user => (
-                            <StaffCard key={user.id} user={user} icon="🤵" onDelete={handleDelete} />
+                            <StaffCard key={user.id} user={user} icon="🤵" onEdit={handleEdit} onDelete={handleDelete} />
                         ))}
                         {waiters.length === 0 && <p className="text-gray-500 italic">No waiters found.</p>}
                     </div>
@@ -88,7 +114,7 @@ export default function StaffPage() {
                     </h2>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                         {kitchenStaff.map(user => (
-                            <StaffCard key={user.id} user={user} icon="👨‍🍳" onDelete={handleDelete} />
+                            <StaffCard key={user.id} user={user} icon="👨‍🍳" onEdit={handleEdit} onDelete={handleDelete} />
                         ))}
                         {kitchenStaff.length === 0 && <p className="text-gray-500 italic">No kitchen staff found.</p>}
                     </div>
@@ -101,8 +127,9 @@ export default function StaffPage() {
                     </h2>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                         {admins.map(user => (
-                            <StaffCard key={user.id} user={user} icon="🛡️" onDelete={handleDelete} />
+                            <StaffCard key={user.id} user={user} icon="🛡️" onEdit={handleEdit} onDelete={handleDelete} />
                         ))}
+                        {admins.length === 0 && <p className="text-gray-500 italic">No admins found.</p>}
                     </div>
                 </section>
 
@@ -111,14 +138,15 @@ export default function StaffPage() {
     );
 }
 
-function StaffCard({ user, icon, onDelete }: {
+function StaffCard({ user, icon, onEdit, onDelete }: {
     user: User;
     icon: string;
+    onEdit: (user: User) => void;
     onDelete: (userId: string, userName: string) => void;
 }) {
     return (
         <div className="bg-white p-4 rounded-lg shadow border border-gray-100 flex items-start justify-between">
-            <div>
+            <div className="flex-1">
                 <div className="font-bold text-lg flex items-center gap-2">
                     {icon} {user.name}
                 </div>
@@ -129,14 +157,24 @@ function StaffCard({ user, icon, onDelete }: {
                 <div className="text-xs font-bold text-gray-400 uppercase tracking-wider">
                     {user.role}
                 </div>
-                <button
-                    onClick={() => onDelete(user.id, user.name)}
-                    className="text-red-500 hover:text-red-700 text-xs font-medium flex items-center gap-1 transition-colors"
-                    title="Delete staff"
-                >
-                    <Icons.Trash2 className="h-3 w-3" />
-                    Delete
-                </button>
+                <div className="flex gap-2">
+                    <button
+                        onClick={() => onEdit(user)}
+                        className="text-blue-500 hover:text-blue-700 text-xs font-medium flex items-center gap-1 transition-colors"
+                        title="Edit staff"
+                    >
+                        <Icons.Edit className="h-3 w-3" />
+                        Edit
+                    </button>
+                    <button
+                        onClick={() => onDelete(user.id, user.name)}
+                        className="text-red-500 hover:text-red-700 text-xs font-medium flex items-center gap-1 transition-colors"
+                        title="Delete staff"
+                    >
+                        <Icons.Trash2 className="h-3 w-3" />
+                        Delete
+                    </button>
+                </div>
             </div>
         </div>
     );

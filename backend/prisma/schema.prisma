@@ -76,6 +76,7 @@ model User {
   // Relations
   orders    Order[] 
   reviews   Review[]
+  assignedTables Table[] @relation("WaiterTables")
   
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -97,6 +98,10 @@ model Table {
   // QR Code info
   qrToken         String?     @unique @map("qr_token") 
   qrTokenCreatedAt DateTime?  @map("qr_token_created_at")
+  
+  // Waiter Assignment
+  assignedWaiterId String?   @map("assigned_waiter_id")
+  assignedWaiter   User?      @relation("WaiterTables", fields: [assignedWaiterId], references: [id])
   
   // Relations
   orders          Order[]   

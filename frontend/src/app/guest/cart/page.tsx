@@ -19,6 +19,7 @@ function CartContent() {
     const { items, totalAmount, removeFromCart, updateQuantity, clearCart } =
         useCartStore();
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [notes, setNotes] = useState("");
     const searchParams = useSearchParams();
     const router = useRouter();
 
@@ -45,6 +46,7 @@ function CartContent() {
         try {
             const orderData = {
                 tableId: tableId,
+                notes: notes.trim() || undefined,
                 items: items.map((item) => ({
                     productId: item.productId,
                     quantity: item.quantity,
@@ -61,6 +63,7 @@ function CartContent() {
 
             toast.success(t('cart.orderPlacedSuccess'));
             clearCart();
+            setNotes("");
             router.push(`/guest/orders?tableId=${tableId}`);
         } catch (error: any) {
             console.error(error);
@@ -147,13 +150,19 @@ function CartContent() {
                 {items.length > 0 && (
                     <div className="bg-white p-4 rounded-xl shadow-sm border border-slate-100">
                         <h4 className="font-bold text-gray-800 mb-2">
-                            {t('cart.specialInstructions')}
+                            {t('cart.specialInstructions') || 'Ghi chú đặc biệt'}
                         </h4>
                         <textarea
-                            className="w-full bg-slate-50 rounded-lg p-3 text-sm focus:outline-none focus:ring-1 focus:ring-[#e74c3c] text-slate-800 placeholder:text-slate-500 border border-slate-200"
-                            placeholder={t('cart.instructionsPlaceholder')}
-                            rows={2}
+                            value={notes}
+                            onChange={(e) => setNotes(e.target.value)}
+                            className="w-full bg-slate-50 rounded-lg p-3 text-sm focus:outline-none focus:ring-1 focus:ring-[#e74c3c] text-slate-800 placeholder:text-slate-500 border border-slate-200 resize-none"
+                            placeholder={t('cart.instructionsPlaceholder') || 'Ví dụ: Ít cay, không hành, giao nhanh...'}
+                            rows={3}
+                            maxLength={500}
                         />
+                        <div className="text-xs text-gray-500 mt-1 text-right">
+                            {notes.length}/500
+                        </div>
                     </div>
                 )}
 

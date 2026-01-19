@@ -15,6 +15,13 @@ export interface CreateUserDto {
     role: string;
 }
 
+export interface UpdateUserDto {
+    name?: string;
+    email?: string;
+    phone?: string;
+    role?: string;
+}
+
 export const usersApi = {
     getAll: async (role?: string): Promise<User[]> => {
         const response = await api.get('/users', {
@@ -25,6 +32,11 @@ export const usersApi = {
 
     create: async (data: CreateUserDto): Promise<User> => {
         const response = await api.post('/users', data);
+        return response.data;
+    },
+
+    update: async (id: string, data: UpdateUserDto): Promise<User> => {
+        const response = await api.patch(`/users/${id}`, data);
         return response.data;
     },
 

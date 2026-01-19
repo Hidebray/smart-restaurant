@@ -49,4 +49,14 @@ export const tablesApi = {
     const response = await api.post(`/tables/${id}/regenerate-qr`);
     return response.data;
   },
+
+  assignWaiter: async (tableId: string, waiterId: string | null): Promise<Table> => {
+    const response = await api.patch(`/tables/${tableId}/assign-waiter`, { waiterId });
+    return response.data;
+  },
+
+  getAssignedTables: async (waiterId: string): Promise<Table[]> => {
+    const response = await api.get(`/tables?waiterId=${waiterId}`);
+    return response.data;
+  },
 };

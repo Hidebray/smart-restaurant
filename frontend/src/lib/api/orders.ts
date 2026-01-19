@@ -3,6 +3,7 @@ import { Order } from '@/types';
 
 export interface CreateOrderPayload {
   tableId: string;
+  notes?: string;
   items: {
     productId: string;
     quantity: number;
