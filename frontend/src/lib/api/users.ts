@@ -6,6 +6,7 @@ export interface User {
     email: string;
     role: string;
     phone?: string;
+    isActive: boolean;
 }
 
 export interface CreateUserDto {
@@ -20,6 +21,7 @@ export interface UpdateUserDto {
     email?: string;
     phone?: string;
     role?: string;
+    isActive?: boolean;
 }
 
 export const usersApi = {

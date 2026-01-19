@@ -84,6 +84,8 @@ function LoginForm() {
         message = t('auth.invalidCredentials');
       } else if (message === 'Please verify your email first') {
         message = t('auth.emailVerifyRequired');
+      } else if (message.includes('Your account has been deactivated')) {
+        message = t('auth.accountDeactivated');
       }
       toast.error(message);
     } finally {

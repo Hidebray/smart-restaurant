@@ -6,6 +6,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import Button from "@/components/ui/Button";
 import Input from "@/components/ui/Input";
 import toast from "react-hot-toast";
+import { useI18n } from "@/contexts/I18nContext";
 
 interface EditStaffModalProps {
     user: User | null;
@@ -15,6 +16,7 @@ interface EditStaffModalProps {
 }
 
 export default function EditStaffModal({ user, isOpen, onClose, onSuccess }: EditStaffModalProps) {
+    const { t } = useI18n();
     const [loading, setLoading] = useState(false);
     const [formData, setFormData] = useState({
         name: "",
@@ -49,7 +51,7 @@ export default function EditStaffModal({ user, isOpen, onClose, onSuccess }: Edi
             };
 
             await usersApi.update(user.id, updateData);
-            toast.success("Staff updated successfully!");
+            toast.success(t('staff.updateSuccess').replace('{name}', user.name));
             onSuccess();
             onClose();
         } catch (error: any) {
@@ -66,24 +68,24 @@ export default function EditStaffModal({ user, isOpen, onClose, onSuccess }: Edi
         <Dialog open={isOpen} onOpenChange={onClose}>
             <DialogContent className="max-w-md">
                 <DialogHeader>
-                    <DialogTitle>Edit Staff: {user.name}</DialogTitle>
+                    <DialogTitle>{t('staff.edit')}: {user.name}</DialogTitle>
                 </DialogHeader>
 
                 <form onSubmit={handleSubmit} className="space-y-4">
                     {/* Name */}
                     <div>
-                        <label className="block text-sm font-medium text-gray-700">Name</label>
+                        <label className="block text-sm font-medium text-gray-700">{t('auth.name')}</label>
                         <Input
                             required
                             value={formData.name}
                             onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                            placeholder="Full Name"
+                            placeholder={t('auth.name')}
                         />
                     </div>
 
                     {/* Email */}
                     <div>
-                        <label className="block text-sm font-medium text-gray-700">Email</label>
+                        <label className="block text-sm font-medium text-gray-700">{t('auth.email')}</label>
                         <Input
                             required
                             type="email"
@@ -95,15 +97,15 @@ export default function EditStaffModal({ user, isOpen, onClose, onSuccess }: Edi
 
                     {/* Role */}
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Role</label>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">{t('auth.role') || 'Role'}</label>
                         <select
                             value={formData.role}
                             onChange={(e) => setFormData({ ...formData, role: e.target.value })}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-gray-900"
                         >
-                            <option value="WAITER">🤵 Waiter</option>
-                            <option value="KITCHEN">👨‍🍳 Kitchen</option>
-                            <option value="ADMIN">🛡️ Admin</option>
+                            <option value="WAITER">🤵 {t('role.waiter')}</option>
+                            <option value="KITCHEN">👨‍🍳 {t('role.kitchen')}</option>
+                            <option value="ADMIN">🛡️ {t('role.admin')}</option>
                         </select>
                         {formData.role === 'ADMIN' && (
                             <div className="mt-2 text-xs text-red-600 bg-red-50 p-2 rounded border border-red-200">
@@ -114,7 +116,7 @@ export default function EditStaffModal({ user, isOpen, onClose, onSuccess }: Edi
 
                     {/* Phone */}
                     <div>
-                        <label className="block text-sm font-medium text-gray-700">Phone (Optional)</label>
+                        <label className="block text-sm font-medium text-gray-700">{t('auth.phone')}</label>
                         <Input
                             value={formData.phone}
                             onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
@@ -124,10 +126,10 @@ export default function EditStaffModal({ user, isOpen, onClose, onSuccess }: Edi
 
                     <div className="flex justify-end gap-2 mt-6">
                         <Button variant="outline" type="button" onClick={onClose} disabled={loading}>
-                            Cancel
+                            {t('common.cancel') || 'Cancel'}
                         </Button>
                         <Button type="submit" disabled={loading}>
-                            {loading ? "Updating..." : "Update Staff"}
+                            {loading ? t('common.updating') || 'Updating...' : t('staff.edit')}
                         </Button>
                     </div>
                 </form>

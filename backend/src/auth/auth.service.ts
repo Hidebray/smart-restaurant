@@ -160,6 +160,10 @@ export class AuthService {
       throw new UnauthorizedException('Please verify your email first');
     }
 
+    if (!user.isActive) {
+      throw new UnauthorizedException('Your account has been deactivated. Please contact support.');
+    }
+
     const payload = { sub: user.id, email: user.email, role: user.role };
 
     return {

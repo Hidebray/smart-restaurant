@@ -141,8 +141,25 @@
         "loginFailed": "Login failed. Please check your credentials.",
         "invalidCredentials": "Invalid email or password",
         "emailVerifyRequired": "Please verify your email address before logging in",
+        "accountDeactivated": "Your account has been deactivated. Please contact support.",
         "registrationFailed": "Registration failed. Please try again.",
         "or": "Or"
+    },
+    "staff": {
+        "title": "Staff Management",
+        "subtitle": "Manage Waiters, Kitchen Staff and Admins.",
+        "addNew": "Add New Staff",
+        "status": "Status",
+        "active": "Active",
+        "inactive": "Inactive",
+        "activate": "Activate",
+        "deactivate": "Deactivate",
+        "edit": "Edit",
+        "delete": "Delete",
+        "confirmDelete": "Are you sure you want to delete {name}?",
+        "deleteSuccess": "{name} has been deleted",
+        "updateSuccess": "{name} updated successfully",
+        "toggleStatusSuccess": "{name} status updated"
     },
     "waiter": {
         "title": "Waiter Dashboard",

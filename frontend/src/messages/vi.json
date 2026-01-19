@@ -141,8 +141,25 @@
     "loginFailed": "Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin.",
     "invalidCredentials": "Email hoặc mật khẩu không chính xác",
     "emailVerifyRequired": "Vui lòng xác thực email trước khi đăng nhập",
+    "accountDeactivated": "Tài khoản của bạn đã bị vô hiệu hóa. Vui lòng liên hệ hỗ trợ.",
     "registrationFailed": "Đăng ký thất bại. Vui lòng thử lại.",
     "or": "Hoặc"
+  },
+  "staff": {
+    "title": "Quản lý nhân viên",
+    "subtitle": "Quản lý Bồi bàn, Đầu bếp và Quản trị viên.",
+    "addNew": "Thêm nhân viên mới",
+    "status": "Trạng thái",
+    "active": "Đang hoạt động",
+    "inactive": "Vô hiệu hóa",
+    "activate": "Kích hoạt",
+    "deactivate": "Vô hiệu hóa",
+    "edit": "Sửa",
+    "delete": "Xóa",
+    "confirmDelete": "Bạn có chắc chắn muốn xóa {name}?",
+    "deleteSuccess": "Đã xóa {name}",
+    "updateSuccess": "Cập nhật {name} thành công",
+    "toggleStatusSuccess": "Đã cập nhật trạng thái {name}"
   },
   "waiter": {
     "title": "Màn hình Phục Vụ",

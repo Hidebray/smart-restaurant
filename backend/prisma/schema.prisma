@@ -103,6 +103,7 @@ model User {
   role     UserRole @default(CUSTOMER)
   phone    String?
   avatar   String?
+  isActive Boolean @default(true) @map("is_active")
 
   isEmailVerified   Boolean @default(false) @map("is_email_verified")
   verificationToken String? @map("verification_token")
