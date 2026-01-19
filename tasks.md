@@ -292,10 +292,10 @@ The working order rotates daily following this sequence:
   - [ ] Based on popularity
   - _Points:_ -0.25
 
-- [ ] **Task 7.16: Multi-Image Upload**
-  - [ ] Update Product model for multiple images
-  - [ ] Implement image gallery
-  - [ ] Add/remove images in admin
+- [x] **Task 7.16: Multi-Image Upload**
+  - [x] Update Product model for multiple images
+  - [x] Implement image gallery
+  - [x] Add/remove images in admin
   - _Points:_ -0.5
 
 - [ ] **Task 7.17: Discount System**

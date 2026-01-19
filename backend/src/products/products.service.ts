@@ -1,14 +1,140 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { Prisma } from '@prisma/client';
 import { AdminProductsQueryDto } from './dto/admin-products-query.dto';
 import { OrderStatus } from '@prisma/client';
+import * as fs from 'fs';
+import * as path from 'path';
 
 @Injectable()
 export class ProductsService {
   constructor(private prisma: PrismaService) {}
+
+  async addProductImages(
+    productId: string,
+    files: Array<Express.Multer.File>,
+    opts?: { setPrimaryFirst?: boolean; replaceAll?: boolean },
+  ) {
+    if (!files || files.length === 0) {
+      throw new BadRequestException('No files uploaded');
+    }
+
+    const product = await this.prisma.product.findUnique({
+      where: { id: productId },
+      include: { images: true },
+    });
+    if (!product) throw new NotFoundException('Product not found');
+
+    // Optional: replace all images
+    if (opts?.replaceAll) {
+      // delete files on disk (best effort)
+      for (const img of product.images) {
+        this.tryDeleteUploadedFile(img.url);
+      }
+      await this.prisma.productImage.deleteMany({ where: { productId } });
+    }
+
+    const baseUrl = process.env.BACKEND_PUBLIC_URL || '';
+    // Nếu không set BACKEND_PUBLIC_URL, frontend vẫn dùng absolute url vì req.get('host') không có trong service.
+    // => Mình lưu url dạng "/uploads/products/xxx.png" để FE dễ prefix NEXT_PUBLIC_API_BASE_URL.
+
+    const existing = await this.prisma.productImage.findMany({
+      where: { productId },
+    });
+    const hasPrimary = existing.some((i) => i.isPrimary);
+
+    const imagesData = files.map((f, idx) => ({
+      url: `/uploads/products/${f.filename}`,
+      isPrimary:
+        (!hasPrimary && idx === 0) || (!!opts?.setPrimaryFirst && idx === 0),
+      productId,
+    }));
+
+    // Nếu setPrimaryFirst=true: set tất cả ảnh cũ thành non-primary
+    if (opts?.setPrimaryFirst) {
+      await this.prisma.productImage.updateMany({
+        where: { productId },
+        data: { isPrimary: false },
+      });
+    }
+
+    await this.prisma.productImage.createMany({ data: imagesData });
+
+    return this.prisma.product.findUnique({
+      where: { id: productId },
+      include: { images: true },
+    });
+  }
+
+  async setPrimaryProductImage(productId: string, imageId: string) {
+    const img = await this.prisma.productImage.findFirst({
+      where: { id: imageId, productId },
+    });
+    if (!img) throw new NotFoundException('Image not found');
+
+    await this.prisma.productImage.updateMany({
+      where: { productId },
+      data: { isPrimary: false },
+    });
+
+    await this.prisma.productImage.update({
+      where: { id: imageId },
+      data: { isPrimary: true },
+    });
+
+    return this.prisma.product.findUnique({
+      where: { id: productId },
+      include: { images: true },
+    });
+  }
+
+  async deleteProductImage(productId: string, imageId: string) {
+    const img = await this.prisma.productImage.findFirst({
+      where: { id: imageId, productId },
+    });
+    if (!img) throw new NotFoundException('Image not found');
+
+    // delete DB
+    await this.prisma.productImage.delete({ where: { id: imageId } });
+
+    // delete file on disk (best effort)
+    this.tryDeleteUploadedFile(img.url);
+
+    // if deleted primary -> set newest as primary (optional)
+    const remaining = await this.prisma.productImage.findMany({
+      where: { productId },
+      orderBy: { createdAt: 'desc' },
+    });
+
+    if (remaining.length > 0 && remaining.every((x) => !x.isPrimary)) {
+      await this.prisma.productImage.update({
+        where: { id: remaining[0].id },
+        data: { isPrimary: true },
+      });
+    }
+
+    return this.prisma.product.findUnique({
+      where: { id: productId },
+      include: { images: true },
+    });
+  }
+
+  private tryDeleteUploadedFile(url: string) {
+    try {
+      // url dạng "/uploads/products/xxx.png"
+      const rel = url.startsWith('/') ? url.slice(1) : url;
+      const abs = path.join(process.cwd(), rel);
+      if (fs.existsSync(abs)) fs.unlinkSync(abs);
+    } catch {
+      // ignore
+    }
+  }
 
   async create(createProductDto: CreateProductDto) {
     const { name, description, price, status, categoryName, imageUrl } =
