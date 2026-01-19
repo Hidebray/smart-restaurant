@@ -202,7 +202,8 @@
         "orders": "Orders",
         "modifiers": "Modifiers",
         "staff": "Staff",
-        "reports": "Reports"
+        "reports": "Reports",
+        "profile": "Profile"
     },
     "review": {
         "title": "Review Item",

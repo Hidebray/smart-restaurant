@@ -81,7 +81,7 @@ Students must input minus points to every uncompleted feature in the SE column.
 | **5** | **Administration features (Restaurant Admin)** |  |  |  |  |
 |  | Create Admin accounts | \-0.25 | 0 |  | Admin creates additional Admin accounts |
 |  | Manage Admin accounts | \-0.25 | 0 |  | View, edit, deactivate Admin accounts |
-|  | Update admin profile | \-0.25 | chưa làm |  | Restaurant admin profile management |
+|  | Update admin profile | \-0.25 | 0 |  | Restaurant admin profile management |
 |  | Create Waiter accounts | \-0.25 | 0 |  | Admin creates accounts for waiters |
 |  | Create Kitchen Staff accounts | \-0.25 | 0 |  | Admin creates accounts for kitchen staff |
 |  | Manage menu categories | \-0.25 | chưa làm |  | Create, edit, delete food categories |
