@@ -12,9 +12,10 @@ interface ProductModalProps {
     product: Product | null;
     isOpen: boolean;
     onClose: () => void;
+    onSelectProduct?: (product: Product) => void;
 }
 
-export default function ProductModal({ product, isOpen, onClose }: ProductModalProps) {
+export default function ProductModal({ product, isOpen, onClose, onSelectProduct }: ProductModalProps) {
     const { t } = useI18n();
     const [quantity, setQuantity] = useState(1);
     const [selectedModifiers, setSelelctedModifiers] = useState<Record<string, ModifierOption[]>>({});
@@ -226,7 +227,7 @@ export default function ProductModal({ product, isOpen, onClose }: ProductModalP
                             <RelatedItems
                                 currentProductId={product.id}
                                 categoryId={product.categoryId}
-                                onClose={onClose}
+                                onSelectProduct={onSelectProduct}
                             />
                         </div>
                     )}
@@ -321,23 +322,26 @@ export default function ProductModal({ product, isOpen, onClose }: ProductModalP
     );
 }
 
-function RelatedItems({ currentProductId, categoryId, onClose }: { currentProductId: string, categoryId: string, onClose: () => void }) {
+function RelatedItems({ currentProductId, categoryId, onSelectProduct }: { currentProductId: string, categoryId: string, onSelectProduct?: (p: Product) => void }) {
     const { products } = useMenuStore();
     const { t } = useI18n();
 
-    // Filter related items: same category, exclude current, limit to 3
+    // Filter related items: same category, exclude current, limit to 4
     const related = products
         .filter(p => p.categoryId === categoryId && p.id !== currentProductId)
-        .slice(0, 3);
+        .slice(0, 4);
 
     if (related.length === 0) return <p className="text-gray-400 text-sm">{t('productModal.noRelatedItems')}</p>;
 
-    // Note: Simple display for now. Switching product logic would require parent control update.
     return (
-        <div className="grid grid-cols-3 gap-2">
+        <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
             {related.map(item => (
-                <div key={item.id} className="border rounded-lg p-2 flex flex-col items-center text-center bg-gray-50">
-                    <div className="relative w-16 h-16 mb-2 rounded-md overflow-hidden bg-white">
+                <div
+                    key={item.id}
+                    onClick={() => onSelectProduct?.(item)}
+                    className="border border-gray-100 rounded-xl p-3 flex flex-col items-center text-center bg-gray-50/50 hover:bg-orange-50 hover:border-orange-200 transition-all cursor-pointer group"
+                >
+                    <div className="relative w-full aspect-square mb-2 rounded-lg overflow-hidden bg-white shadow-sm group-hover:scale-105 transition-transform">
                         <Image
                             src={item.images?.find(i => i.isPrimary)?.url || "https://images.unsplash.com/photo-1546069901-ba9599a7e63c"}
                             alt={item.name}
@@ -345,7 +349,9 @@ function RelatedItems({ currentProductId, categoryId, onClose }: { currentProduc
                             className="object-cover"
                         />
                     </div>
-                    <span className="text-xs font-bold line-clamp-2 h-8 text-gray-900">{item.name}</span>
+                    <span className="text-xs font-bold line-clamp-2 h-8 text-gray-800 group-hover:text-orange-600 transition-colors uppercase tracking-tighter">
+                        {item.name}
+                    </span>
                     <span className="text-xs text-orange-600 font-bold mt-1">
                         {new Intl.NumberFormat("vi-VN", { style: "currency", currency: "VND" }).format(Number(item.price))}
                     </span>

@@ -47,7 +47,7 @@ Students must input minus points to every uncompleted feature in the SE column.
 |  | Menu item paging | \-0.75 | 0 |  | Pagination for large menus with infinite scroll. URL updated on search/filter/paging |
 |  | View menu item details | \-0.25 | 0 |  | Item detail page with full description, modifiers, allergen info |
 |  | View menu item status | \-0.25 | 0 |  | Display item availability status (Available, Unavailable, Sold out) |
-|  | Show related menu items | \-0.25 | chưa bấm được |  | Suggest items from same category or popular pairings |
+|  | Show related menu items | \-0.25 | 0 |  | Suggest items from same category or popular pairings |
 |  | View list of item reviews | \-0.5 | 0 |  | Customer reviews for menu items with pagination |
 |  | Add a new item review | \-0.25 | 0 |  | Logged-in customers can review items they ordered |
 |  | Shopping cart (Order Cart) |  |  |  |  |

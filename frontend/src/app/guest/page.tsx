@@ -362,6 +362,7 @@ function GuestMenuContent() {
         product={selectedProduct}
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
+        onSelectProduct={setSelectedProduct}
       />
     </>
   );
