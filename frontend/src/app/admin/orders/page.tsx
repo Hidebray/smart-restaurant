@@ -41,7 +41,7 @@ type FilterGroup = "ALL" | "RECEIVED" | "PREPARING" | "READY" | "COMPLETED" | "C
 
 export default function OrderListPage() {
     const { t } = useI18n();
-    const { data: orders, error } = useSWR<Order[]>("admin-orders", ordersApi.getAll);
+    const { data: orders, error, mutate } = useSWR<Order[]>("admin-orders", ordersApi.getAll);
     const [filterStatus, setFilterStatus] = useState<FilterGroup>("ALL");
     const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
 
@@ -181,6 +181,7 @@ export default function OrderListPage() {
                 open={!!selectedOrder}
                 order={selectedOrder}
                 onClose={() => setSelectedOrder(null)}
+                onOrderUpdated={() => mutate()}
             />
         </div>
     );

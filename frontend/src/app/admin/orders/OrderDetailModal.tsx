@@ -1,12 +1,15 @@
+import { useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/Dialog";
-import { Order, OrderItem } from "@/types"; // Adjust import path if needed
+import { Order } from "@/types";
 import { useI18n } from "@/contexts/I18nContext";
 import Button from "@/components/ui/Button";
+import { ordersApi } from "@/lib/api/orders";
 
 interface OrderDetailModalProps {
     open: boolean;
     order: Order | null;
     onClose: () => void;
+    onOrderUpdated?: () => void;
 }
 
 const formatPrice = (price: number) =>
@@ -15,14 +18,51 @@ const formatPrice = (price: number) =>
         currency: "VND",
     }).format(price);
 
+const ORDER_STATUSES = [
+    "PENDING",
+    "ACCEPTED",
+    "PREPARING",
+    "READY",
+    "SERVED",
+    "COMPLETED",
+    "CANCELLED",
+    "REJECTED"
+];
+
 export default function OrderDetailModal({
     open,
     order,
     onClose,
+    onOrderUpdated
 }: OrderDetailModalProps) {
     const { t } = useI18n();
+    const [isUpdating, setIsUpdating] = useState(false);
+
+    // We can use local state for the status selection if we want to confirm first
+    // Or just buttons. Let's use a select for flexibility.
+    const [selectedStatus, setSelectedStatus] = useState<string>("");
 
     if (!order) return null;
+
+    // Initialize selected status when opening (or when order changes)
+    // We can't do this easily in render, so we just default to order.status if selectedStatus is empty
+    // But better to handle in a useEffect or just derive it.
+    const currentStatus = selectedStatus || order.status;
+
+    const handleStatusChange = async (newStatus: string) => {
+        if (!order) return;
+        setIsUpdating(true);
+        try {
+            await ordersApi.updateStatus(order.id, newStatus);
+            if (onOrderUpdated) onOrderUpdated();
+            onClose();
+        } catch (error) {
+            console.error("Failed to update status", error);
+            alert("Failed to update status");
+        } finally {
+            setIsUpdating(false);
+        }
+    };
 
     return (
         <Dialog open={open} onOpenChange={(v) => (!v ? onClose() : null)}>
@@ -82,9 +122,30 @@ export default function OrderDetailModal({
                             <span>{formatPrice(Number(order.totalAmount))}</span>
                         </div>
                     </div>
+
+                    {/* Status Update Control */}
+                    <div className="border-t pt-4 bg-gray-50 -mx-6 px-6 pb-2 mt-4 rounded-b-lg">
+                        <h3 className="text-sm font-semibold text-gray-700 mb-2">{t('common.status')}:</h3>
+                        <div className="flex gap-2 flex-wrap">
+                            {ORDER_STATUSES.map(status => (
+                                <button
+                                    key={status}
+                                    onClick={() => handleStatusChange(status)}
+                                    disabled={isUpdating || order.status === status}
+                                    className={`px-3 py-1.5 rounded text-xs font-medium border transition-colors
+                                        ${order.status === status
+                                            ? 'bg-gray-900 text-white border-gray-900 cursor-default opacity-100'
+                                            : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-100'
+                                        }`}
+                                >
+                                    {t(`status.${status}`) || status}
+                                </button>
+                            ))}
+                        </div>
+                    </div>
                 </div>
 
-                <DialogFooter>
+                <DialogFooter className="mt-0">
                     <Button onClick={onClose} variant="outline">{t('common.close') || 'Close'}</Button>
                 </DialogFooter>
             </DialogContent>
