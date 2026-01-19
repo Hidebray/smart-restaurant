@@ -1,7 +1,7 @@
 // [File: frontend/app/waiter/page.tsx]
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import toast from "react-hot-toast";
 import BillModal from "@/components/waiter/BillModal";
 import OrderTimer from "@/components/OrderTimer";
@@ -38,9 +38,8 @@ export default function WaiterPage() {
   // Tải đơn hàng (Chỉ lấy đơn nào có món đã xong hoặc đang ăn)
   const fetchOrders = async () => {
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:5000'}/orders`);
-      const result = await res.json();
-      setOrders(result ?? []);
+      const res = await api.get('/orders');
+      setOrders(res.data ?? []);
     } catch (error) {
       console.error('Error loading orders:', error);
     }
@@ -48,9 +47,6 @@ export default function WaiterPage() {
 
   useEffect(() => {
     fetchOrders();
-    // Set up polling every 5s
-    const interval = setInterval(fetchOrders, 5000);
-    return () => clearInterval(interval);
   }, []);
 
   useEffect(() => {
@@ -66,8 +62,15 @@ export default function WaiterPage() {
     fetchUserProfile();
   }, []);
 
+  // Ref to access latest assignedTables in socket callback without re-running effect
+  const assignedTablesRef = useRef<Table[]>([]);
+
   useEffect(() => {
-    if (currentUserId && showTables) {
+    assignedTablesRef.current = assignedTables;
+  }, [assignedTables]);
+
+  useEffect(() => {
+    if (currentUserId) {
       const fetchAssignedTables = async () => {
         try {
           const tables = await tablesApi.getAssignedTables(currentUserId);
@@ -78,7 +81,7 @@ export default function WaiterPage() {
       };
       fetchAssignedTables();
     }
-  }, [currentUserId, showTables]);
+  }, [currentUserId]);
 
   useEffect(() => {
     // Socket.IO: Listen for order updates from Kitchen
@@ -103,7 +106,20 @@ export default function WaiterPage() {
       };
 
       // Listen for new orders or order status changes
-      socket.on('new_order', () => {
+      socket.on('new_order', (order: any) => {
+        // Check if order belongs to one of the assigned tables
+        const myTableIds = assignedTablesRef.current.map((t: Table) => t.id);
+        // If waiter has no assigned tables (or data not loaded), maybe show all? 
+        // Logic: restriction applies. If restricted, only show if match.
+        // Assuming backend filter logic: Waiter only gets their tables. Notification should match.
+        // If assignedTablesRef.current is empty, user might be new or not assigned. 
+        // For safety, if myTableIds has length > 0, we check. If 0, we might suppress everything or show everything?
+        // Given the requirement "waiter only receives orders from their tables", we should suppress if not matched.
+
+        if (myTableIds.length > 0 && !myTableIds.includes(order.tableId)) {
+          return;
+        }
+
         playNotificationSound();
         toast('🔔 Đơn mới vừa tới!', {
           duration: 5000,
@@ -125,6 +141,11 @@ export default function WaiterPage() {
       });
 
       socket.on('table_notification', (data: any) => {
+        const myTableIds = assignedTablesRef.current.map((t: Table) => t.id);
+        if (myTableIds.length > 0 && !myTableIds.includes(data.tableId)) {
+          return;
+        }
+
         playNotificationSound();
         const msg = data.type === 'PAYMENT_CASH' ? 'gọi thanh toán tiền mặt!'
           : data.type === 'PAYMENT_QR' ? 'gọi thanh toán QR!'

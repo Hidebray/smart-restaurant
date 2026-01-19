@@ -119,7 +119,7 @@ Students must input minus points to every uncompleted feature in the SE column.
 |  | View pending orders | \-0.25 | 0 |  | List of new orders waiting for waiter acceptance |
 |  | Accept/Reject order items | \-0.25 | 0 |  | Waiter can accept or reject individual order items |
 |  | Send orders to kitchen | \-0.25 | 0 |  | Forward accepted orders to Kitchen Display System |
-|  | View assigned tables | \-0.25 | chưa làm |  | See tables assigned to the waiter |
+|  | View assigned tables | \-0.25 | 0 |  | See tables assigned to the waiter |
 |  | Mark orders as served | \-0.25 | 0 |  | Update order status when food is delivered to table |
 |  | Bill Management |  |  |  |  |
 |  | › Create bill for table | \-0.25 | 0 |  | Generate bill with all order items, subtotal, tax, and total |

@@ -58,6 +58,9 @@ export class OrdersController {
         if (decoded && decoded.role === 'CUSTOMER') {
           return this.ordersService.findAll({ customerId: decoded.sub });
         }
+        if (decoded && decoded.role === 'WAITER') {
+          return this.ordersService.findAll({ table: { assignedWaiterId: decoded.sub } });
+        }
       } catch (e) {
         // Ignore
       }
