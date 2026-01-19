@@ -258,10 +258,10 @@ The working order rotates daily following this sequence:
   - [x] Time range filter
   - _Points:_ -0.75
 
-- [ ] **Task 7.11: Sort Menu Items (Admin)**
-  - [ ] Add sort dropdown in admin products list
-  - [ ] Sort by: creation date, price, name, popularity
-  - [ ] Persist sort preference
+- [x] **Task 7.11: Sort Menu Items (Admin)**
+  - [x] Add sort dropdown in admin products list
+  - [x] Sort by: creation date, price, name, popularity
+  - [x] Persist sort preference
   - _Points:_ -0.25
 
 - [ ] **Task 7.12: Order Timer & Alerts**

@@ -1,7 +1,7 @@
 "use client";
 
 import useSWR from "swr";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { Product } from "@/types";
 import { productsApi } from "@/lib/api/products";
 import Button from "@/components/ui/Button";
@@ -10,26 +10,53 @@ import * as Icons from "lucide-react";
 import ProductList from "./ProductList";
 import ProductFormModal from "./ProductFormModal";
 
-const fetcher = () => productsApi.getAll();
+const SORT_KEY = "admin_products_sort";
 
 export default function ProductsPage() {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selected, setSelected] = useState<Product | null>(null);
+  const [query, setQuery] = useState("");
+
+  // ✅ Sort state
+  const [sortBy, setSortBy] = useState<string>("createdAt");
+  const [sortDir, setSortDir] = useState<string>("desc");
+
+  // ✅ Load persisted sort once
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem(SORT_KEY);
+      if (!raw) return;
+      const saved = JSON.parse(raw);
+      if (saved?.sortBy) setSortBy(saved.sortBy);
+      if (saved?.sortDir) setSortDir(saved.sortDir);
+    } catch {}
+  }, []);
+
+  // ✅ Persist sort whenever changed
+  useEffect(() => {
+    try {
+      localStorage.setItem(SORT_KEY, JSON.stringify({ sortBy, sortDir }));
+    } catch {}
+  }, [sortBy, sortDir]);
+
+  // ✅ SWR fetcher uses current sort
+  const fetcher = () => productsApi.getAllAdmin({ sortBy, sortDir });
+
   const {
     data: products,
     error,
     mutate,
-  } = useSWR<Product[]>("admin_products", fetcher);
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [selected, setSelected] = useState<Product | null>(null);
-  const [query, setQuery] = useState("");
+  } = useSWR<Product[]>(["admin_products", sortBy, sortDir], fetcher);
 
   const filtered = useMemo(() => {
     if (!products) return [];
     const q = query.trim().toLowerCase();
     if (!q) return products;
+
     return products.filter((p) =>
-      [p.name, p.category?.name, p.status]
+      [p.name, (p as any).category?.name, (p as any).status]
         .filter(Boolean)
-        .some((v) => String(v).toLowerCase().includes(q))
+        .some((v) => String(v).toLowerCase().includes(q)),
     );
   }, [products, query]);
 
@@ -69,14 +96,41 @@ export default function ProductsPage() {
         </div>
       </div>
 
-      <div className="mb-4 flex items-center gap-2 rounded-xl border border-gray-300 bg-white px-3 py-2">
-        <Icons.Search className="h-4 w-4 text-gray-600" />
-        <Input
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          placeholder="Search by name, category, status..."
-          className="border-0 text-gray-900 placeholder:text-gray-500 focus:ring-0 focus:ring-offset-0"
-        />
+      {/* ✅ Toolbar: Search + Sort */}
+      <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex items-center gap-2 rounded-xl border border-gray-300 bg-white px-3 py-2 w-full sm:w-auto sm:flex-1">
+          <Icons.Search className="h-4 w-4 text-gray-600" />
+          <Input
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Search by name, category, status..."
+            className="border-0 text-gray-900 placeholder:text-gray-500 focus:ring-0 focus:ring-offset-0"
+          />
+        </div>
+
+        <div className="flex gap-2 items-center">
+          <select
+            value={sortBy}
+            onChange={(e) => setSortBy(e.target.value)}
+            className="border border-gray-300 rounded px-2 py-2 text-sm bg-white"
+            title="Sort by"
+          >
+            <option value="createdAt">Creation date</option>
+            <option value="price">Price</option>
+            <option value="name">Name</option>
+            <option value="popularity">Popularity</option>
+          </select>
+
+          <select
+            value={sortDir}
+            onChange={(e) => setSortDir(e.target.value)}
+            className="border border-gray-300 rounded px-2 py-2 text-sm bg-white"
+            title="Sort direction"
+          >
+            <option value="desc">Desc</option>
+            <option value="asc">Asc</option>
+          </select>
+        </div>
       </div>
 
       <ProductList

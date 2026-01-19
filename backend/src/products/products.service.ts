@@ -3,10 +3,12 @@ import { CreateProductDto } from './dto/create-product.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { Prisma } from '@prisma/client';
+import { AdminProductsQueryDto } from './dto/admin-products-query.dto';
+import { OrderStatus } from '@prisma/client';
 
 @Injectable()
 export class ProductsService {
-  constructor(private prisma: PrismaService) { }
+  constructor(private prisma: PrismaService) {}
 
   async create(createProductDto: CreateProductDto) {
     const { name, description, price, status, categoryName, imageUrl } =
@@ -27,8 +29,8 @@ export class ProductsService {
         categoryId: category.id,
         images: imageUrl
           ? {
-            create: [{ url: imageUrl, isPrimary: true }],
-          }
+              create: [{ url: imageUrl, isPrimary: true }],
+            }
           : undefined,
       },
       include: {
@@ -59,6 +61,56 @@ export class ProductsService {
             },
           },
         },
+      },
+    });
+  }
+
+  async findAllAdmin(q: AdminProductsQueryDto) {
+    const sortBy = q.sortBy ?? 'createdAt';
+    const sortDir = q.sortDir ?? 'desc';
+
+    // ✅ Popularity: tổng quantity từ các đơn COMPLETED
+    if (sortBy === 'popularity') {
+      const grouped = await this.prisma.orderItem.groupBy({
+        by: ['productId'],
+        where: {
+          order: { status: OrderStatus.COMPLETED },
+        },
+        _sum: { quantity: true },
+      });
+
+      const qtyMap = new Map(
+        grouped.map((g) => [g.productId, g._sum.quantity ?? 0]),
+      );
+
+      const products = await this.prisma.product.findMany({
+        include: {
+          images: true, // giữ tương thích admin UI của bạn
+        },
+      });
+
+      products.sort((a, b) => {
+        const qa = qtyMap.get(a.id) ?? 0;
+        const qb = qtyMap.get(b.id) ?? 0;
+        return sortDir === 'asc' ? qa - qb : qb - qa;
+      });
+
+      return products;
+    }
+
+    // ✅ createdAt / name / price
+    // ⚠️ Nếu schema bạn không có "price" mà là "basePrice", đổi "price" -> "basePrice"
+    const orderBy =
+      sortBy === 'createdAt'
+        ? { createdAt: sortDir }
+        : sortBy === 'name'
+          ? { name: sortDir }
+          : { price: sortDir };
+
+    return this.prisma.product.findMany({
+      orderBy: orderBy as any,
+      include: {
+        images: true,
       },
     });
   }
@@ -159,11 +211,11 @@ export class ProductsService {
         categoryId: categoryId ?? undefined,
         images: shouldReplaceImage
           ? {
-            deleteMany: currentPrimary
-              ? { id: currentPrimary.id }
-              : undefined,
-            create: [{ url: imageUrl!, isPrimary: true }],
-          }
+              deleteMany: currentPrimary
+                ? { id: currentPrimary.id }
+                : undefined,
+              create: [{ url: imageUrl!, isPrimary: true }],
+            }
           : shouldClearImage && currentPrimary
             ? { deleteMany: { id: currentPrimary.id } }
             : undefined,

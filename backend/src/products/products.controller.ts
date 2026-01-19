@@ -16,10 +16,11 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { Roles } from '../auth/decorators/roles.decorator';
 import { UserRole } from '@prisma/client';
+import { AdminProductsQueryDto } from './dto/admin-products-query.dto';
 
 @Controller('products')
 export class ProductsController {
-  constructor(private readonly productsService: ProductsService) { }
+  constructor(private readonly productsService: ProductsService) {}
 
   @Post()
   @UseGuards(JwtAuthGuard, RolesGuard)
@@ -36,6 +37,13 @@ export class ProductsController {
   @Get('search')
   search(@Query('q') query: string) {
     return this.productsService.search(query || '');
+  }
+
+  @Get('admin')
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles(UserRole.ADMIN)
+  findAllAdmin(@Query() q: AdminProductsQueryDto) {
+    return this.productsService.findAllAdmin(q);
   }
 
   @Get(':id')
