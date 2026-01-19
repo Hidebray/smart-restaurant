@@ -112,7 +112,7 @@ Students must input minus points to every uncompleted feature in the SE column.
 |  | › QR Code Download/Print | -0.25 | 0 |  | Download QR as PNG/PDF for printing (Bulk ZIP supported) |
 |  | › QR Code Regeneration | -0.25 | 0 |  | Regenerate QR and invalidate old codes |
 |  | Reports |  |  |  |  |
-|  | › View revenue report in time range | \-0.25 | chưa hoàn thiện |  | Daily, weekly, monthly revenue reports |
+|  | › View revenue report in time range | \-0.25 | 0 |  | Daily, weekly, monthly revenue reports |
 |  | › View top revenue by menu item in time range | \-0.25 | chưa hoàn thiện |  | Best-selling items report |
 |  | › Show interactive chart in reports | \-0.25 | chưa hoàn thiện |  | Chart.js/Recharts for analytics dashboard (orders/day, peak hours, popular items) |
 | **7** | **Waiter features** |  |  |  |  |
