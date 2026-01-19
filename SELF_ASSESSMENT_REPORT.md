@@ -1,16 +1,15 @@
 # Final project Self-assessment report
 
-Team: \<StudentID1\>-\<StudentID2\>-\<StudentID3\>
+Team: 20120450-23120256-23122056
 
-GitHub repo URL: \<Your GitHub Repository URL\>
-
+GitHub repo URL: https://github.com/Hidebray/smart-restaurant
 # **TEAM INFORMATION**
 
 | Student ID | Full name | Git account | Contribution | Contribution percentage (100% total) | Expected total points | Final total points |
 | :---- | :---- | :---- | :---- | :---- | :---- | :---- |
-| 20120450 | Phạm Hữu Đan | danhuupham | \<List of tasks done by student 1\> | 33% |  |  |
-| \<StudentID2\> | \<Student 2 fullname\> | \<git_account_2\> | \<List of tasks done by student 2\> | 33% |  |  |
-| \<StudentID3\> | \<Student 3 fullname\> | \<git_account_3\> | \<List of tasks done by student 3\> | 34% |  |  |
+| 20120450 | Phạm Hữu Đan | danhuupham | \<List of tasks done by student 1\> | 33.3% |  |  |
+| 23120256 | Trần Đại Hiệp | Hidebray | \<List of tasks done by student 2\> | 33.3% |  |  |
+| 23122056 | Lâm Hoàng Vũ | vtpy23 | \<List of tasks done by student 3\> | 33.4% |  |  |
 
 # **FEATURE LIST**
 
