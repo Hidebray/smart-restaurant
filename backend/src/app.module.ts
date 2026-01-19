@@ -12,6 +12,7 @@ import { ModifiersModule } from './modifiers/modifiers.module';
 import { ReportsModule } from './reports/reports.module';
 import { PaymentsModule } from './payments/payments.module';
 import { ReviewsModule } from './reviews/reviews.module';
+import { LoyaltyModule } from './loyalty/loyalty.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { ReviewsModule } from './reviews/reviews.module';
     ReportsModule,
     PaymentsModule,
     ReviewsModule,
+    LoyaltyModule,
   ],
   controllers: [AppController],
   providers: [AppService],

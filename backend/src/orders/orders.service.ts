@@ -1,14 +1,20 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, Inject, forwardRef } from '@nestjs/common';
 import { CreateOrderDto } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
 import { PrismaService } from 'src/prisma/prisma.service';
 import { OrdersGateway } from 'src/events/orders.gateway';
 import { UpdateDiscountDto } from './dto/update-discount.dto';
+import { LoyaltyService } from '../loyalty/loyalty.service';
 import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class OrdersService {
-  constructor(private prisma: PrismaService, private ordersGateway: OrdersGateway) { }
+  constructor(
+    private prisma: PrismaService,
+    private ordersGateway: OrdersGateway,
+    @Inject(forwardRef(() => LoyaltyService))
+    private loyaltyService?: LoyaltyService,
+  ) { }
 
   async create(createOrderDto: CreateOrderDto) {
     const { tableId, items, notes } = createOrderDto;
@@ -172,6 +178,25 @@ export class OrdersService {
           });
         }
       });
+
+      // 3. Add loyalty points if customer exists and loyalty service is available
+      if (updated.customerId && this.loyaltyService) {
+        try {
+          const orderAmount = Number(updated.totalAmount ?? 0);
+          const points = this.loyaltyService.calculatePointsFromOrder(orderAmount);
+          if (points > 0) {
+            await this.loyaltyService.addPoints(
+              updated.customerId,
+              points,
+              updated.id,
+              `Đơn hàng #${updated.id.substring(0, 8)}`,
+            );
+          }
+        } catch (error) {
+          // Log error but don't fail the order completion
+          console.error('Failed to add loyalty points:', error);
+        }
+      }
     }
 
     try {

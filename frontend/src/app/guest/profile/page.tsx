@@ -18,6 +18,7 @@ import {
   Camera,
   Save,
   KeyRound,
+  Award,
 } from "lucide-react";
 
 interface CustomerProfile {
@@ -442,6 +443,11 @@ function ProfileContent() {
 
         {/* Menu Options (kept) */}
         <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
+          <MenuItem
+            icon={<Award className="w-5 h-5" />}
+            label="Điểm Tích Lũy & Voucher"
+            href="/guest/loyalty"
+          />
           <MenuItem
             icon={<History className="w-5 h-5" />}
             label={t("profile.menu.orderHistory")}
