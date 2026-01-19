@@ -299,10 +299,10 @@ The working order rotates daily following this sequence:
   - [x] Add/remove images in admin
   - _Points:_ -0.5
 
-- [ ] **Task 7.17: Discount System**
-  - [ ] Add discount field to orders
-  - [ ] Percentage and fixed amount discounts
-  - [ ] Apply discount in Bill Modal
+- [x] **Task 7.17: Discount System**
+  - [x] Add discount field to orders
+  - [x] Percentage and fixed amount discounts
+  - [x] Apply discount in Bill Modal
   - _Points:_ -0.25
 
 - [ ] **Task 7.18: Menu Item Detail Page**
