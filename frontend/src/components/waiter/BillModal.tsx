@@ -24,8 +24,6 @@ export default function BillModal({ isOpen, onClose, order, tableNumber, onOrder
     onAfterPrint: () => toast.success("Hóa đơn đã được in!"),
   });
 
-  if (!order) return null;
-
   useEffect(() => {
     if (order) {
       setDiscountType(order.discountType ?? 'NONE');
@@ -33,11 +31,10 @@ export default function BillModal({ isOpen, onClose, order, tableNumber, onOrder
     }
   }, [order]);
 
-  const subtotal = useMemo(() => Number(order.totalAmount ?? 0), [order]);
+  const subtotal = useMemo(() => Number(order?.totalAmount ?? 0), [order]);
 
   const discountAmount = useMemo(() => {
-    if (!order) return 0;
-    if (discountType === 'NONE' || discountValue <= 0) return 0;
+    if (!order || discountType === 'NONE' || discountValue <= 0) return 0;
     if (discountType === 'PERCENT') {
       const percent = Math.min(Math.max(discountValue, 0), 100);
       return (subtotal * percent) / 100;
@@ -103,6 +100,8 @@ export default function BillModal({ isOpen, onClose, order, tableNumber, onOrder
       toast.error(error?.message || "Có lỗi khi áp dụng giảm giá");
     }
   };
+
+  if (!order) return null;
 
   return (
     <Transition appear show={isOpen} as={Fragment}>
