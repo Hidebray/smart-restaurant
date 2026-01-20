@@ -1,11 +1,12 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import Image from "next/image";
 import { Product, ModifierOption, ProductModifierGroup, Review } from "@/types"
 import { useCartStore } from "@/store/useCartStore";
 import { useMenuStore } from "@/store/useMenuStore";
 import { useI18n } from "@/contexts/I18nContext";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import toast from "react-hot-toast";
 
 interface ProductModalProps {
@@ -20,12 +21,22 @@ export default function ProductModal({ product, isOpen, onClose, onSelectProduct
     const [quantity, setQuantity] = useState(1);
     const [selectedModifiers, setSelelctedModifiers] = useState<Record<string, ModifierOption[]>>({});
     const [reviews, setReviews] = useState<Review[]>([]);
+    const [selectedImageIndex, setSelectedImageIndex] = useState(0);
     const addToCart = useCartStore((state) => state.addToCart);
+
+    // Get sorted images (primary first)
+    const images = useMemo(() => {
+        if (!product?.images || product.images.length === 0) {
+            return [{ url: "https://images.unsplash.com/photo-1546069901-ba9599a7e63c", isPrimary: true, id: 'default' }];
+        }
+        return [...product.images].sort((a, b) => (b.isPrimary ? 1 : 0) - (a.isPrimary ? 1 : 0));
+    }, [product]);
 
     useEffect(() => {
         if (isOpen && product) {
             setQuantity(1);
             setSelelctedModifiers({});
+            setSelectedImageIndex(0); // Reset to first image
 
             // Fetch reviews
             fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:5000'}/reviews/product/${product.id}`)
@@ -37,6 +48,14 @@ export default function ProductModal({ product, isOpen, onClose, onSelectProduct
                 .catch(err => console.error("Failed to fetch reviews", err));
         }
     }, [isOpen, product]);
+
+    const handlePrevImage = () => {
+        setSelectedImageIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1));
+    };
+
+    const handleNextImage = () => {
+        setSelectedImageIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1));
+    };
 
     if (!isOpen || !product) return null;
 
@@ -109,20 +128,65 @@ export default function ProductModal({ product, isOpen, onClose, onSelectProduct
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/50 backdrop-blur-sm">
             <div className="bg-white rounded-2xl w-full max-w-lg max-h-[90vh] overflow-hidden flex flex-col shadow-2xl">
 
-                {/* Header: Ảnh món */}
+                {/* Header: Ảnh món với nút chuyển ảnh */}
                 <div className="relative h-64 w-full shrink-0">
                     <Image
-                        src={product.images.find((img) => img.isPrimary)?.url || "https://images.unsplash.com/photo-1546069901-ba9599a7e63c"}
+                        src={images[selectedImageIndex]?.url || "https://images.unsplash.com/photo-1546069901-ba9599a7e63c"}
                         alt={product.name}
                         fill
                         className="object-cover"
                     />
+
+                    {/* Close button */}
                     <button
                         onClick={onClose}
-                        className="absolute top-4 right-4 bg-white/90 text-gray-800 p-2 rounded-full shadow-lg hover:bg-white transition-all"
+                        className="absolute top-4 right-4 bg-white/90 text-gray-800 p-2 rounded-full shadow-lg hover:bg-white transition-all z-10"
                     >
                         ✕
                     </button>
+
+                    {/* Navigation Arrows - Only show if multiple images */}
+                    {images.length > 1 && (
+                        <>
+                            {/* Previous button */}
+                            <button
+                                onClick={handlePrevImage}
+                                className="absolute left-3 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white text-gray-800 p-2 rounded-full shadow-lg transition-all z-10"
+                                aria-label="Previous image"
+                            >
+                                <ChevronLeft className="w-5 h-5" />
+                            </button>
+
+                            {/* Next button */}
+                            <button
+                                onClick={handleNextImage}
+                                className="absolute right-3 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white text-gray-800 p-2 rounded-full shadow-lg transition-all z-10"
+                                aria-label="Next image"
+                            >
+                                <ChevronRight className="w-5 h-5" />
+                            </button>
+
+                            {/* Image indicators (dots) */}
+                            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-10">
+                                {images.map((_, idx) => (
+                                    <button
+                                        key={idx}
+                                        onClick={() => setSelectedImageIndex(idx)}
+                                        className={`w-2 h-2 rounded-full transition-all ${idx === selectedImageIndex
+                                                ? 'bg-white w-4 shadow-md'
+                                                : 'bg-white/50 hover:bg-white/70'
+                                            }`}
+                                        aria-label={`Go to image ${idx + 1}`}
+                                    />
+                                ))}
+                            </div>
+
+                            {/* Image counter */}
+                            <div className="absolute top-4 left-4 bg-black/50 text-white text-xs px-2 py-1 rounded-full z-10">
+                                {selectedImageIndex + 1} / {images.length}
+                            </div>
+                        </>
+                    )}
                 </div>
 
                 {/* Body: Cuộn được */}

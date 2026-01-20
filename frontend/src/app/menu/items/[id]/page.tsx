@@ -15,6 +15,7 @@ import {
   Sparkles,
   AlertTriangle,
   ChevronLeft,
+  ChevronRight,
   Heart,
   Share2
 } from "lucide-react";
@@ -72,6 +73,14 @@ export default function ProductDetailPage() {
   }, [product]);
 
   const isAvailable = product?.status === "AVAILABLE";
+
+  const handlePrevImage = () => {
+    setSelectedImageIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1));
+  };
+
+  const handleNextImage = () => {
+    setSelectedImageIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1));
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-amber-50 via-orange-50 to-rose-50">
@@ -186,96 +195,115 @@ export default function ProductDetailPage() {
                     {product.category?.name || "Khác"}
                   </span>
                 </div>
-              </div>
 
-              {/* Image Thumbnails */}
-              {images.length > 1 && (
-                <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
-                  {images.map((img, idx) => (
+                {/* Navigation Arrows - Only show if multiple images */}
+                {images.length > 1 && (
+                  <>
+                    {/* Previous button */}
                     <button
-                      key={idx}
-                      onClick={() => setSelectedImageIndex(idx)}
-                      className={`w-16 h-16 rounded-xl overflow-hidden border-2 transition-all ${selectedImageIndex === idx
-                        ? 'border-white shadow-lg scale-110'
-                        : 'border-white/50 opacity-70 hover:opacity-100'
-                        }`}
+                      onClick={handlePrevImage}
+                      className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white text-gray-800 p-3 rounded-full shadow-lg transition-all z-10"
+                      aria-label="Previous image"
                     >
-                      <Image
-                        src={img.url}
-                        alt=""
-                        width={64}
-                        height={64}
-                        className="w-full h-full object-cover"
-                      />
+                      <ChevronLeft className="w-6 h-6" />
                     </button>
-                  ))}
-                </div>
-              )}
-            </div>
 
-            {/* Product Info */}
-            <div className="p-6 md:p-8 space-y-6">
-              {/* Title & Price */}
-              <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
-                <div>
-                  <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">
-                    {product.name}
-                  </h1>
-                  {product.prepTimeMinutes && (
-                    <div className="flex items-center gap-2 text-gray-500">
-                      <Clock className="w-4 h-4" />
-                      <span className="text-sm">{product.prepTimeMinutes} {t('productDetail.minutes') || "phút"}</span>
+                    {/* Next button */}
+                    <button
+                      onClick={handleNextImage}
+                      className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/90 hover:bg-white text-gray-800 p-3 rounded-full shadow-lg transition-all z-10"
+                      aria-label="Next image"
+                    >
+                      <ChevronRight className="w-6 h-6" />
+                    </button>
+
+                    {/* Image counter */}
+                    <div className="absolute bottom-4 right-4 bg-black/50 text-white text-sm px-3 py-1.5 rounded-full z-10">
+                      {selectedImageIndex + 1} / {images.length}
                     </div>
-                  )}
-                </div>
-                <div className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-orange-600 to-rose-600 bg-clip-text text-transparent">
-                  {formatPrice(product.price)}
-                </div>
+
+                    {/* Image indicators (dots) */}
+                    <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2 z-10">
+                      {images.map((_, idx) => (
+                        <button
+                          key={idx}
+                          onClick={() => setSelectedImageIndex(idx)}
+                          className={`w-2.5 h-2.5 rounded-full transition-all ${idx === selectedImageIndex
+                            ? 'bg-white w-5 shadow-md'
+                            : 'bg-white/50 hover:bg-white/70'
+                            }`}
+                          aria-label={`Go to image ${idx + 1}`}
+                        />
+                      ))}
+                    </div>
+                  </>
+                )}
               </div>
 
-              {/* Description */}
-              <div className="space-y-3">
-                <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
-                  <Sparkles className="w-5 h-5 text-orange-500" />
-                  {t('productDetail.description') || "Mô tả"}
-                </h2>
-                <p className="text-gray-600 leading-relaxed">
-                  {product.description || t('menu.noDescription') || "Món ăn ngon miệng được chế biến từ những nguyên liệu tươi ngon nhất."}
-                </p>
-              </div>
-
-              {/* Allergens */}
-              {allergens.length > 0 && (
-                <div className="space-y-3">
-                  <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
-                    <AlertTriangle className="w-5 h-5 text-amber-500" />
-                    {t('productDetail.allergens') || "Thông tin dị ứng"}
-                  </h2>
-                  <div className="flex flex-wrap gap-2">
-                    {allergens.map((a, idx) => (
-                      <span
-                        key={idx}
-                        className="px-4 py-2 rounded-full bg-gradient-to-r from-amber-50 to-orange-50 text-amber-800 text-sm font-medium border border-amber-200"
-                      >
-                        {a}
-                      </span>
-                    ))}
+              {/* Product Info */}
+              <div className="p-6 md:p-8 space-y-6">
+                {/* Title & Price */}
+                <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
+                  <div>
+                    <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">
+                      {product.name}
+                    </h1>
+                    {product.prepTimeMinutes && (
+                      <div className="flex items-center gap-2 text-gray-500">
+                        <Clock className="w-4 h-4" />
+                        <span className="text-sm">{product.prepTimeMinutes} {t('productDetail.minutes') || "phút"}</span>
+                      </div>
+                    )}
+                  </div>
+                  <div className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-orange-600 to-rose-600 bg-clip-text text-transparent">
+                    {formatPrice(product.price)}
                   </div>
                 </div>
-              )}
 
-              {/* Order Button - Redirects to Tables page */}
-              <div className="pt-4 border-t border-gray-100">
-                <Link
-                  href="/tables"
-                  className="w-full flex items-center justify-center gap-3 px-8 py-4 rounded-2xl font-semibold text-lg transition-all duration-300 bg-gradient-to-r from-orange-500 to-rose-500 text-white hover:shadow-xl hover:shadow-orange-200 hover:scale-[1.02]"
-                >
-                  <ShoppingBag className="w-6 h-6" />
-                  <span>{t('cart.startOrdering') || "Bắt đầu đặt món"}</span>
-                </Link>
-                <p className="text-center text-sm text-gray-500 mt-3">
-                  {t('productDetail.selectTableHint') || "Chọn bàn để bắt đầu gọi món"}
-                </p>
+                {/* Description */}
+                <div className="space-y-3">
+                  <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                    <Sparkles className="w-5 h-5 text-orange-500" />
+                    {t('productDetail.description') || "Mô tả"}
+                  </h2>
+                  <p className="text-gray-600 leading-relaxed">
+                    {product.description || t('menu.noDescription') || "Món ăn ngon miệng được chế biến từ những nguyên liệu tươi ngon nhất."}
+                  </p>
+                </div>
+
+                {/* Allergens */}
+                {allergens.length > 0 && (
+                  <div className="space-y-3">
+                    <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                      <AlertTriangle className="w-5 h-5 text-amber-500" />
+                      {t('productDetail.allergens') || "Thông tin dị ứng"}
+                    </h2>
+                    <div className="flex flex-wrap gap-2">
+                      {allergens.map((a, idx) => (
+                        <span
+                          key={idx}
+                          className="px-4 py-2 rounded-full bg-gradient-to-r from-amber-50 to-orange-50 text-amber-800 text-sm font-medium border border-amber-200"
+                        >
+                          {a}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Order Button - Redirects to Tables page */}
+                <div className="pt-4 border-t border-gray-100">
+                  <Link
+                    href="/tables"
+                    className="w-full flex items-center justify-center gap-3 px-8 py-4 rounded-2xl font-semibold text-lg transition-all duration-300 bg-gradient-to-r from-orange-500 to-rose-500 text-white hover:shadow-xl hover:shadow-orange-200 hover:scale-[1.02]"
+                  >
+                    <ShoppingBag className="w-6 h-6" />
+                    <span>{t('cart.startOrdering') || "Bắt đầu đặt món"}</span>
+                  </Link>
+                  <p className="text-center text-sm text-gray-500 mt-3">
+                    {t('productDetail.selectTableHint') || "Chọn bàn để bắt đầu gọi món"}
+                  </p>
+                </div>
               </div>
             </div>
           </div>
