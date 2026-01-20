@@ -28,15 +28,45 @@ function GuestMenuContent() {
   const tableIdParam = searchParams.get("tableId"); // Legacy
   const tokenParam = searchParams.get("token"); // New secure way
 
-  const [activeCategory, setActiveCategory] = useState(searchParams.get("category") || "");
-  const [searchQuery, setSearchQuery] = useState(searchParams.get("q") || "");
+  const [activeCategory, setActiveCategory] = useState(() => {
+    // Ưu tiên URL params
+    const param = searchParams.get("category");
+    if (param !== null) return param;
+    // Fallback xuống localStorage
+    if (typeof window !== "undefined") return localStorage.getItem("guest_filter_category") || "";
+    return "";
+  });
+
+  const [searchQuery, setSearchQuery] = useState(() => {
+    const param = searchParams.get("q");
+    if (param !== null) return param;
+    if (typeof window !== "undefined") return localStorage.getItem("guest_filter_q") || "";
+    return "";
+  });
+
   const [currentPage, setCurrentPage] = useState(parseInt(searchParams.get("page") || "1", 10));
   const [isValidating, setIsValidating] = useState(true);
-  const [sortBy, setSortBy] = useState<'default' | 'price_asc' | 'price_desc' | 'popularity'>((searchParams.get("sort") as any) || 'default');
+
+  const [sortBy, setSortBy] = useState<'default' | 'price_asc' | 'price_desc' | 'popularity'>(() => {
+    const param = searchParams.get("sort");
+    if (param !== null) return (param as any);
+    if (typeof window !== "undefined") return (localStorage.getItem("guest_filter_sort") as any) || "default";
+    return "default";
+  });
   const router = useRouter();
 
   // We need to resolve the table ID either from the param or by fetching via token
   const [tableId, setTableId] = useState<string | null>(tableIdParam ?? null);
+
+  // --- Persistence Logic: Preserve filters across navigation ---
+  // 1. Save filters to localStorage whenever they change
+  useEffect(() => {
+    localStorage.setItem("guest_filter_category", activeCategory);
+    localStorage.setItem("guest_filter_q", searchQuery);
+    localStorage.setItem("guest_filter_sort", sortBy);
+  }, [activeCategory, searchQuery, sortBy]);
+
+
 
   const ITEMS_PER_PAGE = 12;
 
@@ -79,8 +109,6 @@ function GuestMenuContent() {
         router.replace('/tables');
       }
     };
-
-    resolveTable();
 
     resolveTable();
   }, [tableIdParam, tokenParam, router]); // Remove searchParams dependency to avoid re-running on filter change causing loops with initialization logic if not careful, though harmless here as resolvedTable is idempotent-ish. Better:
