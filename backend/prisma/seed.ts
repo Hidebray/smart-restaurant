@@ -1,773 +1,664 @@
-// prisma/seed.ts
-
-import { PrismaClient, UserRole, TableStatus, ProductStatus, OrderStatus, LoyaltyTier } from '@prisma/client'
+import {
+  PrismaClient,
+  UserRole,
+  TableStatus,
+  ProductStatus,
+  OrderStatus,
+  OrderItemStatus,
+  DiscountType,
+  User,
+  Product,
+  ModifierGroup
+} from '@prisma/client'
 import * as bcrypt from 'bcrypt'
 
 const prisma = new PrismaClient()
 
 async function main() {
-  console.log('🌱 Starting seed...')
+  console.log('🌱 Starting Professional Clean Seed...')
 
-  // 1. Xóa dữ liệu cũ (để tránh trùng lặp khi chạy lại)
-  await prisma.pointsTransaction.deleteMany()
-  await prisma.loyaltyPoints.deleteMany()
-  await prisma.voucher.deleteMany()
-  await prisma.review.deleteMany()
-  await prisma.inventoryTransaction.deleteMany()
-  await prisma.inventory.deleteMany()
-  await prisma.reservation.deleteMany()
-  await prisma.orderItemModifier.deleteMany()
-  await prisma.orderItem.deleteMany()
-  await prisma.order.deleteMany()
-  await prisma.productModifierGroup.deleteMany()
-  await prisma.modifierOption.deleteMany()
-  await prisma.modifierGroup.deleteMany()
-  await prisma.productImage.deleteMany()
-  await prisma.product.deleteMany()
-  await prisma.category.deleteMany()
-  await prisma.table.deleteMany()
-  await prisma.user.deleteMany()
+  // 1. CLEANUP DATABASE
+  const tablenames = [
+    'analytics_snapshots', 'reservations', 'inventory_transactions', 'inventory',
+    'voucher_redemptions', 'vouchers', 'points_transactions', 'loyalty_points',
+    'reviews', 'order_item_modifiers', 'order_items', 'orders',
+    'product_modifier_groups', 'modifier_options', 'modifier_groups',
+    'product_images', 'products', 'categories', 'tables', 'users'
+  ];
 
-  // 2. Tạo Users (Hash password)
-  console.log('Creating users...')
+  for (const tableName of tablenames) {
+    try {
+      await prisma.$executeRawUnsafe(`TRUNCATE TABLE "${tableName}" RESTART IDENTITY CASCADE;`);
+    } catch (error) {
+      console.log(`⚠️  Could not truncate ${tableName}, trying deleteMany...`);
+    }
+  }
+
+  // 2. CREATE USERS
+  console.log('👤 Creating users...')
   const saltRounds = 10;
   const hashedPassword = await bcrypt.hash('password@123', saltRounds);
 
-  // Staff accounts
-  const admin = await prisma.user.create({
+  // Admin
+  await prisma.user.create({
     data: {
       email: 'admin@smart.restaurant',
       password: hashedPassword,
-      name: 'Chủ Quán (Admin)',
+      name: 'Phạm Hữu Đan (Owner)',
       role: UserRole.ADMIN,
       isActive: true,
-      isEmailVerified: true,
+      isEmailVerified: true
     },
   })
 
-  const waiter = await prisma.user.create({
-    data: {
-      email: 'waiter@smart.restaurant',
-      password: hashedPassword,
-      name: 'Nguyễn Văn A (Phục vụ)',
-      role: UserRole.WAITER,
-      isActive: true,
-      isEmailVerified: true,
-    },
-  })
-
-  const waiter2 = await prisma.user.create({
-    data: {
-      email: 'waiter2@smart.restaurant',
-      password: hashedPassword,
-      name: 'Lê Thị B (Phục vụ)',
-      role: UserRole.WAITER,
-      isActive: true,
-      isEmailVerified: true,
-    },
-  })
-
-  const kitchen = await prisma.user.create({
+  // Kitchen
+  await prisma.user.create({
     data: {
       email: 'kitchen@smart.restaurant',
       password: hashedPassword,
-      name: 'Trần Văn C (Bếp)',
+      name: 'Lâm Hoàng Vũ (Head Chef)',
       role: UserRole.KITCHEN,
       isActive: true,
-      isEmailVerified: true,
+      isEmailVerified: true
     },
   })
 
-  // Customer accounts (10 customers)
-  console.log('Creating customer accounts...')
-  const customers = await Promise.all([
-    prisma.user.create({
-      data: {
-        email: 'customer1@gmail.com',
-        password: hashedPassword,
-        name: 'Nguyễn Minh Tuấn',
-        phone: '0901234567',
-        role: UserRole.CUSTOMER,
-        isActive: true,
-        isEmailVerified: true,
-      },
-    }),
-    prisma.user.create({
-      data: {
-        email: 'customer2@gmail.com',
-        password: hashedPassword,
-        name: 'Trần Thị Hương',
-        phone: '0912345678',
-        role: UserRole.CUSTOMER,
-        isActive: true,
-        isEmailVerified: true,
-      },
-    }),
-    prisma.user.create({
-      data: {
-        email: 'customer3@gmail.com',
-        password: hashedPassword,
-        name: 'Lê Văn Đức',
-        phone: '0923456789',
-        role: UserRole.CUSTOMER,
-        isActive: true,
-        isEmailVerified: true,
-      },
-    }),
-    prisma.user.create({
-      data: {
-        email: 'customer4@gmail.com',
-        password: hashedPassword,
-        name: 'Phạm Thị Mai',
-        phone: '0934567890',
-        role: UserRole.CUSTOMER,
-        isActive: true,
-        isEmailVerified: true,
-      },
-    }),
-    prisma.user.create({
-      data: {
-        email: 'customer5@gmail.com',
-        password: hashedPassword,
-        name: 'Hoàng Văn Nam',
-        phone: '0945678901',
-        role: UserRole.CUSTOMER,
-        isActive: true,
-        isEmailVerified: true,
-      },
-    }),
-    prisma.user.create({
-      data: {
-        email: 'customer6@gmail.com',
-        password: hashedPassword,
-        name: 'Vũ Thị Lan',
-        phone: '0956789012',
-        role: UserRole.CUSTOMER,
-        isActive: true,
-        isEmailVerified: true,
-      },
-    }),
-    prisma.user.create({
-      data: {
-        email: 'customer7@gmail.com',
-        password: hashedPassword,
-        name: 'Đặng Minh Quân',
-        phone: '0967890123',
-        role: UserRole.CUSTOMER,
-        isActive: true,
-        isEmailVerified: true,
-      },
-    }),
-    prisma.user.create({
-      data: {
-        email: 'customer8@gmail.com',
-        password: hashedPassword,
-        name: 'Bùi Thị Ngọc',
-        phone: '0978901234',
-        role: UserRole.CUSTOMER,
-        isActive: true,
-        isEmailVerified: true,
-      },
-    }),
-    prisma.user.create({
-      data: {
-        email: 'customer9@gmail.com',
-        password: hashedPassword,
-        name: 'Ngô Văn Hải',
-        phone: '0989012345',
-        role: UserRole.CUSTOMER,
-        isActive: true,
-        isEmailVerified: true,
-      },
-    }),
-    prisma.user.create({
-      data: {
-        email: 'customer10@gmail.com',
-        password: hashedPassword,
-        name: 'Đinh Thị Phương',
-        phone: '0990123456',
-        role: UserRole.CUSTOMER,
-        isActive: true,
-        isEmailVerified: true,
-      },
-    }),
+  // Staff: 3 Waiters
+  const waiters = await Promise.all([
+    prisma.user.create({ data: { email: 'waiter1@smart.restaurant', password: hashedPassword, name: 'Trần Đại Hiệp', role: UserRole.WAITER, isActive: true, isEmailVerified: true } }),
+    prisma.user.create({ data: { email: 'waiter2@smart.restaurant', password: hashedPassword, name: 'Lê Thu Thảo', role: UserRole.WAITER, isActive: true, isEmailVerified: true } }),
+    prisma.user.create({ data: { email: 'waiter3@smart.restaurant', password: hashedPassword, name: 'Nguyễn Văn Hùng', role: UserRole.WAITER, isActive: true, isEmailVerified: true } }),
   ])
 
-  // 3. Tạo Bàn (gán waiter cho một số bàn)
-  console.log('Creating tables...')
-  const tables = await Promise.all([
-    prisma.table.create({ data: { tableNumber: 'T-1', capacity: 2, status: TableStatus.AVAILABLE, qrToken: 'token-table-1', location: 'Tầng 1 - Cửa sổ', assignedWaiterId: waiter.id } }),
-    prisma.table.create({ data: { tableNumber: 'T-2', capacity: 4, status: TableStatus.AVAILABLE, qrToken: 'token-table-2', location: 'Tầng 1 - Cửa sổ', assignedWaiterId: waiter.id } }),
-    prisma.table.create({ data: { tableNumber: 'T-3', capacity: 4, status: TableStatus.AVAILABLE, qrToken: 'token-table-3', location: 'Tầng 1 - Giữa', assignedWaiterId: waiter.id } }),
-    prisma.table.create({ data: { tableNumber: 'T-4', capacity: 6, status: TableStatus.AVAILABLE, qrToken: 'token-table-4', location: 'Tầng 1 - Giữa', assignedWaiterId: waiter.id } }),
-    prisma.table.create({ data: { tableNumber: 'T-5', capacity: 8, status: TableStatus.AVAILABLE, qrToken: 'token-table-5', location: 'Tầng 1 - VIP', assignedWaiterId: waiter.id } }),
-    prisma.table.create({ data: { tableNumber: 'T-6', capacity: 2, status: TableStatus.AVAILABLE, qrToken: 'token-table-6', location: 'Tầng 2 - Ban công', assignedWaiterId: waiter2.id } }),
-    prisma.table.create({ data: { tableNumber: 'T-7', capacity: 4, status: TableStatus.AVAILABLE, qrToken: 'token-table-7', location: 'Tầng 2 - Ban công', assignedWaiterId: waiter2.id } }),
-    prisma.table.create({ data: { tableNumber: 'T-8', capacity: 4, status: TableStatus.AVAILABLE, qrToken: 'token-table-8', location: 'Tầng 2 - Trong nhà', assignedWaiterId: waiter2.id } }),
-    prisma.table.create({ data: { tableNumber: 'T-9', capacity: 6, status: TableStatus.AVAILABLE, qrToken: 'token-table-9', location: 'Tầng 2 - Trong nhà', assignedWaiterId: waiter2.id } }),
-    prisma.table.create({ data: { tableNumber: 'T-10', capacity: 10, status: TableStatus.AVAILABLE, qrToken: 'token-table-10', location: 'Tầng 2 - VIP', assignedWaiterId: waiter2.id } }),
-  ])
+  // Customers: 3 Customers
+  const customers: User[] = []
+  for (let i = 1; i <= 3; i++) {
+    const customer = await prisma.user.create({
+      data: {
+        email: `customer${i}@gmail.com`,
+        password: hashedPassword,
+        name: `Khách Hàng ${i}`,
+        phone: `090${Math.floor(Math.random() * 10000000 + 1000000)}`,
+        role: UserRole.CUSTOMER,
+        isActive: true,
+        isEmailVerified: true,
+        avatar: null
+      }
+    })
+    customers.push(customer)
+  }
 
-  // 4. Tạo Danh mục (Categories)
-  console.log('Creating categories...')
-  const catAppetizer = await prisma.category.create({ data: { name: 'Khai Vị', displayOrder: 1 } })
-  const catFood = await prisma.category.create({ data: { name: 'Món Chính', displayOrder: 2 } })
-  const catDrink = await prisma.category.create({ data: { name: 'Đồ Uống', displayOrder: 3 } })
-  const catDessert = await prisma.category.create({ data: { name: 'Tráng Miệng', displayOrder: 4 } })
+  // 3. CREATE TABLES
+  console.log('🪑 Creating tables...')
+  const tableData = [
+    ...Array.from({ length: 10 }, (_, i) => ({ tableNumber: `T1-${i + 1}`, capacity: 4, location: 'Tầng 1 - Sảnh Chính', assignedWaiterId: waiters[0].id })),
+    ...Array.from({ length: 10 }, (_, i) => ({ tableNumber: `T2-${i + 1}`, capacity: 6, location: 'Tầng 2 - Máy Lạnh', assignedWaiterId: waiters[1].id })),
+  ]
 
-  // 5. Tạo Modifiers (Topping/Size)
-  console.log('Creating modifiers...')
-  // Group: Size đồ uống
-  const sizeGroup = await prisma.modifierGroup.create({
-    data: {
-      name: 'Size',
-      selectionType: 'SINGLE',
-      isRequired: true,
-      minSelections: 1,
-      maxSelections: 1,
-      options: {
-        create: [
-          { name: 'Size M', priceAdjustment: 0 },
-          { name: 'Size L', priceAdjustment: 5000 },
-        ],
-      },
-    },
-  })
+  const tables = await Promise.all(tableData.map(t => prisma.table.create({
+    data: { ...t, status: TableStatus.AVAILABLE, qrToken: `qr-${t.tableNumber}` }
+  })))
 
-  // Group: Topping
-  const toppingGroup = await prisma.modifierGroup.create({
-    data: {
-      name: 'Topping',
-      selectionType: 'MULTIPLE',
-      isRequired: false,
-      maxSelections: 5,
-      options: {
-        create: [
-          { name: 'Trân châu đen', priceAdjustment: 5000 },
-          { name: 'Thạch dừa', priceAdjustment: 5000 },
-          { name: 'Pudding trứng', priceAdjustment: 10000 },
-          { name: 'Kem cheese', priceAdjustment: 15000 },
-        ],
-      },
-    },
-  })
+  // 4. CREATE CATEGORIES
+  console.log('📂 Creating categories...')
+  const categoryNames = [
+    'Khai Vị', 'Món Chính', 'Hải Sản', 'Lẩu', 'Nướng',
+    'Cơm & Mì', 'Rau & Salad', 'Đồ Uống', 'Tráng Miệng', 'Rượu Vang'
+  ]
 
-  // Group: Mức đá (Sugar/Ice)
-  const iceGroup = await prisma.modifierGroup.create({
-    data: {
-      name: 'Mức Đá',
-      selectionType: 'SINGLE',
-      isRequired: true,
-      options: {
-        create: [
-          { name: '100% Đá', priceAdjustment: 0 },
-          { name: '70% Đá', priceAdjustment: 0 },
-          { name: '50% Đá', priceAdjustment: 0 },
-          { name: '30% Đá', priceAdjustment: 0 },
-          { name: 'Không Đá', priceAdjustment: 0 },
-        ],
-      },
-    },
-  })
+  const categories = await Promise.all(categoryNames.map((name, idx) =>
+    prisma.category.create({ data: { name, displayOrder: idx + 1 } })
+  ))
+  const catMap = new Map(categories.map(c => [c.name, c]));
 
-  // 6. Tạo Sản phẩm (Products)
-  console.log('Creating products...')
+  // 5. CREATE MODIFIERS
+  console.log('✨ Creating modifiers...')
+  const modifiersList = [
+    { name: 'Size', options: ['Size M (Vừa)', 'Size L (Lớn)'] },
+    { name: 'Đường', options: ['100% Đường', '70% Đường', '50% Đường', '30% Đường', 'Không Đường'] },
+    { name: 'Đá', options: ['100% Đá', '70% Đá', '50% Đá', '30% Đá', 'Không Đá'] },
+    { name: 'Độ Cay', options: ['Không cay', 'Cay vừa', 'Cay nhiều', 'Siêu cay'] },
+    { name: 'Độ Chín (Steak)', options: ['Rare (Tái)', 'Medium Rare', 'Medium', 'Well Done'] },
+    { name: 'Sốt Ăn Kèm', options: ['Sốt Tiêu Đen', 'Sốt Nấm', 'Sốt Phô Mai', 'Sốt BBQ'] },
+    { name: 'Topping Trà Sữa', options: ['Trân Châu Đen', 'Thạch Trái Cây', 'Pudding Trứng', 'Kem Cheese'] },
+    { name: 'Loại Mì', options: ['Mì Trứng', 'Mì Gạo', 'Hủ Tiếu Dai'] },
+    { name: 'Trái Cây Thêm', options: ['Thêm Dâu', 'Thêm Xoài', 'Thêm Dưa Hấu'] },
+    { name: 'Bánh Mì Thêm', options: ['Thêm 1 Ổ', 'Thêm 2 Ổ'] }
+  ]
 
-  // --- KHAI VỊ ---
-  await prisma.product.create({
-    data: {
-      name: 'Nem Rán Hà Nội',
-      description: 'Nem rán giòn rụm nhân thịt, mộc nhĩ, miến, cà rốt',
-      price: 45000,
-      categoryId: catAppetizer.id,
-      status: ProductStatus.AVAILABLE,
-      images: { create: { url: 'https://icdn.one/upload/2020/11/13/20201113061759-f9295f1c.jpg', isPrimary: true } }
-    }
-  })
+  const modifierGroups: ModifierGroup[] = []
 
-  await prisma.product.create({
-    data: {
+  for (const mod of modifiersList) {
+    const group = await prisma.modifierGroup.create({
+      data: {
+        name: mod.name,
+        selectionType: 'SINGLE',
+        isRequired: false,
+        options: {
+          create: mod.options.map(opt => ({
+            name: opt,
+            priceAdjustment: opt.includes('Lớn') || opt.includes('L') ? 5000 : 0
+          }))
+        }
+      }
+    })
+    modifierGroups.push(group)
+  }
+
+  const sizeGroupId = modifierGroups.find(g => g.name === 'Size')?.id;
+  const findModId = (namePart: string) => modifierGroups.find(g => g.name.includes(namePart))?.id;
+
+  // 6. CREATE PRODUCTS
+  console.log('🍔 Creating 50 products...')
+
+  interface ProductSeedData {
+    name: string;
+    price: number;
+    cat: string;
+    mod: string | null;
+    img: string;
+  }
+
+  const productsData: ProductSeedData[] = [
+    // Khai Vị
+    {
       name: 'Gỏi Cuốn Tôm Thịt',
-      description: 'Gỏi cuốn tôm tươi, thịt ba chỉ, bún và rau sống, chấm mắm nêm',
       price: 35000,
-      categoryId: catAppetizer.id,
-      status: ProductStatus.AVAILABLE,
-      images: { create: { url: 'https://naucohungthinh.com/files/media/202109/5519_4.jpg', isPrimary: true } }
-    }
-  })
-
-  await prisma.product.create({
-    data: {
-      name: 'Nộm Đu Đủ Bò Khô',
-      description: 'Đu đủ xanh giòn, bò khô, lạc rang, rau thơm',
-      price: 40000,
-      categoryId: catAppetizer.id,
-      status: ProductStatus.AVAILABLE,
-      images: { create: { url: 'https://i.ytimg.com/vi/ueSmw3tgXBI/maxresdefault.jpg', isPrimary: true } }
-    }
-  })
-
-  // --- MÓN CHÍNH ---
-  await prisma.product.create({
-    data: {
-      name: 'Phở Bò Đặc Biệt',
-      description: 'Tô đặc biệt gồm tái, nạm, gầu, gân, bò viên thượng hạng',
-      price: 75000,
-      categoryId: catFood.id,
-      status: ProductStatus.AVAILABLE,
-      isChefRecommended: true,
-      images: { create: { url: 'https://vietnamtravellife.vn/wp-content/uploads/2023/11/pho-bo.jpg', isPrimary: true } }
-    }
-  })
-
-  await prisma.product.create({
-    data: {
-      name: 'Bún Chả Hà Nội',
-      description: 'Chả viên và chả miếng nướng than hoa, ăn kèm bún và nem',
-      price: 65000,
-      categoryId: catFood.id,
-      status: ProductStatus.AVAILABLE,
-      isChefRecommended: true,
-      images: { create: { url: 'https://sunhouse.com.vn/pic/news/images/image-20211229181528-1.jpeg', isPrimary: true } }
-    }
-  })
-
-  await prisma.product.create({
-    data: {
-      name: 'Cơm Rang Dưa Bò',
-      description: 'Cơm rang vàng giòn với dưa chua và thịt bò thăn xào đậm đà',
-      price: 55000,
-      categoryId: catFood.id,
-      status: ProductStatus.AVAILABLE,
-      images: { create: { url: 'https://barona.vn/storage/meo-vat/45/com-rang-dua-bo-thanh-pham.jpg', isPrimary: true } }
-    }
-  })
-
-  await prisma.product.create({
-    data: {
-      name: 'Bún Bò Huế',
-      description: 'Hương vị cố đó với chân giò, tiết, chả cua',
-      price: 60000,
-      categoryId: catFood.id,
-      status: ProductStatus.AVAILABLE,
-      images: { create: { url: 'https://www.hungryhuy.com/wp-content/uploads/bun-bo-hue-bowl.jpg', isPrimary: true } }
-    }
-  })
-
-  await prisma.product.create({
-    data: {
-      name: 'Bánh Mì Thập Cẩm',
-      description: 'Pate, thịt xá xíu, chả lụa, dưa góp',
-      price: 30000,
-      categoryId: catFood.id,
-      status: ProductStatus.AVAILABLE,
-      images: { create: { url: 'https://2sao.vietnamnetjsc.vn/images/2020/02/28/19/32/banhmi-1.jpg', isPrimary: true } }
-    }
-  })
-
-  // --- ĐỒ UỐNG ---
-  await prisma.product.create({
-    data: {
-      name: 'Cà Phê Sữa Đá',
-      description: 'Cà phê Robusta Việt Nam pha phin với sữa đặc',
-      price: 35000,
-      categoryId: catDrink.id,
-      status: ProductStatus.AVAILABLE,
-      images: { create: { url: 'https://giacaphe.com/wp-content/uploads/2023/03/ca-phe-sua-da-2.jpg', isPrimary: true } },
-      modifierGroups: {
-        create: [{ modifierGroupId: iceGroup.id, displayOrder: 1 }]
-      }
-    }
-  })
-
-  await prisma.product.create({
-    data: {
-      name: 'Trà Sữa Trân Châu Đường Đen',
-      description: 'Sữa tươi thanh trùng với đường đen Hàn Quốc và trân châu',
+      cat: 'Khai Vị',
+      mod: 'Độ Cay',
+      img: 'https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?q=80&w=800&auto=format&fit=crop'
+    },
+    {
+      name: 'Chả Giò Rế Hải Sản',
       price: 45000,
-      categoryId: catDrink.id,
-      status: ProductStatus.AVAILABLE,
-      isChefRecommended: true,
-      images: { create: { url: 'https://cdn.tgdd.vn/Files/2022/01/21/1412109/huong-dan-cach-lam-tra-sua-tran-chau-duong-den-202201211522033706.jpg', isPrimary: true } },
-      modifierGroups: {
-        create: [
-          { modifierGroupId: sizeGroup.id, displayOrder: 1 },
-          { modifierGroupId: toppingGroup.id, displayOrder: 2 },
-          { modifierGroupId: iceGroup.id, displayOrder: 3 },
-        ]
-      }
-    }
-  })
-
-  await prisma.product.create({
-    data: {
-      name: 'Trà Đào Cam Sả',
-      description: 'Trà đào mát lạnh với miếng đào giòn và hương sả thơm',
-      price: 40000,
-      categoryId: catDrink.id,
-      status: ProductStatus.AVAILABLE,
-      images: { create: { url: 'https://cdn.tgdd.vn/2020/07/CookRecipe/GalleryStep/thanh-pham-273.jpg', isPrimary: true } },
-      modifierGroups: {
-        create: [
-          { modifierGroupId: sizeGroup.id, displayOrder: 1 },
-          { modifierGroupId: iceGroup.id, displayOrder: 2 },
-        ]
-      }
-    }
-  })
-
-  await prisma.product.create({
-    data: {
-      name: 'Nước Ép Dưa Hấu',
-      description: 'Nước ép dưa hấu nguyên chất không đường',
-      price: 40000,
-      categoryId: catDrink.id,
-      status: ProductStatus.AVAILABLE,
-      images: { create: { url: 'https://cookbeo.com/media/2020/12/nuoc-ep-dua-hau/coc-nuoc-ep-dua-hau.jpg', isPrimary: true } },
-      modifierGroups: {
-        create: [
-          { modifierGroupId: iceGroup.id, displayOrder: 1 },
-        ]
-      }
-    }
-  })
-
-  // --- TRÁNG MIỆNG ---
-  await prisma.product.create({
-    data: {
-      name: 'Chè Khúc Bạch',
-      description: 'Khúc bạch phô mai béo ngậy, hạnh nhân và nhãn lồng',
+      cat: 'Khai Vị',
+      mod: null,
+      img: 'https://images.unsplash.com/photo-1606525437679-037aca74a3e9?q=80&w=1740&auto=format&fit=crop' 
+    },
+    {
+      name: 'Nộm Ngó Sen Tôm Thịt',
+      price: 55000,
+      cat: 'Khai Vị',
+      mod: 'Độ Cay',
+      img: 'https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?q=80&w=800&auto=format&fit=crop'
+    },
+    {
+      name: 'Salad Cá Ngừ',
+      price: 65000,
+      cat: 'Khai Vị',
+      mod: null,
+      img: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?q=80&w=800&auto=format&fit=crop'
+    },
+    {
+      name: 'Khoai Tây Chiên Bơ Tỏi',
       price: 35000,
-      categoryId: catDessert.id,
-      status: ProductStatus.AVAILABLE,
-      images: { create: { url: 'https://bepbtn.vn/wp-content/uploads/2022/06/che-khuc-bach.jpg', isPrimary: true } }
-    }
-  })
+      cat: 'Khai Vị',
+      mod: null,
+      img: 'https://images.unsplash.com/photo-1630384060421-cb20d0e0649d?q=80&w=800&auto=format&fit=crop'
+    },
+    {
+      name: 'Cánh Gà Chiên Nước Mắm',
+      price: 55000,
+      cat: 'Khai Vị',
+      mod: 'Độ Cay',
+      img: 'https://images.unsplash.com/photo-1567620832903-9fc6debc209f?q=80&w=800&auto=format&fit=crop'
+    },
 
-  await prisma.product.create({
-    data: {
-      name: 'Bánh Flan',
-      description: 'Bánh flan trứng sữa mềm mịn',
+    // Món Chính
+    {
+      name: 'Phở Bò Tái Nạm',
+      price: 75000,
+      cat: 'Món Chính',
+      mod: null,
+      img: 'https://images.unsplash.com/photo-1582878826629-29b7ad1cdc43?q=80&w=800&auto=format&fit=crop'
+    },
+    {
+      name: 'Bún Chả Hà Nội Đặc Biệt',
+      price: 65000,
+      cat: 'Món Chính',
+      mod: 'Độ Cay',
+      img: 'https://images.unsplash.com/photo-1585325701165-351af916e581?q=80&w=800&auto=format&fit=crop'
+    },
+    {
+      name: 'Cơm Tấm Sườn Bì Chả',
+      price: 55000,
+      cat: 'Món Chính',
+      mod: 'Độ Cay',
+      img: 'https://images.unsplash.com/photo-1715692728122-50b4494e0a0f?q=80&w=1740&auto=format&fit=crop'
+    },
+    {
+      name: 'Bò Lúc Lắc Khoai Tây',
+      price: 120000,
+      cat: 'Món Chính',
+      mod: 'Độ Chín',
+      img: 'https://images.unsplash.com/photo-1600891964599-f61ba0e24092?q=80&w=800&auto=format&fit=crop'
+    },
+    {
+      name: 'Gà Nướng Mật Ong Nguyên Con',
+      price: 250000,
+      cat: 'Món Chính',
+      mod: null,
+      img: 'https://images.unsplash.com/photo-1598103442097-8b74394b95c6?q=80&w=800&auto=format&fit=crop'
+    },
+    {
+      name: 'Vịt Quay Bắc Kinh',
+      price: 350000,
+      cat: 'Món Chính',
+      mod: null,
+      img: 'https://images.unsplash.com/photo-1512149177596-f817c7ef5d4c?q=80&w=800&auto=format&fit=crop'
+    },
+
+    // Hải Sản
+    {
+      name: 'Tôm Hùm Alaska Nướng Phô Mai',
+      price: 950000,
+      cat: 'Hải Sản',
+      mod: null,
+      img: 'https://images.unsplash.com/photo-1559339352-11d035aa65de?q=80&w=800&auto=format&fit=crop'
+    },
+    {
+      name: 'Cua Cà Mau Rang Me',
+      price: 450000,
+      cat: 'Hải Sản',
+      mod: 'Độ Cay',
+      img: 'https://images.unsplash.com/photo-1565557623262-b51c2513a641?q=80&w=800&auto=format&fit=crop'
+    },
+    {
+      name: 'Mực Hấp Hành Gừng',
+      price: 150000,
+      cat: 'Hải Sản',
+      mod: 'Độ Cay',
+      img: 'https://images.unsplash.com/photo-1599084993091-1cb5c0721cc6?q=80&w=800&auto=format&fit=crop'
+    },
+    {
+      name: 'Hàu Nướng Mỡ Hành (6 con)',
+      price: 120000,
+      cat: 'Hải Sản',
+      mod: null,
+      img: 'https://images.unsplash.com/photo-1625937286074-9ca519d5d9df?q=80&w=800&auto=format&fit=crop' 
+    },
+    {
+      name: 'Sò Điệp Nướng Trứng Cút',
+      price: 90000,
+      cat: 'Hải Sản',
+      mod: null,
+      img: 'https://images.unsplash.com/photo-1565680018434-b513d5e5fd47?q=80&w=800&auto=format&fit=crop'
+    },
+    {
+      name: 'Cá Mú Hấp Xì Dầu',
+      price: 350000,
+      cat: 'Hải Sản',
+      mod: 'Độ Cay',
+      img: 'https://images.unsplash.com/photo-1534938665420-4193effeacc4?q=80&w=800&auto=format&fit=crop'
+    },
+
+    // Lẩu
+    {
+      name: 'Lẩu Thái Tomyum Hải Sản',
+      price: 499000,
+      cat: 'Lẩu',
+      mod: 'Độ Cay',
+      img: 'https://images.unsplash.com/photo-1547592180-85f173990554?q=80&w=800&auto=format&fit=crop' 
+    },
+    {
+      name: 'Lẩu Nấm Chim Câu',
+      price: 399000,
+      cat: 'Lẩu',
+      mod: null,
+      img: 'https://images.unsplash.com/photo-1631709497146-a239ef373cf1?q=80&w=800&auto=format&fit=crop'
+    },
+    {
+      name: 'Lẩu Riêu Cua Bắp Bò',
+      price: 450000,
+      cat: 'Lẩu',
+      mod: null,
+      img: 'https://images.unsplash.com/photo-1574484284002-952d92456975?q=80&w=800&auto=format&fit=crop'
+    },
+    {
+      name: 'Lẩu Cá Kèo Lá Giang',
+      price: 350000,
+      cat: 'Lẩu',
+      mod: 'Độ Cay',
+      img: 'https://images.unsplash.com/photo-1582878826629-29b7ad1cdc43?q=80&w=800&auto=format&fit=crop' 
+    },
+
+    // Nướng
+    {
+      name: 'Sườn Nướng BBQ Tảng',
+      price: 250000,
+      cat: 'Nướng',
+      mod: 'Sốt',
+      img: 'https://images.unsplash.com/photo-1544025162-d76694265947?w=700&auto=format&fit=crop&q=60' 
+    },
+    {
+      name: 'Bò Wagyu Nướng Đá',
+      price: 850000,
+      cat: 'Nướng',
+      mod: 'Độ Chín',
+      img: 'https://images.unsplash.com/photo-1558030006-450675393462?q=80&w=800&auto=format&fit=crop'
+    },
+    {
+      name: 'Ba Chỉ Heo Nướng Mè',
+      price: 120000,
+      cat: 'Nướng',
+      mod: null,
+      img: 'https://images.unsplash.com/photo-1704007573697-6a516da421ec?q=80&w=1740&auto=format&fit=crop'
+    },
+    {
+      name: 'Dẻ Sườn Bò Mỹ Nướng',
+      price: 180000,
+      cat: 'Nướng',
+      mod: 'Độ Chín',
+      img: 'https://images.unsplash.com/photo-1600891964092-4316c288032e?q=80&w=800&auto=format&fit=crop'
+    },
+
+    // Cơm & Mì
+    {
+      name: 'Cơm Chiên Dương Châu',
+      price: 65000,
+      cat: 'Cơm & Mì',
+      mod: 'Độ Cay',
+      img: 'https://images.unsplash.com/photo-1512058564366-18510be2db19?q=80&w=800&auto=format&fit=crop'
+    },
+    {
+      name: 'Mì Ý Sốt Bò Bằm',
+      price: 75000,
+      cat: 'Cơm & Mì',
+      mod: null,
+      img: 'https://images.unsplash.com/photo-1622973536968-3ead9e780960?q=80&w=800&auto=format&fit=crop'
+    },
+    {
+      name: 'Mì Xào Giòn Hải Sản',
+      price: 85000,
+      cat: 'Cơm & Mì',
+      mod: null,
+      img: 'https://images.unsplash.com/photo-1585032226651-759b368d7246?q=80&w=800&auto=format&fit=crop'
+    },
+    {
+      name: 'Cơm Niêu Cá Kho Tộ',
+      price: 95000,
+      cat: 'Cơm & Mì',
+      mod: 'Độ Cay',
+      img: 'https://images.unsplash.com/photo-1539136788836-5699e78bfc75?q=80&w=800&auto=format&fit=crop'
+    },
+
+    // Rau & Salad
+    {
+      name: 'Salad Rong Nho Sốt Mè Rang',
+      price: 55000,
+      cat: 'Rau & Salad',
+      mod: null,
+      img: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?q=80&w=800&auto=format&fit=crop'
+    },
+    {
+      name: 'Rau Muống Xào Tỏi',
+      price: 40000,
+      cat: 'Rau & Salad',
+      mod: null,
+      img: 'https://images.unsplash.com/photo-1604382354936-07c5d9983bd3?q=80&w=800&auto=format&fit=crop'
+    },
+    {
+      name: 'Ngọn Su Su Xào Bò',
+      price: 65000,
+      cat: 'Rau & Salad',
+      mod: null,
+      img: 'https://images.unsplash.com/photo-1592417817098-8fd3d9eb14a5?q=80&w=800&auto=format&fit=crop'
+    },
+
+    // Đồ Uống
+    {
+      name: 'Cà Phê Sữa Đá Sài Gòn',
+      price: 35000,
+      cat: 'Đồ Uống',
+      mod: 'Đường',
+      img: 'https://plus.unsplash.com/premium_photo-1673459683929-3f3574de7e75?w=700&auto=format&fit=crop&q=60'
+    },
+    {
+      name: 'Trà Sữa Trân Châu Đường Đen',
+      price: 45000,
+      cat: 'Đồ Uống',
+      mod: 'Topping',
+      img: 'https://images.unsplash.com/photo-1499638673689-79a0b5115d87?q=80&w=800&auto=format&fit=crop'
+    },
+    {
+      name: 'Trà Đào Cam Sả',
+      price: 40000,
+      cat: 'Đồ Uống',
+      mod: 'Đá',
+      img: 'https://images.unsplash.com/photo-1556679343-c7306c1976bc?q=80&w=800&auto=format&fit=crop'
+    },
+    {
+      name: 'Nước Ép Dưa Hấu',
+      price: 40000,
+      cat: 'Đồ Uống',
+      mod: 'Đá',
+      img: 'https://images.unsplash.com/photo-1587049352846-4a222e784d38?q=80&w=800&auto=format&fit=crop'
+    },
+    {
+      name: 'Sinh Tố Bơ',
+      price: 50000,
+      cat: 'Đồ Uống',
+      mod: 'Đường',
+      img: 'https://images.unsplash.com/photo-1553177595-4de2bb0842b9?q=80&w=800&auto=format&fit=crop'
+    },
+    {
+      name: 'Mojito Chanh Bạc Hà',
+      price: 55000,
+      cat: 'Đồ Uống',
+      mod: 'Đá',
+      img: 'https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?q=80&w=800&auto=format&fit=crop'
+    },
+
+    // Tráng Miệng
+    {
+      name: 'Bánh Flan Caramel',
       price: 20000,
-      categoryId: catDessert.id,
-      status: ProductStatus.AVAILABLE,
-      images: { create: { url: 'https://satrafoods.com.vn/uploads/Images/mon-ngon-moi-ngay/banh-flan.jpg', isPrimary: true } }
+      cat: 'Tráng Miệng',
+      mod: null,
+      img: 'https://images.unsplash.com/photo-1563805042-7684c019e1cb?q=80&w=800&auto=format&fit=crop'
+    },
+    {
+      name: 'Chè Khúc Bạch Hạnh Nhân',
+      price: 35000,
+      cat: 'Tráng Miệng',
+      mod: null,
+      img: 'https://images.unsplash.com/photo-1595475207225-428b62bda831?q=80&w=800&auto=format&fit=crop'
+    },
+    {
+      name: 'Bánh Tiramisu Ý',
+      price: 45000,
+      cat: 'Tráng Miệng',
+      mod: null,
+      img: 'https://images.unsplash.com/photo-1571877227200-a0d98ea607e9?q=80&w=800&auto=format&fit=crop'
+    },
+    {
+      name: 'Panna Cotta Dâu Tây',
+      price: 35000,
+      cat: 'Tráng Miệng',
+      mod: null,
+      img: 'https://images.unsplash.com/photo-1533134242443-d4fd215305ad?q=80&w=800&auto=format&fit=crop' 
+    },
+
+    // Rượu Vang
+    {
+      name: 'Rượu Vang Đỏ Cabernet Sauvignon',
+      price: 850000,
+      cat: 'Rượu Vang',
+      mod: null,
+      img: 'https://images.unsplash.com/photo-1559563362-c667ba5f5480?q=80&w=800&auto=format&fit=crop'
+    },
+    {
+      name: 'Rượu Vang Trắng Chardonnay',
+      price: 950000,
+      cat: 'Rượu Vang',
+      mod: null,
+      img: 'https://images.unsplash.com/photo-1474722883778-792e7990302f?q=80&w=800&auto=format&fit=crop'
+    },
+    {
+      name: 'Bia Tiger Crystal (Thùng)',
+      price: 450000,
+      cat: 'Rượu Vang',
+      mod: null,
+      img: 'https://images.unsplash.com/photo-1615332579037-3c44b3660b53?q=80&w=800&auto=format&fit=crop'
+    },
+    {
+      name: 'Bia Heineken (Thùng)',
+      price: 480000,
+      cat: 'Rượu Vang',
+      mod: null,
+      img: 'https://images.unsplash.com/photo-1575037614876-c38a4d44f5b8?q=80&w=800&auto=format&fit=crop'
+    },
+    {
+      name: 'Soju Hàn Quốc',
+      price: 65000,
+      cat: 'Rượu Vang',
+      mod: null,
+      img: 'https://images.unsplash.com/photo-1528615141309-53f2564d3be8?w=700&auto=format&fit=crop&q=60'
     }
-  })
+  ];
+  const allProducts: Product[] = [];
 
-  // 7. Tạo Vouchers
-  console.log('Creating vouchers...')
-  const vouchers = await Promise.all([
-    prisma.voucher.create({
-      data: {
-        code: 'WELCOME10',
-        name: 'Welcome Discount',
-        description: 'Giảm 10% cho khách hàng mới',
-        discountType: 'PERCENT',
-        discountValue: 10,
-        minOrderAmount: 100000,
-        maxUses: 100,
-        usedCount: 15,
-        isActive: true,
-        expiryDate: new Date('2026-12-31'),
-      },
-    }),
-    prisma.voucher.create({
-      data: {
-        code: 'FREESHIP50',
-        name: 'Giảm 50K',
-        description: 'Giảm 50,000đ cho đơn từ 200K',
-        discountType: 'FIXED',
-        discountValue: 50000,
-        minOrderAmount: 200000,
-        maxUses: 50,
-        usedCount: 8,
-        isActive: true,
-        expiryDate: new Date('2026-06-30'),
-      },
-    }),
-    prisma.voucher.create({
-      data: {
-        code: 'VIP20',
-        name: 'VIP Member',
-        description: 'Giảm 20% cho thành viên VIP',
-        discountType: 'PERCENT',
-        discountValue: 20,
-        minOrderAmount: 300000,
-        maxUses: 30,
-        usedCount: 5,
-        isActive: true,
-        expiryDate: new Date('2026-03-31'),
-      },
-    }),
-    prisma.voucher.create({
-      data: {
-        code: 'LOYALTY100',
-        name: 'Loyalty Reward',
-        description: 'Giảm 100K đổi từ điểm tích lũy',
-        discountType: 'FIXED',
-        discountValue: 100000,
-        minOrderAmount: 500000,
-        maxUses: 20,
-        usedCount: 3,
-        isActive: true,
-        expiryDate: new Date('2026-12-31'),
-      },
-    }),
-  ])
+  for (const p of productsData) {
+    const categoryId = catMap.get(p.cat)?.id || categories[0].id;
+    const contextModId = p.mod ? findModId(p.mod) : null;
 
-  // 8. Lấy tất cả products để tạo orders
-  const allProducts = await prisma.product.findMany({ include: { images: true } })
-  const productMap = new Map(allProducts.map(p => [p.name, p]))
+    // Fix lỗi never[] khi push vào mảng
+    const modsToCreate: { modifierGroupId: string; displayOrder: number }[] = [];
 
-  // 9. Tạo Orders (đơn hàng mẫu với các trạng thái khác nhau)
-  console.log('Creating orders...')
-  
-  // Helper function để tạo order
-  const createOrder = async (
-    customerId: string,
-    tableId: string,
-    status: OrderStatus,
-    items: { productName: string; quantity: number; notes?: string }[],
-    daysAgo: number = 0,
-    discountType?: 'PERCENT' | 'FIXED',
-    discountValue?: number
-  ) => {
-    const orderItems = items.map(item => {
-      const product = productMap.get(item.productName)!
-      const unitPrice = Number(product.price)
-      const totalPrice = unitPrice * item.quantity
-      return {
-        productId: product.id,
-        quantity: item.quantity,
-        unitPrice: unitPrice,
-        totalPrice: totalPrice,
-        notes: item.notes,
-      }
-    })
-
-    const totalAmount = orderItems.reduce((sum, item) => sum + item.totalPrice, 0)
-    const createdAt = new Date()
-    createdAt.setDate(createdAt.getDate() - daysAgo)
-    createdAt.setHours(Math.floor(Math.random() * 12) + 10) // 10:00 - 22:00
-
-    return prisma.order.create({
-      data: {
-        tableId,
-        customerId,
-        status,
-        totalAmount,
-        discountType,
-        discountValue,
-        createdAt,
-        updatedAt: createdAt,
-        items: {
-          create: orderItems,
-        },
-      },
-    })
-  }
-
-  // Tạo nhiều đơn hàng đã hoàn thành (để có dữ liệu reports)
-  const completedOrders: Awaited<ReturnType<typeof createOrder>>[] = []
-  
-  // Đơn hàng trong 30 ngày qua
-  for (let i = 0; i < 30; i++) {
-    const customerIndex = i % customers.length
-    const tableIndex = i % tables.length
-    
-    // Mỗi ngày có 2-5 đơn
-    const ordersPerDay = Math.floor(Math.random() * 4) + 2
-    
-    for (let j = 0; j < ordersPerDay; j++) {
-      const items = [
-        { productName: ['Phở Bò Đặc Biệt', 'Bún Chả Hà Nội', 'Cơm Rang Dưa Bò', 'Bún Bò Huế', 'Bánh Mì Thập Cẩm'][Math.floor(Math.random() * 5)], quantity: Math.floor(Math.random() * 2) + 1 },
-        { productName: ['Cà Phê Sữa Đá', 'Trà Sữa Trân Châu Đường Đen', 'Trà Đào Cam Sả', 'Nước Ép Dưa Hấu'][Math.floor(Math.random() * 4)], quantity: Math.floor(Math.random() * 3) + 1 },
-      ]
-      
-      // Thêm món khai vị ngẫu nhiên
-      if (Math.random() > 0.5) {
-        items.push({ productName: ['Nem Rán Hà Nội', 'Gỏi Cuốn Tôm Thịt', 'Nộm Đu Đủ Bò Khô'][Math.floor(Math.random() * 3)], quantity: 1 })
-      }
-      
-      // Thêm tráng miệng ngẫu nhiên
-      if (Math.random() > 0.7) {
-        items.push({ productName: ['Chè Khúc Bạch', 'Bánh Flan'][Math.floor(Math.random() * 2)], quantity: Math.floor(Math.random() * 2) + 1 })
-      }
-
-      const order = await createOrder(
-        customers[(customerIndex + j) % customers.length].id,
-        tables[(tableIndex + j) % tables.length].id,
-        OrderStatus.COMPLETED,
-        items,
-        i, // days ago
-        Math.random() > 0.8 ? 'PERCENT' : undefined,
-        Math.random() > 0.8 ? 10 : undefined
-      )
-      completedOrders.push(order)
+    if (sizeGroupId) {
+      modsToCreate.push({ modifierGroupId: sizeGroupId, displayOrder: 0 });
     }
+    if (contextModId && contextModId !== sizeGroupId) {
+      modsToCreate.push({ modifierGroupId: contextModId, displayOrder: 1 });
+    }
+
+    const product = await prisma.product.create({
+      data: {
+        name: p.name,
+        description: `Hương vị đặc trưng của món ${p.name}, được chế biến từ nguyên liệu tươi ngon nhất.`,
+        price: p.price,
+        categoryId: categoryId,
+        status: ProductStatus.AVAILABLE,
+        isChefRecommended: Math.random() < 0.2,
+
+        // ProductImage Relation
+        images: p.img ? { create: { url: p.img, isPrimary: true } } : undefined,
+
+        // Modifier Relation
+        modifierGroups: {
+          create: modsToCreate
+        }
+      }
+    });
+    allProducts.push(product);
   }
 
-  // Tạo một số đơn hàng đang xử lý (PENDING, ACCEPTED, PREPARING, READY, SERVED)
-  console.log('Creating active orders...')
-  
-  // Đơn PENDING (chờ xác nhận)
-  await createOrder(customers[0].id, tables[0].id, OrderStatus.PENDING, [
-    { productName: 'Phở Bò Đặc Biệt', quantity: 2 },
-    { productName: 'Trà Đào Cam Sả', quantity: 2 },
-  ], 0)
-
-  await createOrder(customers[1].id, tables[1].id, OrderStatus.PENDING, [
-    { productName: 'Bún Chả Hà Nội', quantity: 1 },
-    { productName: 'Nem Rán Hà Nội', quantity: 1 },
-    { productName: 'Cà Phê Sữa Đá', quantity: 1 },
-  ], 0)
-
-  // Đơn ACCEPTED (đã nhận, chưa nấu)
-  await createOrder(customers[2].id, tables[2].id, OrderStatus.ACCEPTED, [
-    { productName: 'Cơm Rang Dưa Bò', quantity: 2 },
-    { productName: 'Gỏi Cuốn Tôm Thịt', quantity: 1 },
-    { productName: 'Nước Ép Dưa Hấu', quantity: 2 },
-  ], 0)
-
-  // Đơn PREPARING (đang nấu)
-  await createOrder(customers[3].id, tables[3].id, OrderStatus.PREPARING, [
-    { productName: 'Bún Bò Huế', quantity: 3 },
-    { productName: 'Trà Sữa Trân Châu Đường Đen', quantity: 3 },
-    { productName: 'Chè Khúc Bạch', quantity: 2 },
-  ], 0)
-
-  // Đơn READY (sẵn sàng bưng)
-  await createOrder(customers[4].id, tables[4].id, OrderStatus.READY, [
-    { productName: 'Phở Bò Đặc Biệt', quantity: 1 },
-    { productName: 'Bánh Mì Thập Cẩm', quantity: 2 },
-    { productName: 'Cà Phê Sữa Đá', quantity: 2 },
-  ], 0)
-
-  // Đơn SERVED (đang ăn, chờ thanh toán)
-  await createOrder(customers[5].id, tables[5].id, OrderStatus.SERVED, [
-    { productName: 'Bún Chả Hà Nội', quantity: 2 },
-    { productName: 'Nộm Đu Đủ Bò Khô', quantity: 1 },
-    { productName: 'Trà Đào Cam Sả', quantity: 2 },
-    { productName: 'Bánh Flan', quantity: 2 },
-  ], 0)
-
-  await createOrder(customers[6].id, tables[6].id, OrderStatus.SERVED, [
-    { productName: 'Cơm Rang Dưa Bò', quantity: 3 },
-    { productName: 'Nem Rán Hà Nội', quantity: 2 },
-    { productName: 'Nước Ép Dưa Hấu', quantity: 3 },
-  ], 0)
-
-  // 10. Tạo Loyalty Points cho customers
-  console.log('Creating loyalty points...')
-  const loyaltyData = [
-    { customer: customers[0], points: 2500, tier: LoyaltyTier.SILVER, totalEarned: 3000, totalRedeemed: 500 },
-    { customer: customers[1], points: 1200, tier: LoyaltyTier.BRONZE, totalEarned: 1500, totalRedeemed: 300 },
-    { customer: customers[2], points: 5500, tier: LoyaltyTier.GOLD, totalEarned: 6000, totalRedeemed: 500 },
-    { customer: customers[3], points: 800, tier: LoyaltyTier.BRONZE, totalEarned: 800, totalRedeemed: 0 },
-    { customer: customers[4], points: 12000, tier: LoyaltyTier.PLATINUM, totalEarned: 15000, totalRedeemed: 3000 },
-    { customer: customers[5], points: 3200, tier: LoyaltyTier.SILVER, totalEarned: 4000, totalRedeemed: 800 },
-    { customer: customers[6], points: 450, tier: LoyaltyTier.BRONZE, totalEarned: 450, totalRedeemed: 0 },
-    { customer: customers[7], points: 7800, tier: LoyaltyTier.GOLD, totalEarned: 8500, totalRedeemed: 700 },
-    { customer: customers[8], points: 1800, tier: LoyaltyTier.BRONZE, totalEarned: 2000, totalRedeemed: 200 },
-    { customer: customers[9], points: 4100, tier: LoyaltyTier.SILVER, totalEarned: 5000, totalRedeemed: 900 },
+  // 7. CREATE VOUCHERS
+  console.log('🎟️ Creating vouchers...')
+  const vouchersData = [
+    { code: 'WELCOME10', name: 'Giảm 10%', val: 10, type: DiscountType.PERCENT },
+    { code: 'GIAM50K', name: 'Giảm 50K', val: 50000, type: DiscountType.FIXED },
+    { code: 'VIP20', name: 'VIP 20%', val: 20, type: DiscountType.PERCENT },
+    { code: 'FREESHIP', name: 'Freeship', val: 15000, type: DiscountType.FIXED },
+    { code: 'TET2026', name: 'Lì Xì Tết', val: 100000, type: DiscountType.FIXED }
   ]
+  await Promise.all(vouchersData.map(v => prisma.voucher.create({
+    data: {
+      code: v.code, name: v.name, description: v.name,
+      discountType: v.type, discountValue: v.val, minOrderAmount: 0,
+      maxUses: 100, isActive: true, expiryDate: new Date('2026-12-31')
+    }
+  })))
 
-  for (const data of loyaltyData) {
-    await prisma.loyaltyPoints.create({
-      data: {
-        userId: data.customer.id,
-        points: data.points,
-        tier: data.tier,
-        totalEarned: data.totalEarned,
-        totalRedeemed: data.totalRedeemed,
-      },
-    })
-  }
-
-  // 11. Tạo một số Points Transactions
-  console.log('Creating points transactions...')
-  for (let i = 0; i < Math.min(completedOrders.length, 50); i++) {
-    const order = completedOrders[i]
-    const pointsEarned = Math.floor(Number(order.totalAmount) / 10000)
-    
-    await prisma.pointsTransaction.create({
-      data: {
-        userId: order.customerId!,
-        points: pointsEarned,
-        type: 'EARN',
-        description: `Tích điểm từ đơn hàng #${order.id.substring(0, 8)}`,
-        orderId: order.id,
-        createdAt: order.createdAt,
-      },
-    })
-  }
-
-  // 12. Tạo Reviews
-  console.log('Creating reviews...')
-  const reviewComments = [
-    'Món ăn rất ngon, phục vụ tận tình!',
-    'Đồ ăn tươi ngon, giá cả hợp lý.',
-    'Không gian đẹp, sẽ quay lại lần sau.',
-    'Phở ngon đậm đà, đúng vị Hà Nội.',
-    'Bún chả nướng thơm, nem giòn rụm.',
-    'Trà sữa béo ngậy, topping nhiều.',
-    'Món ăn ngon nhưng hơi lâu.',
-    'Chất lượng ổn định, nhân viên thân thiện.',
-  ]
-
-  for (let i = 0; i < 20; i++) {
-    const product = allProducts[i % allProducts.length]
-    const customer = customers[i % customers.length]
-    
-    await prisma.review.create({
-      data: {
-        productId: product.id,
-        userId: customer.id,
-        rating: Math.floor(Math.random() * 2) + 4, // 4-5 stars
-        comment: reviewComments[i % reviewComments.length],
-        createdAt: new Date(Date.now() - Math.random() * 30 * 24 * 60 * 60 * 1000), // Random trong 30 ngày
-      },
-    })
-  }
-
-  // 13. Tạo Inventory
-  console.log('Creating inventory...')
+  // 8. CREATE INVENTORY
+  console.log('📦 Creating inventory...')
   for (const product of allProducts) {
     await prisma.inventory.create({
       data: {
         productId: product.id,
-        quantity: Math.floor(Math.random() * 50) + 20, // 20-70
-        minStock: 10,
-        maxStock: 100,
-        unit: product.categoryId === (await prisma.category.findFirst({ where: { name: 'Đồ Uống' } }))?.id ? 'ly' : 'phần',
-      },
+        quantity: 100,
+        minStock: 10, maxStock: 200, unit: 'phần'
+      }
     })
   }
 
-  console.log('✅ Seed data successfully!')
-  console.log('📊 Summary:')
-  console.log(`   - Users: ${4 + customers.length} (4 staff + ${customers.length} customers)`)
-  console.log(`   - Tables: ${tables.length}`)
-  console.log(`   - Products: ${allProducts.length}`)
-  console.log(`   - Vouchers: ${vouchers.length}`)
-  console.log(`   - Completed Orders: ${completedOrders.length}`)
-  console.log(`   - Active Orders: 7`)
-  console.log(`   - Loyalty Points: ${loyaltyData.length} customers`)
-  console.log('')
-  console.log('🔑 Demo Accounts (password: password@123):')
-  console.log('   - Admin: admin@smart.restaurant')
-  console.log('   - Waiter: waiter@smart.restaurant, waiter2@smart.restaurant')
-  console.log('   - Kitchen: kitchen@smart.restaurant')
-  console.log('   - Customers: customer1@gmail.com ... customer10@gmail.com')
+  // 9. CREATE ORDERS & REVIEWS
+  console.log('🍳 Creating random orders & reviews...')
+
+  const reviewComments = [
+    "Món này rất ngon, nêm nếm vừa miệng.",
+    "Tuyệt vời, thịt mềm và thơm.",
+    "Không gian quán đẹp, đồ ăn trình bày bắt mắt.",
+    "Hơi mặn so với khẩu vị của mình một chút.",
+    "Phục vụ nhiệt tình, món ăn ra nhanh.",
+    "Giá cả hợp lý, chất lượng ổn.",
+    "Món này ăn lạ miệng, rất thích nước sốt.",
+    "Bình thường, không quá đặc sắc.",
+    "Rất recommend mọi người thử món này nhé!",
+    "Đồ ăn nóng hổi, rau tươi."
+  ];
+
+  for (let i = 0; i < 20; i++) {
+    const customer = customers[i % customers.length];
+    const table = tables[i % tables.length];
+
+    // 1. Shuffle & Select Products
+    const shuffledProducts = [...allProducts].sort(() => 0.5 - Math.random());
+    const numberOfItems = Math.floor(Math.random() * 3) + 2; // 2-4 items
+    const selectedProducts = shuffledProducts.slice(0, numberOfItems);
+
+    // 2. Prepare Order Items
+    const orderItemsData = selectedProducts.map(prod => {
+      const qty = Math.floor(Math.random() * 2) + 1;
+      return {
+        productId: prod.id,
+        quantity: qty,
+        unitPrice: Number(prod.price),
+        totalPrice: Number(prod.price) * qty,
+        status: OrderItemStatus.SERVED
+      };
+    });
+
+    const totalOrderAmount = orderItemsData.reduce((sum, item) => sum + item.totalPrice, 0);
+
+    // 3. Create Order
+    await prisma.order.create({
+      data: {
+        customerId: customer.id,
+        tableId: table.id,
+        status: OrderStatus.COMPLETED,
+        totalAmount: totalOrderAmount,
+        guestCount: Math.floor(Math.random() * 4) + 1,
+        createdAt: new Date(),
+        items: { create: orderItemsData }
+      }
+    });
+
+    // 4. Create Reviews
+    for (let j = 0; j < selectedProducts.length; j++) {
+      if (j < 2 || Math.random() > 0.5) {
+        const product = selectedProducts[j];
+        await prisma.review.create({
+          data: {
+            userId: customer.id,
+            productId: product.id,
+            rating: Math.floor(Math.random() * 3) + 3,
+            comment: reviewComments[Math.floor(Math.random() * reviewComments.length)]
+          }
+        });
+      }
+    }
+  }
+
+  console.log('✅ Professional Seed Completed!');
+  console.log(`   - Users: 3 Staff + 3 Customers`);
+  console.log(`   - Tables: ${tables.length}`);
+  console.log(`   - Products: ${allProducts.length} (Ready for images)`);
+  console.log(`   - All Products have SIZE modifier!`);
+  console.log(`   - Categories: ${categories.length}`);
+  console.log(`   - Orders: 20 (Randomized)`);
 }
 
 main()
-  .then(async () => {
-    await prisma.$disconnect()
-  })
-  .catch(async (e) => {
-    console.error(e)
-    await prisma.$disconnect()
-    process.exit(1)
-  })
+  .then(async () => { await prisma.$disconnect() })
+  .catch(async (e) => { console.error(e); await prisma.$disconnect(); process.exit(1) })
