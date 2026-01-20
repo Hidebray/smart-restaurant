@@ -31,6 +31,7 @@ export default function KitchenPage() {
     try {
       const res = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:5000'}/orders`);
       const data = await res.json();
+      // Giữ nguyên thứ tự từ server (không sắp xếp lại)
       setOrders(data);
       setLoading(false);
     } catch (error) {
@@ -84,11 +85,11 @@ export default function KitchenPage() {
           });
         });
         socket.on('order_updated', (order: Order) => {
-          // Optional: play sound on update? Maybe a different one?
-          // For now, let's just make sound on NEW orders.
+          // Cập nhật mà giữ nguyên vị trí (thứ tự) trong danh sách
           setOrders((prev) => {
             const idx = prev.findIndex((o) => o.id === order.id);
             if (idx > -1) {
+              // Giữ nguyên vị trí, chỉ thay thế nội dung
               const copy = [...prev];
               copy[idx] = order;
               return copy;
@@ -120,15 +121,28 @@ export default function KitchenPage() {
   };
 
   const updateItemStatus = async (itemId: string, newStatus: string) => {
+    // Cập nhật local state NGAY LẬP TỨC để giữ nguyên thứ tự
+    setOrders((prev) => {
+      return prev.map((order) => ({
+        ...order,
+        items: order.items.map((item) =>
+          item.id === itemId ? { ...item, status: newStatus } : item
+        ),
+      }));
+    });
+
+    // Gửi request lên server (không cần đợi và không fetch lại)
     try {
       await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:5000'}/orders/items/${itemId}/status`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ status: newStatus }),
       });
-      fetchOrders();
+      // Không gọi fetchOrders() - socket sẽ đồng bộ nếu cần
     } catch (error) {
       console.error("Lỗi cập nhật món:", error);
+      // Rollback nếu lỗi - fetch lại từ server
+      fetchOrders();
     }
   }
 
@@ -322,23 +336,17 @@ function OrderCard({ order, updateStatus, updateItemStatus, parentActionType }: 
         })}
       </div>
 
-      {/* Footer / Bulk Actions */}
+      {/* Footer / Status Info */}
       <div className="pt-4 mt-auto">
         {parentActionType === 'COOK' && (
-          <button
-            onClick={() => updateStatus(order.id, 'PREPARING')}
-            className="w-full py-4 bg-blue-600 hover:bg-blue-500 text-white rounded-xl text-lg font-bold uppercase tracking-wider shadow-sm transition-all"
-          >
-            {t('kitchen.cookAll') || 'Cook Order'}
-          </button>
+          <div className="w-full py-3 bg-orange-50 text-orange-700 rounded-xl text-sm font-bold text-center uppercase border-2 border-orange-100">
+            {t('kitchen.cookingPrompt') || 'Bấm "Nấu" cho từng món'}
+          </div>
         )}
         {parentActionType === 'READY' && (
-          <button
-            onClick={() => updateStatus(order.id, 'READY')}
-            className="w-full py-4 bg-green-600 hover:bg-green-500 text-white rounded-xl text-lg font-bold uppercase tracking-wider shadow-sm transition-all"
-          >
-            {t('kitchen.readyAll') || 'Complete Order'}
-          </button>
+          <div className="w-full py-3 bg-blue-50 text-blue-700 rounded-xl text-sm font-bold text-center uppercase border-2 border-blue-100">
+            {t('kitchen.preparingPrompt') || 'Bấm "Xong" khi món sẵn sàng'}
+          </div>
         )}
         {parentActionType === 'DONE' && (
           <div className="w-full py-4 bg-green-50 text-green-700 rounded-xl text-lg font-bold text-center uppercase border-2 border-green-100">

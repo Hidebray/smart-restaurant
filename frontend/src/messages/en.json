@@ -274,7 +274,9 @@
         "cookAll": "Cook Order",
         "readyAll": "Complete Order",
         "served": "Served",
-        "servedAll": "Order Served"
+        "servedAll": "Order Served",
+        "cookingPrompt": "Click \"Cook\" for each item",
+        "preparingPrompt": "Click \"Done\" when item is ready"
     },
     "admin": {
         "dashboard": "Admin Dashboard",

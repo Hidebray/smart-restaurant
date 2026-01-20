@@ -274,7 +274,9 @@
     "cookAll": "Nấu Cả Đơn",
     "readyAll": "Xong Cả Đơn",
     "served": "Đã Phục Vụ",
-    "servedAll": "Đã Phục Vụ"
+    "servedAll": "Đã Phục Vụ",
+    "cookingPrompt": "Bấm \"Nấu\" cho từng món",
+    "preparingPrompt": "Bấm \"Xong\" khi món sẵn sàng"
   },
   "admin": {
     "dashboard": "Quản Trị Viên",
