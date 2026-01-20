@@ -23,9 +23,9 @@ export default function AdminLayout({
     { label: t('admin.modifiers'), href: "/admin/modifiers" },
     { label: t('admin.staff'), href: "/admin/staff" },
     { label: t('admin.profile'), href: "/admin/profile" },
-    { label: "Loyalty", href: "/admin/loyalty" },
-    { label: "Inventory", href: "/admin/inventory" },
-    { label: "Reservations", href: "/admin/reservations" },
+    { label: t('admin.loyalty'), href: "/admin/loyalty" },
+    { label: t('admin.inventory'), href: "/admin/inventory" },
+    { label: t('admin.reservations'), href: "/admin/reservations" },
     { label: t('admin.reports'), href: "/admin/reports" },
   ];
 

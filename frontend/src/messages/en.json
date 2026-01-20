@@ -250,6 +250,9 @@
         "orders": "Orders",
         "modifiers": "Modifiers",
         "staff": "Staff",
+    "loyalty": "Loyalty",
+    "inventory": "Inventory",
+    "reservations": "Reservations",
         "reports": "Reports",
         "profile": "Profile"
     },

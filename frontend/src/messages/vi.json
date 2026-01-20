@@ -250,6 +250,9 @@
     "orders": "Đơn Hàng",
     "modifiers": "Tùy Chọn",
     "staff": "Nhân Viên",
+    "loyalty": "Khách hàng thân thiết",
+    "inventory": "Kho hàng",
+    "reservations": "Đặt bàn",
     "reports": "Báo Cáo",
     "profile": "Hồ sơ"
   },
