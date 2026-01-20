@@ -331,6 +331,18 @@
       "PLATINUM": "Bạch Kim"
     }
   },
+  "voucher": {
+    "code": "Mã",
+    "clickToCopy": "Bấm để sao chép",
+    "codeCopied": "Đã sao chép mã!",
+    "copyFailed": "Không thể sao chép mã",
+    "expired": "Đã hết hạn",
+    "maxUsesReached": "Đã hết lượt",
+    "unavailable": "Không khả dụng",
+    "noVouchers": "Chưa có voucher nào",
+    "discount": "Giảm",
+    "minOrder": "Đơn tối thiểu"
+  },
   "review": {
     "title": "Đánh Giá Món Ăn",
     "rating": "Chất lượng (Sao)",

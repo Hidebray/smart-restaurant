@@ -331,6 +331,18 @@
             "PLATINUM": "Platinum"
         }
     },
+    "voucher": {
+        "code": "Code",
+        "clickToCopy": "Click to copy",
+        "codeCopied": "Code copied!",
+        "copyFailed": "Failed to copy code",
+        "expired": "Expired",
+        "maxUsesReached": "Max uses reached",
+        "unavailable": "Unavailable",
+        "noVouchers": "No vouchers available",
+        "discount": "Discount",
+        "minOrder": "Min order"
+    },
     "review": {
         "title": "Review Item",
         "rating": "Rating (Stars)",

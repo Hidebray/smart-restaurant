@@ -2,8 +2,9 @@
 
 import { useEffect, useState } from "react";
 import { loyaltyApi, Voucher } from "@/lib/api/loyalty";
-import { Ticket, Percent, DollarSign, Calendar, CheckCircle } from "lucide-react";
+import { Ticket, Percent, DollarSign, Calendar, CheckCircle, Copy } from "lucide-react";
 import toast from "react-hot-toast";
+import { useI18n } from "@/contexts/I18nContext";
 
 interface VoucherListProps {
   onSelect?: (voucher: Voucher) => void;
@@ -16,8 +17,19 @@ export default function VoucherList({
   selectedVoucherId,
   showInactive = false,
 }: VoucherListProps) {
+  const { t } = useI18n();
   const [vouchers, setVouchers] = useState<Voucher[]>([]);
   const [loading, setLoading] = useState(true);
+
+  const handleCopyCode = async (e: React.MouseEvent, code: string) => {
+    e.stopPropagation(); // Prevent triggering onSelect
+    try {
+      await navigator.clipboard.writeText(code);
+      toast.success(t("voucher.codeCopied") || `Đã sao chép mã: ${code}`);
+    } catch (err) {
+      toast.error(t("voucher.copyFailed") || "Không thể sao chép mã");
+    }
+  };
 
   useEffect(() => {
     const fetchVouchers = async () => {
@@ -145,17 +157,22 @@ export default function VoucherList({
               </div>
 
               <div className="text-right">
-                <div className="text-xs text-gray-500 mb-1">Mã</div>
-                <div className="font-mono font-bold text-lg text-gray-900 bg-white px-2 py-1 rounded border border-gray-300">
+                <div className="text-xs text-gray-500 mb-1">{t("voucher.code") || "Mã"}</div>
+                <button
+                  onClick={(e) => handleCopyCode(e, voucher.code)}
+                  className="group font-mono font-bold text-lg text-gray-900 bg-white px-3 py-1.5 rounded border border-gray-300 hover:border-orange-400 hover:bg-orange-50 transition-all flex items-center gap-2"
+                  title={t("voucher.clickToCopy") || "Bấm để sao chép"}
+                >
                   {voucher.code}
-                </div>
+                  <Copy className="w-4 h-4 text-gray-400 group-hover:text-orange-600 transition-colors" />
+                </button>
                 {!isAvailable && (
                   <div className="text-xs text-red-600 mt-1 font-medium">
                     {expired
-                      ? "Đã hết hạn"
+                      ? t("voucher.expired") || "Đã hết hạn"
                       : maxUsesReached
-                      ? "Đã hết lượt"
-                      : "Không khả dụng"}
+                      ? t("voucher.maxUsesReached") || "Đã hết lượt"
+                      : t("voucher.unavailable") || "Không khả dụng"}
                   </div>
                 )}
               </div>
