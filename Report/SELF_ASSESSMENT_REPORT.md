@@ -6,11 +6,11 @@ GitHub repo URL: https://github.com/Hidebray/smart-restaurant
 
 # **TEAM INFORMATION**
 
-| MSSV     | Họ và Tên     | Vai trò                                                   | Commits | Tỷ lệ |
-| -------- | ------------- | --------------------------------------------------------- | ------- | ----- |
-| 20120450 | Phạm Hữu Đan  | Frontend Developer, UI/UX Designer, Integration           | 120     | 51.9% |
-| 23120256 | Trần Đại Hiệp | Backend Developer, Database Architect, Real-time Features | 51      | 22.1% |
-| 23122056 | Lâm Hoàng Vũ  | Full-stack Developer, Git Manager, QA & Code Review       | 60      | 26.0% |
+| MSSV     | Họ và Tên     | Git account | Contribution                                              | Commits | Tỷ lệ |
+| -------- | ------------- | ----------- | --------------------------------------------------------- | ------- | ----- |
+| 20120450 | Phạm Hữu Đan  | danhuupham  | Frontend Developer, UI/UX Designer, Integration           | 120     | 51.9% |
+| 23120256 | Trần Đại Hiệp | Hidebray    | Backend Developer, Database Architect, Real-time Features | 51      | 22.1% |
+| 23122056 | Lâm Hoàng Vũ  | vtpy23      | Full-stack Developer, Git Manager, QA & Code Review       | 60      | 26.0% |
 
 # **FEATURE LIST**
 
