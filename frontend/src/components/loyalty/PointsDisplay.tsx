@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { loyaltyApi, LoyaltyPoints } from "@/lib/api/loyalty";
+import { loyaltyApi } from "@/lib/api/loyalty";
+import { LoyaltyPoints, LoyaltyTier } from "@/types/loyalty";
 import { Trophy, Star, Award, Crown } from "lucide-react";
 import toast from "react-hot-toast";
 import { useI18n } from "@/contexts/I18nContext";
@@ -11,7 +12,7 @@ interface PointsDisplayProps {
   compact?: boolean;
 }
 
-const tierConfig = {
+const tierConfig: Record<LoyaltyTier, any> = {
   BRONZE: {
     nameKey: "loyalty.tiers.BRONZE",
     color: "text-amber-700",
@@ -68,7 +69,7 @@ export default function PointsDisplay({ userId, compact = false }: PointsDisplay
     };
 
     fetchPoints();
-  }, [userId, t]);
+  }, [userId]);
 
   if (loading) {
     return (
@@ -103,10 +104,10 @@ export default function PointsDisplay({ userId, compact = false }: PointsDisplay
 
   // Calculate next tier progress
   const currentTierIndex = Object.keys(tierConfig).indexOf(loyaltyPoints.tier);
-  const nextTier = currentTierIndex < 3 
+  const nextTier = currentTierIndex < 3
     ? Object.values(tierConfig)[currentTierIndex + 1]
     : null;
-  
+
   const progressToNextTier = nextTier
     ? Math.min(100, ((loyaltyPoints.totalEarned - tier.minPoints) / (nextTier.minPoints - tier.minPoints)) * 100)
     : 100;
