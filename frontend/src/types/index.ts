@@ -43,6 +43,14 @@ export interface ProductImage {
   isPrimary: boolean;
 }
 
+export interface ProductInventory {
+  id: string;
+  quantity: number;
+  minStock: number;
+  maxStock: number;
+  unit: string;
+}
+
 export interface Product {
   id: string;
   name: string;
@@ -58,6 +66,7 @@ export interface Product {
   prepTimeMinutes?: number | null;
   orderCount?: number;
   reviews?: Review[];
+  inventory?: ProductInventory | null;
 }
 
 export interface CartItem {

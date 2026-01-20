@@ -40,6 +40,7 @@ export class OrdersService {
       for (const item of items) {
         const product = await tx.product.findUnique({
           where: { id: item.productId },
+          include: { inventory: true },
         });
 
         if (!product) {
@@ -48,6 +49,18 @@ export class OrdersService {
 
         if (product.status !== 'AVAILABLE') {
           throw new BadRequestException(`"${product.name}" is sold out.`)
+        }
+
+        // Check inventory stock
+        if (product.inventory) {
+          if (product.inventory.quantity <= 0) {
+            throw new BadRequestException(`"${product.name}" is out of stock.`);
+          }
+          if (product.inventory.quantity < item.quantity) {
+            throw new BadRequestException(
+              `"${product.name}" only has ${product.inventory.quantity} items in stock. You requested ${item.quantity}.`
+            );
+          }
         }
 
         // Handle modifiers if provided

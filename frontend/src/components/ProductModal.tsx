@@ -59,6 +59,12 @@ export default function ProductModal({ product, isOpen, onClose, onSelectProduct
 
     if (!isOpen || !product) return null;
 
+    // Check if product is out of stock based on inventory
+    const isOutOfStock = product.inventory && product.inventory.quantity <= 0;
+    const isLowStock = product.inventory && product.inventory.quantity > 0 && product.inventory.quantity <= product.inventory.minStock;
+    const maxQuantity = product.inventory ? product.inventory.quantity : 999;
+    const isUnavailable = product.status === 'SOLD_OUT' || product.status === 'UNAVAILABLE' || isOutOfStock;
+
     const handleModifierToggle = (group: ProductModifierGroup["modifierGroup"], option: ModifierOption) => {
         const groupId = group.id;
         const currentSelected = selectedModifiers[groupId] || [];
@@ -214,21 +220,28 @@ export default function ProductModal({ product, isOpen, onClose, onSelectProduct
                                 {t('menu.chefsChoice')}
                             </span>
                         )}
-                        {(product.status === 'AVAILABLE' || !product.status) && (
-                            <span className="bg-green-100 text-green-600 text-[10px] font-bold px-2.5 py-1 rounded-full border border-green-200 uppercase tracking-wide">
-                                {t('menu.statusAvailable')}
-                            </span>
-                        )}
-                        {product.status === 'SOLD_OUT' && (
+                        {/* Check inventory for stock status */}
+                        {isOutOfStock ? (
                             <span className="bg-red-100 text-red-600 text-[10px] font-bold px-2.5 py-1 rounded-full border border-red-200 uppercase tracking-wide">
                                 {t('menu.statusSoldOut')}
                             </span>
-                        )}
-                        {product.status === 'UNAVAILABLE' && (
+                        ) : isLowStock ? (
+                            <span className="bg-yellow-100 text-yellow-700 text-[10px] font-bold px-2.5 py-1 rounded-full border border-yellow-200 uppercase tracking-wide">
+                                {t('menu.lowStock') || 'Low Stock'} ({product.inventory?.quantity})
+                            </span>
+                        ) : product.status === 'SOLD_OUT' ? (
+                            <span className="bg-red-100 text-red-600 text-[10px] font-bold px-2.5 py-1 rounded-full border border-red-200 uppercase tracking-wide">
+                                {t('menu.statusSoldOut')}
+                            </span>
+                        ) : product.status === 'UNAVAILABLE' ? (
                             <span className="bg-gray-100 text-gray-600 text-[10px] font-bold px-2.5 py-1 rounded-full border border-gray-200 uppercase tracking-wide">
                                 {t('menu.statusUnavailable')}
                             </span>
-                        )}
+                        ) : (product.status === 'AVAILABLE' || !product.status) ? (
+                            <span className="bg-green-100 text-green-600 text-[10px] font-bold px-2.5 py-1 rounded-full border border-green-200 uppercase tracking-wide">
+                                {t('menu.statusAvailable')}
+                            </span>
+                        ) : null}
                     </div>
 
                     {/* Allergens Info */}
@@ -355,37 +368,43 @@ export default function ProductModal({ product, isOpen, onClose, onSelectProduct
 
                 {/* Footer: Nút bấm */}
                 <div className="p-4 border-t bg-white shrink-0 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)]">
+                    {/* Stock warning */}
+                    {isLowStock && !isOutOfStock && (
+                        <div className="mb-3 p-2 bg-yellow-50 border border-yellow-200 rounded-lg text-xs text-yellow-700 text-center">
+                            ⚠️ {t('menu.onlyXLeft', { count: product.inventory?.quantity }) || `Only ${product.inventory?.quantity} left in stock`}
+                        </div>
+                    )}
                     <div className="flex items-center gap-4">
                         <div className="flex items-center bg-gray-100 rounded-xl h-12 p-1 shrink-0">
                             <button
                                 className="w-10 h-full flex items-center justify-center hover:bg-white rounded-lg transition-all text-gray-600 font-bold text-lg disabled:opacity-50"
                                 onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                                disabled={quantity <= 1 || product.status !== 'AVAILABLE' && product.status !== undefined}
+                                disabled={quantity <= 1 || isUnavailable}
                             >−</button>
                             <span className="w-10 text-center font-bold text-gray-900">{quantity}</span>
                             <button
                                 className="w-10 h-full flex items-center justify-center hover:bg-white rounded-lg transition-all text-gray-600 font-bold text-lg disabled:opacity-50"
                                 onClick={() => setQuantity(quantity + 1)}
-                                disabled={product.status !== 'AVAILABLE' && product.status !== undefined}
+                                disabled={isUnavailable || quantity >= maxQuantity}
                             >+</button>
                         </div>
 
                         <button
                             onClick={handleAddToCart}
-                            disabled={product.status !== 'AVAILABLE' && product.status !== undefined}
-                            className={`flex-1 h-12 rounded-xl transition-all flex items-center justify-between px-6 shadow-lg ${product.status === 'AVAILABLE' || !product.status
+                            disabled={isUnavailable}
+                            className={`flex-1 h-12 rounded-xl transition-all flex items-center justify-between px-6 shadow-lg ${!isUnavailable
                                 ? 'bg-orange-600 text-white hover:bg-orange-700 active:scale-95 shadow-orange-200'
                                 : 'bg-gray-100 text-gray-400 cursor-not-allowed shadow-none'
                                 }`}
                         >
                             <span className="font-bold">
-                                {product.status === 'SOLD_OUT'
+                                {isOutOfStock || product.status === 'SOLD_OUT'
                                     ? t('menu.statusSoldOut')
                                     : product.status === 'UNAVAILABLE'
                                         ? t('menu.statusUnavailable')
                                         : t('productModal.addToOrder')}
                             </span>
-                            {(product.status === 'AVAILABLE' || !product.status) && (
+                            {!isUnavailable && (
                                 <span className="font-medium bg-orange-700/50 px-2 py-0.5 rounded text-sm">
                                     {formatPrice(calculateTotal())}
                                 </span>

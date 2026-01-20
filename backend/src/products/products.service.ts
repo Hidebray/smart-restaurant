@@ -193,6 +193,7 @@ export class ProductsService {
           },
         },
         reviews: true,
+        inventory: true,
       },
     });
   }
