@@ -292,6 +292,38 @@
     "reports": "Báo Cáo",
     "profile": "Hồ sơ"
   },
+  "loyalty": {
+    "title": "Điểm Tích Lũy",
+    "tabs": {
+      "points": "Điểm",
+      "vouchers": "Voucher",
+      "history": "Lịch Sử"
+    },
+    "pointsExchange": "Quy Đổi Điểm",
+    "pointsRules": "Quy tắc tích điểm:",
+    "rule1": "1 điểm = 10,000 VND đơn hàng",
+    "rule2": "100 điểm = 10,000 VND giảm giá",
+    "memberTiers": "Hạng thành viên:",
+    "tierBronze": "Đồng: 0 - 1,999 điểm",
+    "tierSilver": "Bạc: 2,000 - 4,999 điểm",
+    "tierGold": "Vàng: 5,000 - 9,999 điểm",
+    "tierPlatinum": "Bạch Kim: 10,000+ điểm",
+    "availableVouchers": "Voucher Có Thể Dùng",
+    "transactionHistory": "Lịch Sử Giao Dịch",
+    "memberTier": "Hạng thành viên",
+    "currentPoints": "điểm hiện có",
+    "progressTo": "Tiến tới",
+    "points": "điểm",
+    "totalEarned": "Đã tích lũy",
+    "totalRedeemed": "Đã đổi",
+    "loadError": "Không thể tải thông tin điểm tích lũy",
+    "tiers": {
+      "BRONZE": "Đồng",
+      "SILVER": "Bạc",
+      "GOLD": "Vàng",
+      "PLATINUM": "Bạch Kim"
+    }
+  },
   "review": {
     "title": "Đánh Giá Món Ăn",
     "rating": "Chất lượng (Sao)",
@@ -366,7 +398,8 @@
       "orderHistory": "Lịch Sử Đơn Hàng",
       "favorites": "Món Yêu Thích",
       "settings": "Cài Đặt Tài Khoản",
-      "help": "Trợ Giúp & Hỗ Trợ"
+      "help": "Trợ Giúp & Hỗ Trợ",
+      "loyaltyVoucher": "Điểm Tích Lũy & Voucher"
     },
     "version": "Phiên bản",
     "save": "Lưu thay đổi",

@@ -381,7 +381,7 @@ function ProfileContent() {
         <div className="bg-white rounded-2xl shadow-sm overflow-hidden">
           <MenuItem
             icon={<Award className="w-5 h-5" />}
-            label="Điểm Tích Lũy & Voucher"
+            label={t("profile.menu.loyaltyVoucher")}
             href={`/guest/loyalty?tableId=${tableId || ""}`}
           />
           <MenuItem

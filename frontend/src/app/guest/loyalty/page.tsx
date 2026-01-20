@@ -35,7 +35,7 @@ function LoyaltyContent() {
             }`}
           >
             <Award className="w-4 h-4" />
-            Điểm
+            {t("loyalty.tabs.points")}
           </button>
           <button
             onClick={() => setActiveTab("vouchers")}
@@ -46,7 +46,7 @@ function LoyaltyContent() {
             }`}
           >
             <Ticket className="w-4 h-4" />
-            Voucher
+            {t("loyalty.tabs.vouchers")}
           </button>
           <button
             onClick={() => setActiveTab("history")}
@@ -57,7 +57,7 @@ function LoyaltyContent() {
             }`}
           >
             <History className="w-4 h-4" />
-            Lịch Sử
+            {t("loyalty.tabs.history")}
           </button>
         </div>
 
@@ -66,21 +66,21 @@ function LoyaltyContent() {
           {activeTab === "points" && (
             <div className="space-y-4">
               <h2 className="text-lg font-bold text-gray-900 mb-4">
-                Quy Đổi Điểm
+                {t("loyalty.pointsExchange")}
               </h2>
               <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
                 <div className="text-sm text-blue-800 space-y-2">
-                  <p className="font-semibold">Quy tắc tích điểm:</p>
+                  <p className="font-semibold">{t("loyalty.pointsRules")}</p>
                   <ul className="list-disc list-inside space-y-1 ml-2">
-                    <li>1 điểm = 10,000 VND đơn hàng</li>
-                    <li>100 điểm = 10,000 VND giảm giá</li>
+                    <li>{t("loyalty.rule1")}</li>
+                    <li>{t("loyalty.rule2")}</li>
                   </ul>
-                  <p className="font-semibold mt-3">Hạng thành viên:</p>
+                  <p className="font-semibold mt-3">{t("loyalty.memberTiers")}</p>
                   <ul className="list-disc list-inside space-y-1 ml-2">
-                    <li>Đồng: 0 - 1,999 điểm</li>
-                    <li>Bạc: 2,000 - 4,999 điểm</li>
-                    <li>Vàng: 5,000 - 9,999 điểm</li>
-                    <li>Bạch Kim: 10,000+ điểm</li>
+                    <li>{t("loyalty.tierBronze")}</li>
+                    <li>{t("loyalty.tierSilver")}</li>
+                    <li>{t("loyalty.tierGold")}</li>
+                    <li>{t("loyalty.tierPlatinum")}</li>
                   </ul>
                 </div>
               </div>
@@ -90,7 +90,7 @@ function LoyaltyContent() {
           {activeTab === "vouchers" && (
             <div>
               <h2 className="text-lg font-bold text-gray-900 mb-4">
-                Voucher Có Thể Dùng
+                {t("loyalty.availableVouchers")}
               </h2>
               <VoucherList />
             </div>
@@ -99,7 +99,7 @@ function LoyaltyContent() {
           {activeTab === "history" && (
             <div>
               <h2 className="text-lg font-bold text-gray-900 mb-4">
-                Lịch Sử Giao Dịch
+                {t("loyalty.transactionHistory")}
               </h2>
               <PointsHistory />
             </div>
