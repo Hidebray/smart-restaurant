@@ -2,7 +2,22 @@
 
 **Tên dự án:** Smart Restaurant - Hệ thống Quản lý Nhà hàng Thông minh  
 **Môn học:** Web Development  
-**Nhóm:** Phạm Hữu Đan (20120450), Trần Đại Hiệp (23120256), Lâm Hoàng Vũ (23122056)
+**Nhóm:** Phạm Hữu Đan (20120450), Trần Đại Hiệp (23120256), Lâm Hoàng Vũ (23122056)  
+**GitHub:** [https://github.com/Hidebray/smart-restaurant](https://github.com/Hidebray/smart-restaurant)
+
+---
+
+## 🛠️ Tech Stack
+
+| Layer          | Technologies                                      |
+| -------------- | ------------------------------------------------- |
+| **Frontend**   | Next.js 14, TypeScript, Tailwind CSS, Zustand     |
+| **Backend**    | NestJS, Prisma ORM, PostgreSQL, Socket.IO         |
+| **Auth**       | JWT, Passport.js, Google OAuth, bcrypt            |
+| **Payment**    | Stripe SDK                                        |
+| **Storage**    | Cloudinary (images)                               |
+| **DevOps**     | Docker, Docker Compose                            |
+| **UI/UX**      | Lucide Icons, Recharts, react-to-print, Fuse.js   |
 
 ---
 
@@ -52,44 +67,54 @@
 
 ### 2.1. Danh sách thành viên
 
-| MSSV     | Họ và Tên     | Vai trò                                    |
-| -------- | ------------- | ------------------------------------------ |
-| 20120450 | Phạm Hữu Đan  | Frontend Developer, UI/UX Designer         |
-| 23120256 | Trần Đại Hiệp | Backend Developer, Real-time Features      |
-| 23122056 | Lâm Hoàng Vũ  | Full-stack Developer, DevOps, Git Manager  |
+| MSSV     | Họ và Tên     | Vai trò                                                   |
+| -------- | ------------- | --------------------------------------------------------- |
+| 20120450 | Phạm Hữu Đan  | Frontend Developer, UI/UX Designer, Integration           |
+| 23120256 | Trần Đại Hiệp | Backend Developer, Database Architect, Real-time Features |
+| 23122056 | Lâm Hoàng Vũ  | Full-stack Developer, Git Manager, QA & Code Review       |
 
 ### 2.2. Phân công nhiệm vụ
 
-**Phạm Hữu Đan (99 commits - 50.5%):**
-- Thiết kế và phát triển toàn bộ giao diện frontend (Next.js)
-- Implement UI/UX cho Customer, Admin, Waiter, Kitchen pages
+**Phạm Hữu Đan (120 commits - 51.9%):**
+- Phát triển toàn bộ giao diện frontend (Next.js)
+- Implement UI/UX cho tất cả các trang: Customer, Admin, Waiter, Kitchen
 - Multi-language support (EN/VI) với i18n
-- Authentication flows (login, register, forgot password)
-- Admin dashboard: Staff, Categories, Products, Orders, Tables, Reports
+- Thiết kế responsive design cho mobile
+- Implement authentication flows (login, register, forgot password)
+- Guest menu page với search, filtering, pagination
+- Cart và ordering system
+- Admin dashboard: Staff management, Categories, Products, Orders, Tables
+- Reports với interactive charts
 - Cloudinary integration cho upload ảnh
 - Stripe payment integration (frontend)
 - Role-based access control trong middleware
 
-**Trần Đại Hiệp (49 commits - 25.0%):**
+**Trần Đại Hiệp (51 commits - 22.1%):**
 - Khởi tạo project và setup Docker PostgreSQL
 - Thiết kế database schema với Prisma
 - Xây dựng backend API (NestJS)
-- JWT authentication và authorization
-- Socket.IO server cho real-time features
-- Kitchen KDS và Waiter dashboard
-- Stripe integration (backend)
-- QR code download, print bill, fuzzy search
-- Order timer, chef recommendations, product popularity
+- Implement JWT authentication và authorization
+- Setup Socket.IO server cho real-time features
+- Kitchen KDS dashboard với realtime order updates
+- Waiter dashboard và kitchen workflow
+- Table management và QR code generation
+- Product modifier management, Bill modal và payment demo
+- Stripe integration cho online payments (backend)
+- QR code download as PNG, Print bill functionality
+- Fuzzy search, customer reviews, Order timer cho KDS
+- Chef recommendations và product popularity tracking
 
-**Lâm Hoàng Vũ (48 commits - 24.5%):**
-- Admin products management và reports
-- Discount functionality và billing
-- Loyalty points system với tiers và vouchers
-- Inventory management system
+**Lâm Hoàng Vũ (60 commits - 26.0%):**
+- Setup admin layout và product list view
+- Admin products management và reports feature với revenue charts
+- Discount functionality và billing display
+- Loyalty points system với tiers và voucher management
+- Inventory management system với stock validation
 - Table reservation system
-- Analytics module và dashboard
-- Quản lý Git repository và merge pull requests
-- Code review và integration
+- Analytics module và Advanced Analytics Dashboard
+- Quản lý Git repository và merge pull requests (#1-#23)
+- Code review, integration và localization updates
+- Enhance seed data script với user roles, loyalty points, vouchers
 
 ---
 
@@ -105,7 +130,7 @@
 | 4      | Payment & Checkout            | ✅ 100%  | 2026-01   | Hoàn thành                         |
 | 5      | Deployment                    | ✅ 100%  | 2026-01   | Hoàn thành                         |
 | 6      | Advanced Features             | ✅ 100%  | 2026-01   | Hoàn thành                         |
-| 7      | Essential Missing Features    | ✅ 95%   | 2026-01   | Thiếu demo video và public hosting |
+| 7      | Essential Missing Features    | ✅ 100%  | 2026-01   | Hoàn thành (demo video & hosting)  |
 | 8      | Advanced Business Features    | ✅ 100%  | 2026-01   | Loyalty, Inventory, Reservations   |
 
 ### 3.2. Timeline
@@ -122,12 +147,13 @@
 
 ### 3.3. Completed Tasks
 
-✅ 196 commits từ 3 thành viên  
-✅ 8 modules implemented  
+✅ 231 commits từ 3 thành viên  
+✅ 8 modules implemented (100% hoàn thành)  
 ✅ 3 advanced features (Loyalty, Inventory, Reservations)  
 ✅ Full documentation  
 ✅ Multi-language support (EN/VI)  
-✅ Real-time updates với Socket.IO
+✅ Real-time updates với Socket.IO  
+✅ Demo video và public hosting
 
 ---
 
@@ -222,7 +248,6 @@
 - Đặt bàn trước
 - Phát hiện trùng lặp (overlap detection)
 - Quản lý trạng thái đặt bàn
-- Analytics đặt bàn
 
 ---
 

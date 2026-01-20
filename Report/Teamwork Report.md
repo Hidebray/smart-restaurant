@@ -19,26 +19,24 @@
 
 **Phạm Hữu Đan:**
 
-- Phát triển giao diện frontend (Next.js)
-- Thiết kế UI/UX cho các trang Customer, Admin, Waiter, Kitchen
-- Implement multi-language support (EN/VI)
-- Xử lý real-time updates với Socket.IO client
-- Tối ưu hóa responsive design cho mobile
+- Phát triển toàn bộ giao diện frontend (Next.js) và UI/UX
+- Implement multi-language support (EN/VI), responsive design cho mobile
+- Authentication flows, Guest menu, Cart, Admin dashboard
+- Cloudinary & Stripe integration (frontend), Role-based access control
 
 **Trần Đại Hiệp:**
 
-- Thiết kế và phát triển database schema (Prisma)
-- Xây dựng REST API backend (NestJS)
-- Implement authentication & authorization (JWT)
-- Phát triển các module: Orders, Products, Tables, Payments
-- Tối ưu hóa database queries
+- Khởi tạo project, setup Docker PostgreSQL, database schema (Prisma)
+- Xây dựng backend API (NestJS), JWT authentication, Socket.IO real-time
+- Kitchen KDS, Waiter dashboard, Table & QR code management
+- Stripe payment (backend), Fuzzy search, Order timer, Chef recommendations
 
 **Lâm Hoàng Vũ:**
 
-- Phát triển các tính năng nâng cao: Loyalty, Inventory, Reservations
-- Chức năng thêm món: tên, giá, mô tả, phân loại...
-- Quản lý Git repository và merge requests
-- Code review và quality assurance
+- Phát triển tính năng nâng cao: Loyalty, Inventory, Reservations
+- Admin products management, Discount, Allergens, Analytics Dashboard
+- Quản lý Git repository, merge pull requests, code review
+- Fix bugs, seed data, localization updates
 
 ---
 
@@ -94,14 +92,16 @@ Nhóm áp dụng mô hình làm việc theo ca (Shift-based) để đảm bảo 
 
 **Repository:** `smart-restaurant`  
 **Main Branch:** `main`  
-**Total Commits:** 196 commits  
+**Total Commits:** 231 commits  
 **Contributors:** 3 thành viên
 
 | Author              | Commits | Tỷ lệ  |
 | ------------------- | ------- | ------ |
-| Phạm Hữu Đan        | 99      | 50.5%  |
-| Trần Đại Hiệp       | 49      | 25.0%  |
-| Lâm Hoàng Vũ        | 48      | 24.5%  |
+| Phạm Hữu Đan        | 120     | 51.9%  |
+| Lâm Hoàng Vũ        | 60      | 26.0%  |
+| Trần Đại Hiệp       | 51      | 22.1%  |
+
+![Git Shortlog](Report%20images/Screenshot%202026-01-20%20152118.png)
 
 ### 3.2. Chi tiết Commits (Sắp xếp theo thời gian)
 
@@ -303,6 +303,41 @@ Nhóm áp dụng mô hình làm việc theo ca (Shift-based) để đảm bảo 
 | 2026-01-20 | Lâm Hoàng Vũ   | 5f0fd03     | Merge pull request #19 from Hidebray/config-update-92667                                    |
 | 2026-01-20 | Lâm Hoàng Vũ   | b456809     | Enhance localization by adding translations for Loyalty, Inventory, and Reservations        |
 | 2026-01-20 | Lâm Hoàng Vũ   | 8c5583a     | Merge pull request #20 from Hidebray/config-update-92667                                    |
+| 2026-01-20 | Lâm Hoàng Vũ   | f9127b4     | Refactor Admin layout to improve accessibility and streamline navigation                    |
+| 2026-01-20 | Lâm Hoàng Vũ   | 812973c     | Merge pull request #21 from Hidebray/config-update-92667                                    |
+| 2026-01-20 | Lâm Hoàng Vũ   | fc5418f     | add Final Project Report                                                                    |
+| 2026-01-20 | Lâm Hoàng Vũ   | 9e9bcbe     | Merge pull request #22 from Hidebray/config-update-92667                                    |
+| 2026-01-20 | Lâm Hoàng Vũ   | 4d14226     | Implement loyalty points redemption in cart functionality                                   |
+| 2026-01-20 | Lâm Hoàng Vũ   | 4447a90     | Merge pull request #23 from Hidebray/config-update-92667                                    |
+| 2026-01-20 | Phạm Hữu Đan   | 129ac98     | update UI /menu and /menu/items                                                             |
+| 2026-01-20 | Phạm Hữu Đan   | 01dfd52     | Merge branch 'main' of https://github.com/Hidebray/smart-restaurant                         |
+| 2026-01-20 | Phạm Hữu Đan   | 3fc7ba2     | update guest UI                                                                             |
+| 2026-01-20 | Lâm Hoàng Vũ   | c042030     | Enhance loyalty points display and localization support                                     |
+| 2026-01-20 | Phạm Hữu Đan   | 330dde5     | update UX/UI /kitchen                                                                       |
+| 2026-01-20 | Phạm Hữu Đan   | 693af0c     | Merge branch 'main' of https://github.com/Hidebray/smart-restaurant                         |
+| 2026-01-20 | Lâm Hoàng Vũ   | d237167     | Add category name localization for guest menu page                                          |
+| 2026-01-20 | Phạm Hữu Đan   | 0644d9b     | update realtime in /waiter                                                                  |
+| 2026-01-20 | Phạm Hữu Đan   | f8ce5b7     | Merge branch 'main' of https://github.com/Hidebray/smart-restaurant                         |
+| 2026-01-20 | Lâm Hoàng Vũ   | 5f80431     | Add copy voucher code feature with click to clipboard                                       |
+| 2026-01-20 | Phạm Hữu Đan   | 08ea99b     | update UI /waiter                                                                           |
+| 2026-01-20 | Phạm Hữu Đan   | f7a5259     | Merge branch 'main' of https://github.com/Hidebray/smart-restaurant                         |
+| 2026-01-20 | Phạm Hữu Đan   | f00b37c     | update UI /verify-email                                                                     |
+| 2026-01-20 | Phạm Hữu Đan   | d9f1b5c     | add ChefHat                                                                                 |
+| 2026-01-20 | Lâm Hoàng Vũ   | da73a29     | Enhance seed data script with user roles, loyalty points, vouchers                          |
+| 2026-01-20 | Phạm Hữu Đan   | 9ec7940     | display allergen info /guest                                                                |
+| 2026-01-20 | Phạm Hữu Đan   | 9334fc4     | Merge branch 'main' of https://github.com/Hidebray/smart-restaurant                         |
+| 2026-01-20 | Phạm Hữu Đan   | 5f53012     | fix loyalty UI                                                                              |
+| 2026-01-20 | Phạm Hữu Đan   | c95b856     | store URL params in guest page                                                              |
+| 2026-01-20 | Lâm Hoàng Vũ   | 57c8d3f     | Fix admin dashboard to use real data from API instead of mock data                          |
+| 2026-01-20 | Lâm Hoàng Vũ   | b0facc5     | Add inventory stock validation when creating orders                                         |
+| 2026-01-20 | Phạm Hữu Đan   | 8b81959     | Fix tsconfig include backend prisma seed                                                    |
+| 2026-01-20 | Phạm Hữu Đan   | ac5203a     | Fix inventory type import path                                                              |
+| 2026-01-20 | Phạm Hữu Đan   | 3af1d48     | Fix inventory type imports                                                                  |
+| 2026-01-20 | Phạm Hữu Đan   | 918f573     | Fix inventory types import in inventory page                                                |
+| 2026-01-20 | Phạm Hữu Đan   | f75420c     | Fix final typescript errors in product modal and loyalty imports                            |
+| 2026-01-20 | Phạm Hữu Đan   | 0b65765     | Remove build log files                                                                      |
+| 2026-01-20 | Lâm Hoàng Vũ   | 52d083f     | chore(db): add large seed data                                                              |
+| 2026-01-20 | Lâm Hoàng Vũ   | a5bf0f5     | docs: add self assessment report                                                            |
 
 ---
 
@@ -310,7 +345,7 @@ Nhóm áp dụng mô hình làm việc theo ca (Shift-based) để đảm bảo 
 
 ### 4.1. Phạm Hữu Đan (20120450)
 
-**Commits:** 99 commits (50.5%)  
+**Commits:** 120 commits (51.9%)  
 **Thời gian hoạt động:** 2026-01-12 → 2026-01-20
 
 **Đóng góp chính:**
@@ -329,11 +364,11 @@ Nhóm áp dụng mô hình làm việc theo ca (Shift-based) để đảm bảo 
 - Role-based access control trong middleware
 - Fix bugs và cải thiện UX liên tục
 
-**Tỷ lệ đóng góp:** ~50%
+**Tỷ lệ đóng góp:** ~52%
 
 ### 4.2. Trần Đại Hiệp (23120256)
 
-**Commits:** 49 commits (25.0%)  
+**Commits:** 51 commits (22.1%)  
 **Thời gian hoạt động:** 2026-01-05 → 2026-01-19
 
 **Đóng góp chính:**
@@ -357,11 +392,11 @@ Nhóm áp dụng mô hình làm việc theo ca (Shift-based) để đảm bảo 
 - Chef recommendations và related items suggestion
 - Product popularity tracking
 
-**Tỷ lệ đóng góp:** ~25%
+**Tỷ lệ đóng góp:** ~22%
 
 ### 4.3. Lâm Hoàng Vũ (23122056)
 
-**Commits:** 48 commits (24.5%)  
+**Commits:** 60 commits (26.0%)  
 **Thời gian hoạt động:** 2026-01-15 → 2026-01-20
 
 **Đóng góp chính:**
@@ -382,8 +417,12 @@ Nhóm áp dụng mô hình làm việc theo ca (Shift-based) để đảm bảo 
 - Quản lý Git repository và merge pull requests (#1-#20)
 - Code review và integration
 - Localization updates cho Loyalty, Inventory, Reservations
+- Fix admin dashboard to use real data from API
+- Add inventory stock validation when creating orders
+- Enhance seed data script with user roles, loyalty points, vouchers
+- Add copy voucher code feature
 
-**Tỷ lệ đóng góp:** ~25%
+**Tỷ lệ đóng góp:** ~26%
 
 ---
 
