@@ -43,49 +43,55 @@ function CartContent() {
     // Fetch loyalty points and user info on mount
     useEffect(() => {
         const fetchUserAndPoints = async () => {
+            const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
+            
+            // No token = not logged in, skip all API calls
+            if (!token) {
+                setIsLoggedIn(false);
+                setAvailablePoints(0);
+                setIsLoadingPoints(false);
+                return;
+            }
+
             try {
                 setIsLoadingPoints(true);
+
+                // Fetch user profile to get userId
+                const profileRes = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:5000'}/auth/profile`, {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
                 
-                const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
-                if (!token) {
+                if (!profileRes.ok) {
+                    // Token invalid or expired
+                    console.log("Profile fetch failed, user not authenticated");
                     setIsLoggedIn(false);
                     setAvailablePoints(0);
                     return;
                 }
 
-                // Fetch user profile to get userId
-                try {
-                    const profileRes = await fetch(`${process.env.NEXT_PUBLIC_API_BASE_URL || 'http://localhost:5000'}/auth/profile`, {
-                        headers: { Authorization: `Bearer ${token}` }
-                    });
-                    if (profileRes.ok) {
-                        const user = await profileRes.json();
-                        console.log("User profile fetched:", user);
-                        if (user?.id) {
-                            setUserId(user.id);
-                        }
-                    }
-                } catch (e) {
-                    console.error("Failed to fetch user profile:", e);
+                const user = await profileRes.json();
+                console.log("User profile fetched:", user);
+                if (user?.id) {
+                    setUserId(user.id);
                 }
                 
-                const data = await loyaltyApi.getMyPoints();
-                console.log("Loyalty points fetched:", data);
-                // Handle both possible field names
-                const points = data.points ?? data.balance ?? 0;
-                setAvailablePoints(points);
+                // Only fetch loyalty points after successful profile fetch
+                try {
+                    const data = await loyaltyApi.getMyPoints();
+                    console.log("Loyalty points fetched:", data);
+                    // Handle both possible field names
+                    const points = data.points ?? data.balance ?? 0;
+                    setAvailablePoints(points);
+                } catch (loyaltyError: any) {
+                    console.error("Loyalty points fetch error:", loyaltyError?.message);
+                    // User is still logged in, just no points data
+                    setAvailablePoints(0);
+                }
+                
                 setIsLoggedIn(true);
             } catch (error: any) {
-                console.error("Loyalty points fetch error:", error?.response?.status, error?.message);
-                // If 401 or no token, user is not logged in
-                if (error?.response?.status === 401 || error?.response?.status === 403) {
-                    setIsLoggedIn(false);
-                } else {
-                    // Other errors - still show as logged in (might be network issue)
-                    // Check if we have a token to determine login state
-                    const token = typeof window !== "undefined" ? localStorage.getItem("accessToken") : null;
-                    setIsLoggedIn(!!token);
-                }
+                console.error("Auth error:", error?.message);
+                setIsLoggedIn(false);
                 setAvailablePoints(0);
             } finally {
                 setIsLoadingPoints(false);
