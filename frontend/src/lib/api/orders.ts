@@ -10,6 +10,8 @@ export interface CreateOrderPayload {
     modifiers?: { modifierOptionId: string }[];
   }[];
   voucherCode?: string;
+  customerId?: string;
+  pointsToRedeem?: number;
 }
 
 export const ordersApi = {

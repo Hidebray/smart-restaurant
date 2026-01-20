@@ -22,11 +22,18 @@ export class OrdersService {
   async create(createOrderDto: CreateOrderDto) {
     const { tableId, items, notes } = createOrderDto;
 
+    // DEBUG LOGGING
+    console.log('=== CREATE ORDER DEBUG ===');
+    console.log('customerId:', createOrderDto.customerId);
+    console.log('pointsToRedeem:', createOrderDto.pointsToRedeem);
+    console.log('voucherCode:', createOrderDto.voucherCode);
+    console.log('========================');
+
     if (!items?.length) {
       throw new BadRequestException("The order must have at least one item.");
     }
 
-    return this.prisma.$transaction(async (tx) => {
+    const result = await this.prisma.$transaction(async (tx) => {
       let totalAmount = 0;
       const orderItemsData: any[] = [];
 
@@ -74,6 +81,29 @@ export class OrdersService {
         }
 
         orderItemsData.push(orderItemPayload);
+      }
+
+      // POINTS REDEMPTION LOGIC - Only validate here, actual redemption happens after order creation
+      let pointsDiscountAmount = 0;
+      let shouldRedeemPoints = false;
+      
+      if (createOrderDto.pointsToRedeem && createOrderDto.pointsToRedeem >= 100 && createOrderDto.customerId) {
+        try {
+          // Validate points (don't deduct yet)
+          const loyaltyPoints = await this.loyaltyService?.getOrCreateLoyaltyPoints(createOrderDto.customerId);
+          
+          if (loyaltyPoints && loyaltyPoints.points >= createOrderDto.pointsToRedeem) {
+            // Calculate discount: 100 points = 10,000 VND
+            pointsDiscountAmount = (createOrderDto.pointsToRedeem / 100) * 10000;
+            // Cap at total amount
+            pointsDiscountAmount = Math.min(pointsDiscountAmount, totalAmount);
+            shouldRedeemPoints = true;
+            console.log('Points validated - will redeem after order creation:', pointsDiscountAmount);
+          }
+        } catch (error) {
+          console.error('Failed to validate points:', error);
+          pointsDiscountAmount = 0;
+        }
       }
 
       // VOUCHER LOGIC
@@ -174,8 +204,35 @@ export class OrdersService {
         // Emit websocket event for waiter clients only
         try { this.ordersGateway.emitNewOrderToWaiters(updatedOrder); } catch (e) { /* ignore */ }
 
-        return updatedOrder;
+        // Return with flag - no points redemption for existing order append (complex scenario)
+        return { order: updatedOrder, shouldRedeemPoints: false, pointsToRedeem: 0 };
       }
+
+      // Calculate total discount (voucher + points)
+      const totalDiscountAmount = discountAmount + pointsDiscountAmount;
+      console.log('=== DISCOUNT CALCULATION ===');
+      console.log('voucherDiscountAmount:', discountAmount);
+      console.log('pointsDiscountAmount:', pointsDiscountAmount);
+      console.log('totalDiscountAmount:', totalDiscountAmount);
+
+      // Determine final discount type and value
+      // If we have both voucher and points discount, use FIXED type with combined amount
+      let finalDiscountType = discountType;
+      let finalDiscountValue = discountValue;
+      
+      if (pointsDiscountAmount > 0) {
+        if (discountAmount > 0) {
+          // Both voucher and points: combine as FIXED
+          finalDiscountType = 'FIXED';
+          finalDiscountValue = totalDiscountAmount;
+        } else {
+          // Only points discount
+          finalDiscountType = 'FIXED';
+          finalDiscountValue = pointsDiscountAmount;
+        }
+      }
+      console.log('finalDiscountType:', finalDiscountType);
+      console.log('finalDiscountValue:', finalDiscountValue);
 
       // No existing order, create a new one
       const newOrder = await tx.order.create({
@@ -185,8 +242,8 @@ export class OrdersService {
           status: 'PENDING',
           customerId: createOrderDto.customerId,
           notes: notes || null,
-          discountType: discountType,
-          discountValue: discountValue,
+          discountType: finalDiscountType,
+          discountValue: finalDiscountValue,
           items: {
             create: orderItemsData,
           },
@@ -225,8 +282,29 @@ export class OrdersService {
       // Emit websocket event for waiter clients only
       try { this.ordersGateway.emitNewOrderToWaiters(newOrder); } catch (e) { /* ignore */ }
 
-      return newOrder;
-    })
+      // Return order with flag for points redemption
+      return { order: newOrder, shouldRedeemPoints, pointsToRedeem: createOrderDto.pointsToRedeem };
+    });
+
+    // Extract result
+    const { order: newOrder, shouldRedeemPoints: shouldRedeem, pointsToRedeem } = result as any;
+
+    // Redeem points AFTER transaction completes successfully
+    if (shouldRedeem && createOrderDto.customerId && pointsToRedeem) {
+      try {
+        await this.loyaltyService?.redeemPoints(
+          createOrderDto.customerId,
+          pointsToRedeem,
+          newOrder.id
+        );
+        console.log('Points redeemed successfully for order:', newOrder.id);
+      } catch (error) {
+        console.error('Failed to redeem points after order creation:', error);
+        // Order already created with discount, log error but don't fail
+      }
+    }
+
+    return newOrder;
   }
 
   findAll(filter?: any) {

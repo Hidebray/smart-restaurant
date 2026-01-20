@@ -120,7 +120,21 @@
     "voucherApplied": "Đã áp dụng mã: {code} - Giảm {discount}",
     "discount": "Giảm giá",
     "voucherSuccess": "Áp dụng mã giảm giá thành công!",
-    "voucherError": "Mã giảm giá không hợp lệ"
+    "voucherError": "Mã giảm giá không hợp lệ",
+    "usePoints": "Dùng điểm tích lũy",
+    "availablePoints": "Có",
+    "points": "điểm",
+    "pointsRule": "100 điểm = 10,000 VND giảm giá. Tối thiểu 100 điểm.",
+    "clearPoints": "Xóa",
+    "useMax": "Dùng tối đa",
+    "pointsDiscount": "Giảm",
+    "loginForPoints": "Đăng nhập để dùng điểm tích lũy",
+    "loginForPointsDesc": "Tích điểm mỗi đơn hàng và đổi lấy giảm giá!",
+    "loginNow": "Đăng nhập ngay →",
+    "voucherDiscount": "Giảm voucher",
+    "pointsDiscountLabel": "Giảm từ điểm",
+    "totalDiscount": "Tổng giảm",
+    "notEnoughPoints": "Bạn cần tối thiểu 100 điểm để đổi giảm giá. Hãy đặt thêm đơn để tích điểm!"
   },
   "orders": {
     "title": "Đơn Hàng Của Bạn",

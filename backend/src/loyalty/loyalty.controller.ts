@@ -37,7 +37,7 @@ export class LoyaltyController {
    */
   @Get('points')
   getMyPoints(@Req() req) {
-    return this.loyaltyService.getLoyaltyPoints(req.user.sub);
+    return this.loyaltyService.getLoyaltyPoints(req.user.id);
   }
 
   /**
@@ -46,7 +46,7 @@ export class LoyaltyController {
    */
   @Get('points/history')
   getMyPointsHistory(@Req() req, @Query() query: GetPointsHistoryDto) {
-    return this.loyaltyService.getPointsHistory(req.user.sub, query);
+    return this.loyaltyService.getPointsHistory(req.user.id, query);
   }
 
   /**
@@ -59,7 +59,7 @@ export class LoyaltyController {
     @Body() body: { points: number; orderId: string },
   ) {
     return this.loyaltyService.redeemPoints(
-      req.user.sub,
+      req.user.id,
       body.points,
       body.orderId,
     );
@@ -116,7 +116,7 @@ export class LoyaltyController {
    */
   @Get('vouchers')
   getAvailableVouchers(@Req() req) {
-    return this.loyaltyService.getAvailableVouchers(req.user?.sub);
+    return this.loyaltyService.getAvailableVouchers(req.user?.id);
   }
 
   /**
@@ -134,7 +134,7 @@ export class LoyaltyController {
    */
   @Post('vouchers/redeem')
   redeemVoucher(@Req() req, @Body() dto: RedeemVoucherDto) {
-    return this.loyaltyService.redeemVoucher(req.user.sub, dto);
+    return this.loyaltyService.redeemVoucher(req.user.id, dto);
   }
 
   /**

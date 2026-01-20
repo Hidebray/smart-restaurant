@@ -44,4 +44,9 @@ export class CreateOrderDto {
     @IsOptional()
     @IsString()
     voucherCode?: string;
+
+    @IsOptional()
+    @IsInt()
+    @Min(100)
+    pointsToRedeem?: number;
 }

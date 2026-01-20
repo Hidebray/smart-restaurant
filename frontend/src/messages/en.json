@@ -120,7 +120,21 @@
         "voucherApplied": "Code applied: {code} - Discount {discount}",
         "discount": "Discount",
         "voucherSuccess": "Discount code applied successfully!",
-        "voucherError": "Invalid discount code"
+        "voucherError": "Invalid discount code",
+        "usePoints": "Use Loyalty Points",
+        "availablePoints": "Available",
+        "points": "points",
+        "pointsRule": "100 points = 10,000 VND discount. Minimum 100 points.",
+        "clearPoints": "Clear",
+        "useMax": "Use Max",
+        "pointsDiscount": "Discount",
+        "loginForPoints": "Login to use loyalty points",
+        "loginForPointsDesc": "Earn points with every order and redeem for discounts!",
+        "loginNow": "Login now →",
+        "voucherDiscount": "Voucher discount",
+        "pointsDiscountLabel": "Points discount",
+        "totalDiscount": "Total discount",
+        "notEnoughPoints": "You need at least 100 points to redeem for discount. Place more orders to earn points!"
     },
     "orders": {
         "title": "Your Orders",
