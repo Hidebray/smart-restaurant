@@ -110,12 +110,23 @@ function GuestMenuContent() {
     router.replace(`/guest?${params.toString()}`, { scroll: false });
   }, [currentPage, tableId, activeCategory, searchQuery, sortBy, router]);
 
-  // Extract unique categories
-  const categories = useMemo(() => {
+  // Helper to translate category name
+  const translateCategory = (catName: string) => {
+    const translated = t(`menu.categories.${catName}`);
+    // If translation key doesn't exist, return original name
+    return translated.startsWith('menu.categories.') ? catName : translated;
+  };
+
+  // Extract unique categories (keep original names for filtering)
+  const rawCategories = useMemo(() => {
     const cats = new Set(products.map((p) => p.category?.name || "Other"));
-    // Ensure "All" label is always first
-    return [t('menu.allCategories'), ...Array.from(cats).sort()];
-  }, [products, t]);
+    return ["", ...Array.from(cats).sort()]; // "" represents "All"
+  }, [products]);
+
+  // Translated category names for display
+  const categories = useMemo(() => {
+    return rawCategories.map(cat => cat === "" ? t('menu.allCategories') : translateCategory(cat));
+  }, [rawCategories, t]);
 
   // Filter products by category AND search AND sort
   const filteredProducts = useMemo(() => {
@@ -251,8 +262,13 @@ function GuestMenuContent() {
       <div className="bg-white pb-2 shadow-sm mb-4">
         <CategoryTabs
           categories={categories}
-          activeCategory={activeCategory === "" ? t('menu.allCategories') : activeCategory}
-          onSelect={(cat) => setActiveCategory(cat === t('menu.allCategories') ? "" : cat)}
+          activeCategory={activeCategory === "" ? t('menu.allCategories') : translateCategory(activeCategory)}
+          onSelect={(cat) => {
+            // Find the original category name from translated name
+            const index = categories.indexOf(cat);
+            const originalCat = index >= 0 ? rawCategories[index] : "";
+            setActiveCategory(originalCat);
+          }}
         />
       </div>
 

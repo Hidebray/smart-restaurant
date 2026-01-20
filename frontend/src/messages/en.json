@@ -79,6 +79,13 @@
         "title": "Menu",
         "searchPlaceholder": "Search menu items...",
         "allCategories": "All",
+        "categories": {
+            "Khai Vị": "Appetizers",
+            "Món Chính": "Main Courses",
+            "Tráng Miệng": "Desserts",
+            "Đồ Uống": "Beverages",
+            "Other": "Other"
+        },
         "noItems": "No items found",
         "addToCart": "Add to Cart",
         "showingItems": "Showing {start}-{end} of {total} items",

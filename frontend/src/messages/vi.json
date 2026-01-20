@@ -79,6 +79,13 @@
     "title": "Thực Đơn",
     "searchPlaceholder": "Tìm món ăn...",
     "allCategories": "Tất cả",
+    "categories": {
+      "Khai Vị": "Khai Vị",
+      "Món Chính": "Món Chính",
+      "Tráng Miệng": "Tráng Miệng",
+      "Đồ Uống": "Đồ Uống",
+      "Other": "Khác"
+    },
     "noItems": "Không tìm thấy món nào",
     "addToCart": "Thêm vào giỏ",
     "showingItems": "Hiển thị {start}-{end} trên {total} món",
