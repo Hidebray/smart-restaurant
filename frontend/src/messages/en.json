@@ -92,7 +92,27 @@
         "chefsChoice": "Chef's Choice",
         "statusAvailable": "Available",
         "statusSoldOut": "Sold Out",
-        "statusUnavailable": "Unavailable"
+        "statusUnavailable": "Unavailable",
+        "heroTitle": "Discover Our Menu",
+        "heroSubtitle": "Delightful dishes crafted with love and meticulous care",
+        "freshIngredients": "Fresh ingredients every day",
+        "items": "items",
+        "freshDaily": "Fresh Daily",
+        "tryAnotherSearch": "Try searching with different keywords",
+        "viewDetail": "View Details",
+        "madeWithLove": "Made with love ❤️",
+        "noDescription": "Delicious dish"
+    },
+    "productDetail": {
+        "backToMenu": "Go Back",
+        "notFound": "Item not found or has been removed.",
+        "notFoundTitle": "Item Not Found",
+        "description": "Description",
+        "allergens": "Allergen Information",
+        "minutes": "minutes",
+        "addToCart": "Add to Cart",
+        "addedToCart": "Added to Cart!",
+        "selectTableHint": "Select a table to start ordering"
     },
     "cart": {
         "title": "Your Cart",
@@ -250,9 +270,9 @@
         "orders": "Orders",
         "modifiers": "Modifiers",
         "staff": "Staff",
-    "loyalty": "Loyalty",
-    "inventory": "Inventory",
-    "reservations": "Reservations",
+        "loyalty": "Loyalty",
+        "inventory": "Inventory",
+        "reservations": "Reservations",
         "reports": "Reports",
         "profile": "Profile"
     },

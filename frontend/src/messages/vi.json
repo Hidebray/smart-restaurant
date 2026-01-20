@@ -92,7 +92,27 @@
     "chefsChoice": "Bếp Trưởng Khuyên Dùng",
     "statusAvailable": "Còn món",
     "statusSoldOut": "Hết món",
-    "statusUnavailable": "Tạm ngưng"
+    "statusUnavailable": "Tạm ngưng",
+    "heroTitle": "Khám Phá Thực Đơn",
+    "heroSubtitle": "Những món ăn tuyệt vời được chế biến với tình yêu và sự tỉ mỉ",
+    "freshIngredients": "Nguyên liệu tươi ngon mỗi ngày",
+    "items": "món",
+    "freshDaily": "Tươi mỗi ngày",
+    "tryAnotherSearch": "Thử tìm kiếm với từ khóa khác",
+    "viewDetail": "Xem chi tiết",
+    "madeWithLove": "Chế biến với tình yêu ❤️",
+    "noDescription": "Món ăn ngon miệng"
+  },
+  "productDetail": {
+    "backToMenu": "Quay lại",
+    "notFound": "Không tìm thấy món hoặc đã bị xoá.",
+    "notFoundTitle": "Không tìm thấy món",
+    "description": "Mô tả",
+    "allergens": "Thông tin dị ứng",
+    "minutes": "phút",
+    "addToCart": "Thêm vào giỏ",
+    "addedToCart": "Đã thêm vào giỏ!",
+    "selectTableHint": "Chọn bàn để bắt đầu gọi món"
   },
   "cart": {
     "title": "Giỏ Hàng",
