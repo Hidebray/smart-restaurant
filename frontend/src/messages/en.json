@@ -97,6 +97,7 @@
         "sortPriceAsc": "Price: Low to High",
         "sortPriceDesc": "Price: High to Low",
         "chefsChoice": "Chef's Choice",
+        "allergens": "Allergens",
         "statusAvailable": "Available",
         "statusSoldOut": "Sold Out",
         "statusUnavailable": "Unavailable",

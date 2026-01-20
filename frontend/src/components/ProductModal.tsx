@@ -6,7 +6,7 @@ import { Product, ModifierOption, ProductModifierGroup, Review } from "@/types"
 import { useCartStore } from "@/store/useCartStore";
 import { useMenuStore } from "@/store/useMenuStore";
 import { useI18n } from "@/contexts/I18nContext";
-import { ChevronLeft, ChevronRight, ChefHat } from "lucide-react";
+import { ChevronLeft, ChevronRight, ChefHat, AlertCircle } from "lucide-react";
 import toast from "react-hot-toast";
 
 interface ProductModalProps {
@@ -230,6 +230,18 @@ export default function ProductModal({ product, isOpen, onClose, onSelectProduct
                             </span>
                         )}
                     </div>
+
+                    {/* Allergens Info */}
+                    {product.allergens && (
+                        <div className="flex items-start gap-2 mt-3 p-3 bg-red-50 border border-red-100 text-red-700 rounded-xl text-xs leading-relaxed">
+                            <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" />
+                            <span>
+                                <span className="font-bold uppercase tracking-wider mr-1">{t('menu.allergens')}:</span>
+                                {product.allergens}
+                            </span>
+                        </div>
+                    )}
+
                     <p className="text-gray-500 mt-4 text-sm leading-relaxed">{product.description}</p>
 
                     {/* Loop qua các nhóm Modifier (Size, Topping...) */}
