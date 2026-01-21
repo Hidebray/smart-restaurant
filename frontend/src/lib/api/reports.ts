@@ -22,4 +22,7 @@ export const reportsApi = {
 
   ordersTrend: (params: any) =>
     api.get("/reports/orders-trend", { params }).then((r) => r.data),
+
+  topCategories: (params: any) =>
+    api.get("/reports/top-categories", { params }).then((r) => r.data),
 };

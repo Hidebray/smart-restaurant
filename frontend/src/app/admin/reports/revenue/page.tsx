@@ -11,11 +11,13 @@ export default function RevenueReportPage() {
   const [range, setRange] = useState({ from: "", to: "", groupBy: "day" });
   const [revenue, setRevenue] = useState([]);
   const [topProducts, setTopProducts] = useState([]);
+  const [topCategories, setTopCategories] = useState([]);
   const [ordersTrend, setOrdersTrend] = useState([]);
 
   const load = async () => {
     setRevenue(await reportsApi.revenue(range));
     setTopProducts(await reportsApi.topProducts(range));
+    setTopCategories(await reportsApi.topCategories(range));
     setOrdersTrend(await reportsApi.ordersTrend(range));
   };
 
@@ -109,7 +111,7 @@ export default function RevenueReportPage() {
           <h2 className="text-xl font-bold text-gray-800 mb-6 border-b border-gray-100 pb-4">Top Categories</h2>
           <div className="flex-1 flex items-center justify-center">
             <div className="w-full">
-              <TopProductsPieChart data={topProducts} />
+              <TopProductsPieChart data={topCategories} />
             </div>
           </div>
         </div>

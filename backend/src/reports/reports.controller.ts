@@ -10,7 +10,7 @@ import { UserRole } from '@prisma/client';
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Roles(UserRole.ADMIN)
 export class ReportsController {
-  constructor(private readonly reportsService: ReportsService) {}
+  constructor(private readonly reportsService: ReportsService) { }
 
   // Existing (giữ lại nếu bạn đang dùng)
   @Get('summary')
@@ -41,5 +41,11 @@ export class ReportsController {
   @Get('orders-trend')
   ordersTrend(@Query() q: RevenueQueryDto) {
     return this.reportsService.ordersTrend(q);
+  }
+
+  // ✅ Task 7.10: top categories pie data
+  @Get('top-categories')
+  topCategories(@Query() q: RevenueQueryDto) {
+    return this.reportsService.topCategories(q);
   }
 }

@@ -17,7 +17,11 @@ export class ReportsService {
     if (from || to) {
       whereClause.createdAt = {};
       if (from) whereClause.createdAt.gte = new Date(from);
-      if (to) whereClause.createdAt.lte = new Date(to);
+      if (to) {
+        const toDate = new Date(to);
+        toDate.setUTCHours(23, 59, 59, 999);
+        whereClause.createdAt.lte = toDate;
+      }
     }
 
     // Use findMany to calculate correct revenue with discounts
@@ -102,7 +106,11 @@ export class ReportsService {
     if (from || to) {
       where.createdAt = {};
       if (from) where.createdAt.gte = new Date(from);
-      if (to) where.createdAt.lte = new Date(to);
+      if (to) {
+        const toDate = new Date(to);
+        toDate.setUTCHours(23, 59, 59, 999);
+        where.createdAt.lte = toDate;
+      }
     }
 
     const orders = await this.prisma.order.findMany({
@@ -157,7 +165,11 @@ export class ReportsService {
     if (from || to) {
       where.createdAt = {};
       if (from) where.createdAt.gte = new Date(from);
-      if (to) where.createdAt.lte = new Date(to);
+      if (to) {
+        const toDate = new Date(to);
+        toDate.setUTCHours(23, 59, 59, 999);
+        where.createdAt.lte = toDate;
+      }
     }
 
     const orders = await this.prisma.order.findMany({
@@ -196,7 +208,13 @@ export class ReportsService {
         status: OrderStatus.COMPLETED,
         createdAt: {
           ...(from && { gte: new Date(from) }),
-          ...(to && { lte: new Date(to) }),
+          ...(to && {
+            lte: (() => {
+              const d = new Date(to);
+              d.setUTCHours(23, 59, 59, 999);
+              return d;
+            })(),
+          }),
         },
       },
       include: { items: true },
@@ -238,6 +256,83 @@ export class ReportsService {
     return Array.from(productStats.entries())
       .map(([productId, stats]) => ({
         name: productMap.get(productId) || 'Unknown',
+        value: stats.revenue,
+        quantity: stats.quantity,
+      }))
+      .sort((a, b) => b.value - a.value)
+      .slice(0, topN);
+  }
+
+  // ==========================
+  // Task 7.10: Top categories pie (by revenue)
+  // ==========================
+  async topCategories({
+    from,
+    to,
+    take,
+  }: {
+    from?: string;
+    to?: string;
+    take?: string;
+  }) {
+    const orders = await this.prisma.order.findMany({
+      where: {
+        status: OrderStatus.COMPLETED,
+        createdAt: {
+          ...(from && { gte: new Date(from) }),
+          ...(to && {
+            lte: (() => {
+              const d = new Date(to);
+              d.setUTCHours(23, 59, 59, 999);
+              return d;
+            })(),
+          }),
+        },
+      },
+      include: {
+        items: {
+          include: {
+            product: {
+              include: { category: true },
+            },
+          },
+        },
+      },
+    });
+
+    const categoryStats = new Map<string, { name: string; revenue: number; quantity: number }>();
+
+    for (const order of orders) {
+      const rawTotal = Number(order.totalAmount);
+      let orderDiscount = 0;
+      if (order.discountType === 'PERCENT') {
+        orderDiscount = (rawTotal * Number(order.discountValue)) / 100;
+      } else if (order.discountType === 'FIXED') {
+        orderDiscount = Number(order.discountValue);
+      }
+      const netTotal = Math.max(0, rawTotal - orderDiscount);
+
+      const ratio = rawTotal > 0 ? netTotal / rawTotal : 1;
+
+      for (const item of order.items) {
+        // Skip if product or category was deleted (though relations should prevent this usually)
+        if (!item.product || !item.product.category) continue;
+
+        const itemRevenue = Number(item.totalPrice) * ratio;
+        const categoryName = item.product.category.name;
+
+        const current = categoryStats.get(categoryName) || { name: categoryName, revenue: 0, quantity: 0 };
+        current.revenue += itemRevenue;
+        current.quantity += item.quantity;
+        categoryStats.set(categoryName, current);
+      }
+    }
+
+    const topN = take ? Math.max(1, parseInt(take, 10) || 10) : 10;
+
+    return Array.from(categoryStats.values())
+      .map((stats) => ({
+        name: stats.name,
         value: stats.revenue,
         quantity: stats.quantity,
       }))
